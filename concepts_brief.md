@@ -163,7 +163,29 @@ Durante a abertura do plano técnico, o autor escolheu serviços separados para 
 
 ## Questões abertas e próximos passos
 
+### Decisão de linguagem: Rust
+
+O autor escolheu Rust para os serviços de backend Atendimento, Materiais e Inventário, buscando economia de recursos e aprendizado. A equipe domina principalmente JavaScript, Python e Java. Considerar o esforço de aprendizado e validar o consumo real na VM, sem presumir que a linguagem isoladamente garante o orçamento de recursos. Frameworks, bibliotecas e tecnologia da interface permanecem abertos.
+
+### Decisão de implantação: servidor próprio
+
+O autor escolheu uma VM Debian em servidor próprio da Prefeitura, com um container por serviço de Chamados, e informou capacidade inicial de 4 GB de RAM, 4 vCPUs e 100 GB de armazenamento no total. O banco compartilhado e a fila persistente também ficarão nessa mesma VM. Todos compartilham sua disponibilidade e seus recursos; persistência da fila não oferece recuperação automática diante de perda do armazenamento da VM. Ferramenta de containers, publicação da interface, forma de execução do banco e da fila, distribuição de recursos, persistência, backup e recuperação ainda precisam ser definidos. A suficiência para a carga real não foi validada e esta decisão não estabelece alta disponibilidade.
+
+### Decisão do plano técnico: banco compartilhado
+
+O autor escolheu um banco compartilhado entre os serviços Atendimento, Materiais e Inventário, com escrita exclusiva: cada serviço altera apenas suas próprias tabelas. Tanto mudanças quanto consultas a dados de outro serviço passam pela interface responsável, sem acesso direto às tabelas alheias. O banco do SupriTI permanece externo; seu estoque não será incorporado ao banco de Chamados. A escolha cria uma dependência comum, sem garantir isolamento diante de falha do banco. A atribuição concreta das tabelas, as credenciais e a coordenação de migrações ainda precisam ser definidas.
+
 ### Decisão inicial do plano técnico: três serviços
+
+O autor confirmou o uso de fila persistente no fluxo de materiais provisórios com uma condição explícita: sem produto oficial identificado, o registro aguarda ação humana e não gera tentativas de baixa. Após a seleção do produto pelo técnico, preparar a operação para processamento automático conforme a intenção vigente, sem antecipar consumo antes da revisão e do fechamento ou do cancelamento aprovado. Identificação pendente e operação pronta para processamento são situações distintas. Tecnologia da fila, propriedade do registro provisório e persistência/publicação sem perda ainda precisam ser definidas; esta escolha não torna automaticamente todos os processos assíncronos.
+
+Materiais registrados provisoriamente sem produto oficial associado aparecem na seção independente de pendências com o aviso “Identificação de material pendente”, inclusive em chamados fechados. A identificação encerra esse tipo de pendência, mas não comprova baixa nem elimina outras pendências de integração do material.
+
+Se o serviço de Materiais estiver indisponível, permitir ao técnico registrar no chamado os materiais utilizados mesmo sem consultar o catálogo, mantendo a sincronização pendente sem bloquear o fechamento. Não apresentar reserva ou consumo como confirmado. O autor confirmou os campos provisórios: nome ou descrição, quantidade e condição (novo ou recondicionado). Após a recuperação, o técnico seleciona o produto correto do catálogo antes da baixa; não associar automaticamente por nome. Preservar os dados originais e a autoria e data da associação. O mecanismo de persistência e encaminhamento ainda precisa ser definido.
+
+Qualquer técnico pode desativar e reativar equipamentos, sem concessão específica adicional para essas ações. Preservar autoria, data e histórico, mantendo a execução pela interface do serviço de Inventário.
+
+O chamado guarda apenas o identificador do equipamento, sem cópia de patrimônio, descrição ou resumo do cadastro. Os detalhes são consultados pela interface de Inventário. Durante uma falha desse serviço, manter o identificador e sinalizar a indisponibilidade dos detalhes; não converter um vínculo existente em pendência de associação apenas por não conseguir consultá-lo. Equipamentos fora de uso são desativados, preservando cadastro, identificador e histórico para consulta nos chamados antigos. Não permitir sua seleção em novos chamados enquanto estiverem desativados; a reativação torna a seleção novamente disponível, preservando o mesmo cadastro e seus vínculos. O formato do identificador permanece aberto.
 
 O autor escolheu Atendimento (chamados e formulários), Materiais (integração SupriTI) e Inventário (equipamentos e Wazuh), no mesmo repositório, para desenvolvimento cooperativo com três pessoas. A justificativa é facilitar o isolamento e o diagnóstico de falhas de materiais e inventário. A separação não garante disponibilidade por si só: contratos e tratamento de indisponibilidade ainda serão desenhados. Propriedade dos dados e localização de funções transversais continuam abertas.
 
