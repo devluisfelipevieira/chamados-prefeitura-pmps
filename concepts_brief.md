@@ -7,6 +7,28 @@
 
 ## Visão geral
 
+### Revisão de escopo: abertura simples e comunicação pelo canal existente
+
+O autor confirmou a base de conhecimento dentro de Atendimento, incluindo artigos e vínculos às soluções de chamados, sem serviço adicional. Autoria, revisão, publicação, visibilidade e versionamento continuam por definir; escolher o serviço responsável não aprova implicitamente esses fluxos.
+
+O autor confirmou que Atendimento centraliza as notificações internas dos técnicos, reunindo os avisos dos três serviços no mesmo painel. Materiais e Inventário encaminham avisos por sua API, respeitando a propriedade exclusiva das tabelas. Preservar leitura, destinatários, retenção e remoção já aprovados. As notificações não substituem os resultados e as pendências oficiais das operações; contrato, prevenção de duplicidade e recuperação de entrega permanecem abertos.
+
+O autor definiu que contas, login, grupos, permissões e sessões ficam no serviço Atendimento, sem criar um serviço de Identidade separado. Materiais e Inventário validam acessos técnicos pela API de Atendimento, sem acesso direto às tabelas de identidade. O contrato e as credenciais entre serviços permanecem por detalhar. A indisponibilidade de Atendimento pode afetar essa validação, sem autorizar contornar o login ou aceitar sessões não verificadas.
+
+Por solicitação do autor, adotar o comportamento de sessões encontrado na cópia de SupriTI: 30 minutos de inatividade e limite absoluto de 8 horas por padrão, configuráveis; sessão no servidor, token em cookie protegido e verificação de conta ativa, revogação e expiração nas requisições protegidas. A renovação por atividade não ultrapassa o limite absoluto. Esses são padrões do código examinado, não valores comprovados da configuração de produção. Manter sessões próprias de Chamados e a revogação imediata já aprovada; a responsabilidade pela validação entre os serviços ainda será definida.
+
+Redefinir a senha ou desativar a conta de um técnico encerra imediatamente todas as suas sessões abertas. Recusar novas requisições com sessões revogadas e exigir novo login; troca posterior de senha ou reativação não restaura sessões antigas. Não confundir essa revogação com cancelamento de operações de materiais já autorizadas, que seguem as regras de continuidade e suspensão administrativa existentes.
+
+O administrador cria as contas dos técnicos, com login e senha próprios do sistema, sem autocadastro público da equipe. Fornecer senha temporária e exigir sua troca no primeiro acesso antes de permitir o uso das funções do painel. Em caso de esquecimento, o administrador redefine a senha com outra temporária, novamente sujeita à troca obrigatória no próximo acesso. Não depender de recuperação automática por e-mail. Integração com AD fica para uma etapa futura. Essa autenticação é independente do formulário público do solicitante e mantém as permissões por grupos já definidas. Gestão e revogação de sessões permanecem por detalhar.
+
+O formulário de abertura sem login será acessível pela internet, inclusive fora da rede da Prefeitura. O painel técnico também será acessível pela internet, mas com login obrigatório e aplicação das permissões do usuário autenticado. Essas decisões não concedem consulta pública a chamados, anexos, dados de contato ou cadastros internos e não implicam expor banco, filas ou todas as APIs. Mecanismo de autenticação, sessão, publicação HTTPS, domínio, controles de acesso à infraestrutura e proteção contra envios abusivos ainda serão definidos.
+
+Após discutir adoção pelos funcionários, o autor escolheu simplificar a participação do solicitante: formulário de abertura sem login, destinado ao registro do chamado; esclarecimentos, acompanhamento e pedidos de reabertura continuam pelo WhatsApp/Chatwoot, e o técnico atualiza o chamado no sistema. Não implementar chat próprio nem exigir conta do solicitante nesta etapa. O sistema concentra registro, organização e controle do atendimento, sem substituir integralmente o canal atual.
+
+Esta decisão mais recente substitui as regras anteriores de portal autenticado do solicitante, notificações internas destinadas a ele e ações de acompanhamento, complemento, cancelamento ou pedido de reabertura realizadas diretamente por ele no sistema. As notificações internas da equipe técnica permanecem. Preservar as regras técnicas de prazo, histórico e controle de reabertura que forem compatíveis; a forma de registrar e avaliar uma solicitação recebida pelo canal externo ainda precisa ser detalhada. Não presumir integração automática com Chatwoot, envio automático de mensagens ou criação de chamados a partir das conversas.
+
+O autor confirmou os campos da abertura simplificada: nome, setor, telefone/WhatsApp, assunto, descrição e patrimônio opcional, além de anexo opcional de imagem, como foto do equipamento ou captura do erro. Nome, setor e contato são informados pelo solicitante, sem exigir conta. A relação dos campos essenciais com os formulários configuráveis por categoria ainda precisa ser definida. Sem autenticação, dados informados não comprovam autoria; não expor histórico ou cadastros internos no formulário público. Quantidade, formatos e tamanho máximo das imagens ainda precisam ser definidos.
+
 O sistema deve reunir o atendimento de TI, o histórico técnico dos equipamentos e o acompanhamento de materiais usados nas intervenções. O objetivo é permitir que solicitantes registrem problemas e que a equipe organize, execute e documente os atendimentos sem acrescentar confirmações ou aprovações sem utilidade prática.
 
 Chamados registra o atendimento e a intenção das operações de materiais. O SupriTI continua sendo a fonte oficial de estoque, reservas e movimentações. O Wazuh fornece inventários para detectar alterações de hardware. Um chamado fechado pode manter pendências de integração visíveis e rastreáveis, sem apresentar uma movimentação não confirmada como concluída.
@@ -39,6 +61,12 @@ O resultado pretendido é um atendimento simples de abrir e acompanhar, com hist
 - Integração com SupriTI para consulta, reserva, ajuste, liberação, consumo e tratamento de devoluções no cancelamento.
 - Histórico por equipamento e comparação diária de hardware com dados do Wazuh.
 - Permissões dinâmicas por grupos e consulta à base de conhecimento, respeitando o grau de definição descrito abaixo.
+
+### Escopo futuro para discussão: alerta de inatividade de equipamentos
+
+O autor solicitou registrar o monitoramento de equipamentos sem atividade por um período configurável pelo administrador, tendo 35 dias como referência inicial proposta. A ideia é consultar os registros do Wazuh e comparar a última atualização ou atividade com o limite configurado, gerando um alerta de possível sumiço quando o tempo decorrido ultrapassar esse limite. Esse monitoramento complementa a comparação de hardware para identificar possíveis mudanças não autorizadas.
+
+A funcionalidade fica anotada para discussão futura, sem implementação nesta etapa. Ainda será necessário definir qual registro do Wazuh representa atividade, frequência de verificação, tratamento de equipamentos desativados, ausência de registros e falhas de coleta, além dos destinatários e do encerramento dos alertas. A falta de atualização é um indício para investigação, não confirmação de desaparecimento.
 
 ### Fora do escopo atual
 
@@ -165,13 +193,21 @@ Durante a abertura do plano técnico, o autor escolheu serviços separados para 
 
 ### Decisão de linguagem: Rust
 
-O autor escolheu Rust para os serviços de backend Atendimento, Materiais e Inventário, buscando economia de recursos e aprendizado. A equipe domina principalmente JavaScript, Python e Java. Considerar o esforço de aprendizado e validar o consumo real na VM, sem presumir que a linguagem isoladamente garante o orçamento de recursos. Frameworks, bibliotecas e tecnologia da interface permanecem abertos.
+O autor escolheu Axum como framework HTTP dos três serviços Rust, mantendo APIs HTTP/JSON. O acesso ao PostgreSQL será feito com SQLx e SQL escrito diretamente, sem ORM. Versões, pools, migrações e implementação da fila permanecem por definir.
+
+O autor escolheu Rust para os serviços de backend Atendimento, Materiais e Inventário, buscando economia de recursos e aprendizado. A equipe domina principalmente JavaScript, Python e Java. Considerar o esforço de aprendizado e validar o consumo real na VM, sem presumir que a linguagem isoladamente garante o orçamento de recursos. Axum e SQLx com SQL direto foram escolhidos posteriormente; as demais bibliotecas e a tecnologia da interface permanecem abertas.
 
 ### Decisão de implantação: servidor próprio
 
 O autor escolheu uma VM Debian em servidor próprio da Prefeitura, com um container por serviço de Chamados, e informou capacidade inicial de 4 GB de RAM, 4 vCPUs e 100 GB de armazenamento no total. O banco compartilhado e a fila persistente também ficarão nessa mesma VM. Todos compartilham sua disponibilidade e seus recursos; persistência da fila não oferece recuperação automática diante de perda do armazenamento da VM. Ferramenta de containers, publicação da interface, forma de execução do banco e da fila, distribuição de recursos, persistência, backup e recuperação ainda precisam ser definidos. A suficiência para a carga real não foi validada e esta decisão não estabelece alta disponibilidade.
 
 ### Decisão do plano técnico: banco compartilhado
+
+O autor confirmou comunicação por APIs HTTP com mensagens JSON entre os três serviços, mantendo consultas e alterações na interface do proprietário dos dados. O trabalho persistido em filas internas será encaminhado pelas APIs, sem leitura direta de tabelas alheias. Autenticação, proteção do transporte e contratos permanecem por definir; a escolha não obriga esperar a conclusão externa para responder ao usuário nem presume compatibilidade dos contratos externos do SupriTI e do Wazuh.
+
+O autor escolheu implementar as filas persistentes somente no PostgreSQL, sem RabbitMQ ou outro intermediário nesta etapa. Cada serviço mantém propriedade exclusiva de suas tabelas de tarefas; a fila não autoriza acesso direto aos dados dos demais serviços. Encaminhamento entre serviços, processamento concorrente, recuperação, tentativas e biblioteca ou implementação ainda serão definidos. Manter a distinção entre material aguardando identificação humana e operação apta ao processamento automático.
+
+O autor definiu PostgreSQL como banco compartilhado, por ser a tecnologia utilizada pela equipe. Versão, organização de schemas e tabelas, credenciais, migrações e limites de conexão permanecem abertos. Manter as fronteiras de leitura e escrita por serviço já aprovadas.
 
 O autor escolheu um banco compartilhado entre os serviços Atendimento, Materiais e Inventário, com escrita exclusiva: cada serviço altera apenas suas próprias tabelas. Tanto mudanças quanto consultas a dados de outro serviço passam pela interface responsável, sem acesso direto às tabelas alheias. O banco do SupriTI permanece externo; seu estoque não será incorporado ao banco de Chamados. A escolha cria uma dependência comum, sem garantir isolamento diante de falha do banco. A atribuição concreta das tabelas, as credenciais e a coordenação de migrações ainda precisam ser definidas.
 
