@@ -3,6 +3,38 @@
 Data de atualização: 2026-11-09
 Situação: requisitos em planejamento. Este documento não autoriza implementação nem constitui desenho técnico final ou revisão Goldfish.
 
+## Substituição do último técnico ativo na desativação — decisão após revisão Goldfish
+
+Na desativação de um técnico, verificar os chamados aos quais está vinculado. Se ele for o único técnico ou o último participante ainda ativo, o administrador deve escolher um novo técnico para assumir antes de concluir a desativação. A regra inclui chamados fechados ou cancelados com pendências de integração; não deixar essas pendências sem acompanhamento ativo. Havendo outros participantes técnicos ativos, não exigir substituição adicional por esta regra.
+
+Se o substituto não for o próprio administrador que realiza a desativação, enviar a ele uma notificação padrão informando que foi vinculado ao chamado pelo administrador. Preservar a autoria histórica das operações e registrar a atribuição. A substituição não reabre o chamado nem repete operações de estoque.
+
+Esta decisão mais recente substitui a exigência anterior de substituto em todos os chamados abertos mesmo com outros participantes e a dispensa anterior de substituição nos encerrados com pendências. Resolve a responsabilidade ativa levantada no achado F1; a forma de localizar essas pendências no painel ainda precisa ser definida.
+
+## Seção independente de pendências de integração — decisão após revisão Goldfish
+
+O usuário definiu uma seção à parte, independente, para os chamados com pendências de integração, incluindo chamados fechados ou cancelados. A descoberta dessas pendências não depende de notificações nem de o chamado estar em andamento. A seção acompanha a pendência real, sem reabrir o atendimento apenas para exibi-la. Esta decisão complementa a substituição do último técnico ativo e resolve a definição funcional de descoberta das pendências levantada em F1; detalhes de apresentação permanecem para o desenho.
+
+## Nova conferência após alteração dos dados da revisão final — decisão após revisão Goldfish
+
+O usuário confirmou que alterações na solução, no diagnóstico ou no vínculo de equipamento enquanto a revisão final estiver aberta devem receber a mesma proteção já definida para materiais: impedir a confirmação do resumo anterior, apresentar o conteúdo atualizado e exigir nova conferência antes do fechamento. Validar a atualidade do conteúdo no processamento da confirmação, sem depender apenas da interface. Uma tentativa desatualizada não inicia fechamento nem consumo. Esta decisão resolve a lacuna funcional apontada em F2 do relatório Goldfish.
+
+## Reabertura direta equivale ao aceite do pedido pendente — decisão após revisão Goldfish
+
+O usuário definiu que a reabertura direta por um técnico, quando houver pedido de reabertura pendente, deve ser entendida como aceite desse pedido. Aplicar os mesmos efeitos do aceite: encerrar o pedido como aceito, retornar o chamado a Em atendimento, incluir o técnico como participante se necessário, remover os avisos pendentes e enviar a notificação padrão ao solicitante. Evitar duplicação de efeitos e notificações.
+
+Como aceite do mesmo pedido, a reabertura direta participa da regra de primeira ação válida registrada diante de recusa ou cancelamento concorrentes. Esta decisão resolve a interação com pedido pendente apontada em F3. A possibilidade de reabrir diretamente após uma recusa já registrada ainda precisa ser definida.
+
+## Reabertura técnica após recusa de pedido — decisão após revisão Goldfish
+
+O usuário confirmou que, após um técnico recusar o pedido de reabertura, outro técnico pode reabrir diretamente o chamado dentro dos sete dias corridos contados do fechamento mais recente. A recusa encerra o pedido e mantém o chamado fechado naquele momento, mas não impede a reabertura técnica posterior dentro da janela vigente. Essa definição esclarece o alcance do fechamento definitivo por recusa descrito anteriormente.
+
+Preservar a recusa e seu motivo, autoria e data; registrar a reabertura posterior como nova ação, com o motivo exigido para técnicos, sem transformar retroativamente o pedido recusado em aceito. Aplicar as regras já acordadas de retorno a Em atendimento, inclusão do técnico e notificações. A recusa não reinicia nem amplia a janela de sete dias. Esta decisão completa a interação funcional apontada em F3 do relatório Goldfish.
+
+## Preservação da tentativa de envio sem rascunhos — decisão após revisão Goldfish
+
+O usuário confirmou que, diante de erro ao enviar o formulário, os dados devem permanecer na página aberta para correção ou nova tentativa, sem criar rascunhos para o usuário. A exclusão de rascunhos busca evitar carga desnecessária no sistema. Não implementar salvamento manual ou automático para retomada posterior; preservar a tentativa atual na interface não constitui rascunho persistido nem garante recuperação após fechar ou recarregar a página. Esta decisão esclarece F4 do relatório Goldfish.
+
 ## Objetivo e fontes
 
 Permitir que o sistema de Chamados consulte materiais, reserve peças durante o atendimento, libere reservas e registre consumo no SupriTI. O SupriTI continua sendo a fonte oficial dos saldos e das movimentações. Não criar estoque paralelo no sistema de Chamados.
@@ -477,3 +509,203 @@ O chamado continua acessível aos técnicos conforme as regras já acordadas, in
 ## Notificação ao solicitante quando o chamado for assumido — 2026-11-09
 
 O usuário confirmou que o solicitante deve receber uma notificação interna quando um técnico assumir seu chamado. Aplicar o comportamento já acordado de indicador de não lidas, abertura do chamado e marcação como lida ao clicar, com retenção de 30 dias.
+
+## Mensagem de conclusão e confirmação do solicitante — 2026-11-10
+
+O usuário definiu que o solicitante deve receber uma mensagem de conclusão com opções de confirmar a conclusão ou pedir a reabertura. A confirmação do solicitante tem finalidade de compliance e não condiciona a resolução: o chamado é finalizado pelo técnico sem aguardar esse aceite.
+
+Na ausência de confirmação expressa, a confirmação deve ocorrer automaticamente em sete dias. Distinguir no histórico a confirmação expressa do solicitante da confirmação automática pelo decurso do prazo; não atribuir ao solicitante uma ação que ele não realizou.
+
+Ainda é necessário esclarecer o efeito do pedido de reabertura sobre essa confirmação automática. O marco e a contagem do prazo de confirmação também precisam ser explicitados, sem presumir que sejam idênticos aos da janela de reabertura anteriormente definida.
+
+## Aceite técnico do pedido de reabertura — 2026-11-10
+
+O usuário definiu que o pedido de reabertura do solicitante deve notificar o técnico e depender do aceite dele para reabrir efetivamente o chamado. O envio do pedido não altera por si só o estado resolvido do chamado. Esta decisão substitui, para reabertura solicitada pelo solicitante após resolução, qualquer interpretação anterior de reabertura imediata.
+
+Ainda precisam ser definidos o técnico destinatário quando houver vários participantes, o tratamento da recusa e o efeito de um pedido aguardando avaliação sobre a confirmação automática de conclusão em sete dias. Não estender esta decisão automaticamente à reabertura feita por técnicos ou à de chamados cancelados.
+
+## Pedido de reabertura interrompe a confirmação automática — 2026-11-10
+
+O usuário definiu que, quando o solicitante pedir a reabertura, o contador de sete dias para confirmação automática da conclusão deve ser desconsiderado. O pedido elimina a contagem vigente, em vez de apenas pausá-la; não confirmar automaticamente a conclusão pelo vencimento desse prazo enquanto o pedido aguarda avaliação técnica. O chamado permanece resolvido até o aceite técnico da reabertura, conforme a decisão anterior.
+
+O comportamento da confirmação de compliance em caso de recusa do pedido ainda precisa ser definido. Esta decisão trata do contador de confirmação automática e não altera, por si só, a janela permitida para solicitar reabertura.
+
+## Recusa de reabertura encerra o chamado definitivamente — 2026-11-10
+
+O usuário definiu que, se o técnico recusar o pedido de reabertura, o chamado deve ser fechado em definitivo, sem reiniciar o contador de confirmação de conclusão nem criar novas etapas de contestação ou aprovação no sistema. Técnico e solicitante dispõem de um canal alternativo de comunicação para tratar a questão; esta decisão não inclui a implementação desse canal no sistema.
+
+Preservar no histórico o pedido, a decisão técnica, a autoria e as datas. O fechamento por recusa não deve ser apresentado como confirmação expressa do solicitante. Ainda precisam ser definidos o técnico responsável pela decisão quando houver vários participantes e a comunicação da recusa ao solicitante.
+
+## Aceite da reabertura por técnico não participante — 2026-11-10
+
+O usuário definiu que qualquer técnico pode reabrir o chamado, inclusive quem não participou do atendimento anterior. Ao aceitar o pedido e efetivar a reabertura, o técnico deve ser automaticamente associado como participante, caso ainda não participe. A decisão não restringe o aceite aos participantes anteriores e reafirma a inclusão automática do técnico que reabre, já registrada anteriormente.
+
+Esta resposta esclarece quem pode aceitar e efetivar a reabertura; não estabelece que qualquer técnico também possa recusar o pedido. A abrangência da permissão de recusa e os destinatários da notificação do pedido ainda precisam ser definidos.
+
+## Recusa de reabertura por qualquer técnico — 2026-11-10
+
+O usuário confirmou que qualquer técnico pode recusar o pedido de reabertura e fechar o chamado definitivamente, inclusive quem não participou do atendimento anterior. Registrar a autoria e a data da decisão. A inclusão automática como participante está definida para quem efetiva a reabertura; não estendê-la automaticamente a quem recusa.
+
+Esta decisão resolve a abrangência da permissão de recusa. Os destinatários da notificação do pedido de reabertura ainda precisam ser definidos.
+
+## Visibilidade e notificação do pedido de reabertura — 2026-11-10
+
+O usuário definiu que o pedido de reabertura deve ficar visível para todos os técnicos no painel, mas a notificação do pedido deve ser enviada apenas aos técnicos participantes do chamado. A visibilidade no painel permite que qualquer técnico aceite ou recuse o pedido, conforme as permissões já acordadas; não é necessário notificar toda a equipe.
+
+Esta decisão resolve os destinatários do aviso do pedido. A comunicação ao solicitante sobre o aceite ou a recusa ainda precisa ser definida.
+
+## Notificação do resultado do pedido de reabertura — 2026-11-10
+
+O usuário definiu que o solicitante deve receber a notificação padrão do sistema quando seu pedido de reabertura for aceito ou recusado. Aplicar as regras já acordadas das notificações internas: indicador de não lidas, persistência durante desconexão, abertura do chamado e marcação como lida ao clicar, com retenção de 30 dias. O aviso deve comunicar o resultado efetivo: chamado reaberto no aceite ou fechado definitivamente na recusa.
+
+## Motivo obrigatório na recusa de reabertura — 2026-11-10
+
+O usuário confirmou que o técnico deve informar um motivo obrigatório ao recusar o pedido de reabertura. O motivo deve ficar visível ao solicitante e ser preservado no histórico junto à autoria e à data da decisão. Aplicar a notificação padrão do resultado já acordada; a recusa fecha o chamado definitivamente, sem nova etapa de contestação no sistema.
+
+## Contagem do prazo de confirmação automática — 2026-11-10
+
+O usuário confirmou que os sete dias para confirmação automática são dias corridos, contados a partir do momento em que o técnico resolve o chamado. A resolução é imediata e independe do aceite do solicitante. Se o solicitante pedir reabertura, desconsiderar essa contagem, conforme decisão anterior; não confirmar automaticamente a conclusão enquanto o pedido aguarda avaliação.
+
+## Simplificação do fechamento: sem confirmação do solicitante — 2026-11-10
+
+O usuário revisou a decisão sobre confirmação de conclusão: o técnico fecha o chamado em definitivo, sem depender de confirmação do solicitante. Excluir o botão de confirmação, o aceite de compliance, a confirmação automática e seu contador. As decisões anteriores que descrevem esses mecanismos ficam substituídas por esta decisão. A passagem de sete dias não exige uma nova operação de fechamento.
+
+O solicitante recebe a notificação de conclusão e pode solicitar reabertura durante sete dias corridos, contados do momento do fechamento pelo técnico. O pedido depende do aceite de um técnico para efetivar a reabertura; até esse aceite, o chamado continua fechado. Qualquer técnico pode aceitar ou recusar. Quem reabrir passa automaticamente a participante. A recusa exige motivo visível ao solicitante e preservado no histórico, mantendo o fechamento definitivo.
+
+Preservar a visibilidade do pedido para todos os técnicos no painel, a notificação apenas aos participantes e a notificação padrão ao solicitante sobre aceite ou recusa. O técnico também pode reabrir o chamado conforme as regras já acordadas. O prazo de sete dias limita a apresentação do pedido pelo solicitante; não é um contador de confirmação e não encerra automaticamente um pedido já apresentado que ainda aguarde avaliação.
+
+## Validade do pedido apresentado dentro do prazo — 2026-11-10
+
+O usuário confirmou que um pedido de reabertura apresentado pelo solicitante dentro dos sete dias corridos continua válido mesmo que o técnico só o avalie e aceite depois desse prazo. Usar o momento de apresentação do pedido para verificar sua tempestividade; o fim da janela não impede o aceite posterior nem expira automaticamente o pedido pendente.
+
+## Complementação do pedido de reabertura pendente — 2026-11-10
+
+O usuário confirmou que o solicitante pode complementar o motivo do pedido de reabertura com novas informações enquanto ele aguarda avaliação técnica. A complementação pertence ao mesmo pedido e não altera a data de apresentação usada para verificar o prazo de sete dias. Preservar o motivo original e registrar os complementos com autoria e data no histórico.
+
+## Complementos sem nova notificação — 2026-11-10
+
+O usuário definiu que os complementos do solicitante apenas atualizam o pedido de reabertura existente, sem gerar novas notificações. Preservar o registro dos complementos e a data original de apresentação do pedido, conforme a decisão anterior.
+
+## Decisões simultâneas sobre o pedido de reabertura — 2026-11-10
+
+O usuário confirmou que, se dois técnicos tentarem decidir o mesmo pedido simultaneamente, prevalece a primeira decisão registrada. Informar ao outro técnico que o pedido já foi avaliado, sem sobrescrever a decisão nem repetir seus efeitos. Garantir essa regra no processamento da decisão, inclusive quando os técnicos estiverem com telas desatualizadas; não depender apenas do bloqueio de botões na interface.
+
+## Cancelamento de pedido de reabertura pendente pelo solicitante — 2026-11-10
+
+O usuário confirmou que o solicitante pode cancelar seu pedido de reabertura enquanto ele ainda aguarda avaliação técnica. O cancelamento encerra o pedido, mantendo o chamado fechado, e deve ser preservado no histórico com autoria e data. Ainda precisa ser definido se o solicitante poderá apresentar outro pedido dentro da janela original de sete dias após cancelar o anterior.
+
+## Novo pedido após cancelamento pelo solicitante — 2026-11-10
+
+O usuário confirmou que, após cancelar seu pedido de reabertura pendente, o solicitante pode apresentar outro pedido se ainda estiver dentro dos sete dias corridos contados do fechamento original. O cancelamento e o novo pedido não reiniciam nem ampliam essa janela. Preservar o pedido cancelado no histórico e tratar o novo pedido pelo fluxo de avaliação técnica já definido. Esta permissão não se aplica a pedidos recusados por técnico, cuja recusa mantém o fechamento definitivo conforme decisão anterior.
+
+## Atualização do painel e remoção do aviso após cancelar pedido — 2026-11-10
+
+O usuário definiu que, quando o solicitante cancelar um pedido de reabertura pendente, basta atualizar o painel e remover a notificação de reabertura correspondente, sem gerar outra notificação. Remover o aviso dos destinatários e atualizar seus indicadores de não lidas quando aplicável. Preservar o pedido cancelado e seu histórico; a remoção atinge somente o aviso daquele pedido, não outras notificações sobre o chamado.
+
+## Remoção do aviso pendente após decisão técnica — 2026-11-10
+
+O usuário confirmou que, quando um técnico aceitar ou recusar o pedido de reabertura, a notificação pendente desse pedido deve desaparecer para os demais participantes. Atualizar os indicadores de não lidas quando aplicável e refletir o resultado no painel. Preservar o histórico do pedido e a notificação padrão do resultado enviada ao solicitante; não remover outras notificações do chamado.
+
+## Cancelamento e decisão técnica simultâneos — 2026-11-10
+
+O usuário confirmou que a primeira ação registrada prevalece quando o cancelamento do pedido pelo solicitante concorrer com o aceite ou a recusa por um técnico. Efetivar somente a primeira ação válida e informar à outra pessoa o estado atualizado do pedido, sem sobrescrever o resultado nem repetir seus efeitos. Aplicar a regra no processamento, inclusive com telas desatualizadas, conforme a proteção já definida para decisões técnicas simultâneas.
+
+## Informações principais no painel dos técnicos — 2026-11-10
+
+O usuário definiu as informações principais que devem aparecer para cada chamado no painel dos técnicos: título do chamado, categoria, data de abertura, prioridade e solicitante, incluindo setor e usuário. A ordenação inicial dos chamados e as regras de definição da prioridade ainda precisam ser esclarecidas.
+
+## Ordenação inicial da fila dos técnicos — 2026-11-10
+
+O usuário confirmou que a fila deve respeitar primeiro a hierarquia de prioridade, exibindo os níveis mais prioritários acima. Dentro de cada nível, ordenar pela data de abertura, com os chamados mais antigos primeiro. Os níveis de prioridade e as regras para atribuí-los ainda precisam ser definidos.
+
+## Definição técnica e visibilidade da prioridade — 2026-11-10
+
+O usuário definiu que a prioridade deve ser analisada e atribuída pelo técnico. O solicitante não deve visualizar a prioridade atribuída nem sua posição na ordenação por prioridade. A prioridade é uma informação interna da equipe técnica e orienta a fila conforme a ordenação já acordada. Os níveis de prioridade e o tratamento inicial de chamados ainda não avaliados continuam pendentes de definição.
+
+## Chamados novos aguardando triagem — 2026-11-10
+
+O usuário definiu que os chamados novos devem aparecer como “Aguardando triagem” até a avaliação técnica, sem receber uma prioridade padrão. Após a atribuição de prioridade pelo técnico, aplicar a ordenação por hierarquia de prioridade e, dentro de cada nível, pela data de abertura mais antiga. A posição ou seção dos chamados aguardando triagem no painel ainda precisa ser definida.
+
+## Divisão do painel entre chamados novos e em andamento — 2026-11-10
+
+O usuário definiu que a tela principal dos técnicos deve ter áreas distintas para chamados novos e chamados em andamento. Reservar o topo do painel para os chamados novos, que aguardam triagem. Exibir nesses chamados um pequeno círculo verde piscando no canto esquerdo, indicando a chegada de um novo chamado. Conforme correção do usuário, o círculo é apenas um indicador visual, não um botão, e não executa ação ao clicar. O momento em que o indicador deixa de piscar ainda precisa ser esclarecido.
+
+Manter as informações principais de cada chamado já acordadas. Não atribuir prioridade padrão aos chamados novos; a ordenação por prioridade aplica-se após a avaliação técnica.
+
+## Duração do indicador de novo chamado — 2026-11-10
+
+O usuário definiu que o círculo verde deve continuar piscando até um técnico assumir o chamado. Apenas abrir os detalhes para consulta ou triagem não interrompe o indicador. Ao assumir, o círculo deixa de piscar; a remoção da notificação de entrada na fila para os demais técnicos segue a regra já acordada.
+
+## Prioridade média ao assumir sem definição explícita — 2026-11-10
+
+O usuário definiu que, quando um técnico assumir o chamado sem informar a prioridade, o sistema deve atribuir prioridade média por padrão. A definição explícita de prioridade não é obrigatória para assumir. Antes de ser assumido ou receber avaliação de prioridade, o chamado novo permanece aguardando triagem, sem prioridade padrão, conforme a regra anterior. A prioridade continua sendo informação interna da equipe técnica.
+
+## Níveis de prioridade — 2026-11-10
+
+O usuário definiu quatro níveis de prioridade: baixa, média, alta e crítica. Na fila priorizada, aplicar a hierarquia crítica, alta, média e baixa, com os chamados mais antigos primeiro dentro de cada nível. Manter média como padrão ao assumir sem definição explícita e a prioridade oculta ao solicitante.
+
+## Alteração de prioridade por qualquer técnico — 2026-11-10
+
+O usuário definiu que qualquer técnico pode alterar a prioridade de um chamado em andamento, inclusive quem não participa dele. Não restringir essa ação aos participantes. A alteração deve refletir a nova prioridade na ordenação da fila, mantendo essa informação oculta ao solicitante. Esta decisão não inclui automaticamente o autor da alteração como participante.
+
+## Alteração de prioridade sem justificativa — 2026-11-10
+
+O usuário definiu que a alteração de prioridade não exige justificativa. Registrar no histórico interno quem alterou, quando e os níveis anterior e novo, preservando a restrição de visibilidade da prioridade ao solicitante. Não acrescentar campo obrigatório de motivo ou etapa de aprovação para essa alteração.
+
+## Visualização da equipe e filtros no painel — 2026-11-10
+
+O usuário definiu que, na área de chamados em andamento, cada técnico deve visualizar inicialmente todos os chamados da equipe, com opção de usar filtros programáveis. Não limitar a visualização inicial aos chamados de que participa. O significado e o funcionamento dos filtros programáveis ainda precisam ser esclarecidos, incluindo os critérios configuráveis e eventual salvamento de combinações.
+
+## Combinação e salvamento de filtros por técnico — 2026-11-10
+
+O usuário confirmou que cada técnico pode combinar critérios de filtro, como prioridade, categoria e participante, e salvar essas combinações para reutilizar no painel. Os critérios mencionados não constituem uma lista exaustiva. O comportamento de aplicação dos filtros salvos ao acessar novamente o painel ainda precisa ser definido.
+
+## Persistência do último filtro utilizado — 2026-11-10
+
+O usuário definiu que, ao voltar ao painel, cada técnico deve encontrar o último filtro que utilizou ainda aplicado. A preferência pertence ao técnico. A visualização inicial de todos os chamados aplica-se quando ainda não houver filtro anterior; nas visitas seguintes, prevalece o último filtro utilizado.
+
+## Triagem independente dos filtros do painel — 2026-11-10
+
+O usuário definiu que os chamados aguardando triagem não devem ser afetados pelos filtros do painel. A área reservada no topo continua mostrando todos os chamados aguardando triagem, independentemente da combinação de filtros aplicada ou restaurada para o técnico. Aplicar os filtros à área de chamados em andamento, preservando a separação entre as duas áreas.
+
+## Transferência imediata da triagem ao assumir — 2026-11-10
+
+O usuário confirmou que, quando um técnico assumir um chamado, ele deve sair imediatamente da área de triagem e passar à área de chamados em andamento. Aplicar a prioridade escolhida pelo técnico ou média por padrão, a ordenação e os filtros vigentes dessa área. Atualizar o indicador de novo chamado e as notificações conforme as regras já acordadas.
+
+## Acesso à página do chamado pelo painel — 2026-11-10
+
+O usuário esclareceu que, quando um chamado chega, o técnico clica nele no painel e é direcionado à página do chamado. A partir dessa página, realiza as edições necessárias e assume o atendimento. Não é necessário acrescentar uma abertura automática de detalhes depois de assumir, pois o técnico já está na página do chamado. Manter a distinção já acordada: apenas abrir a página não equivale a assumir o chamado nem interrompe o círculo verde piscante.
+
+## Resumo apresentado na página do chamado — 2026-11-10
+
+O usuário definiu que a página do chamado deve apresentar o resumo conforme preenchido pelo solicitante. A definição dos campos do formulário de abertura deve orientar esse resumo, sem presumir informações adicionais fornecidas pelo solicitante.
+
+## Formulário de abertura configurável pelo administrador — 2026-11-10
+
+O usuário definiu que os campos preenchidos pelo solicitante ao abrir um chamado devem ser configuráveis pelo administrador. O resumo apresentado ao técnico deve refletir os dados preenchidos nesse formulário. O alcance da configuração, incluindo obrigatoriedade e eventual variação por categoria, ainda precisa ser esclarecido.
+
+## Formulários configuráveis por categoria — 2026-11-10
+
+O usuário definiu que o formulário de abertura deve ser totalmente configurável pelo administrador conforme a categoria escolhida. Cada categoria pode ter sua própria configuração de campos; não limitar o sistema a um único formulário global. O resumo do chamado deve refletir os dados efetivamente preenchidos no formulário da categoria. Os recursos específicos do configurador ainda precisam ser detalhados, sem interpretar “totalmente programável” como autorização implícita para executar código arbitrário.
+
+## Configurador visual de formulários por categoria — 2026-11-10
+
+O usuário confirmou que a configuração dos formulários deve ocorrer por uma interface visual para o administrador. Permitir adicionar campos, escolher o tipo de cada campo, definir sua ordem e marcar quais são obrigatórios, com configuração própria por categoria. Os tipos de campo disponíveis ainda precisam ser definidos.
+
+## Preservação do formulário dos chamados já abertos — 2026-11-10
+
+O usuário confirmou que alterações administrativas no formulário não devem modificar os campos nem as respostas dos chamados já abertos. Cada chamado deve preservar a versão do formulário utilizada na abertura, permitindo interpretar suas respostas mesmo após alteração ou remoção de campos na configuração da categoria. Novas configurações aplicam-se às novas aberturas, sem migração automática dos chamados existentes.
+
+## Tipos de campo do formulário de chamados — 2026-11-10
+
+O usuário solicitou os tipos de campo de um formulário de chamados padrão. Como tradução inicial desse pedido para o configurador, considerar: texto curto; texto longo; seleção única em lista ou botões de opção; seleção múltipla; caixa de confirmação e sim/não; número inteiro ou decimal; data, hora e data com hora; e-mail; telefone; endereço de site; e anexos, incluindo imagens e documentos. Esta enumeração é uma proposta de detalhamento do pedido amplo, não uma lista de tipos individualmente confirmados pelo usuário.
+
+Seletores vinculados aos cadastros do sistema, como equipamento, setor e usuário, devem ser diferenciados de listas de opções livres para preservar a referência ao cadastro. O alcance desses seletores e a exibição condicional de campos ainda precisam ser definidos.
+
+## Exibição condicional de campos no formulário — 2026-11-10
+
+O usuário confirmou que o administrador deve poder configurar campos condicionais na interface visual: a exibição de um campo pode depender da resposta dada em outro campo. Por exemplo, mostrar o campo de patrimônio do equipamento quando uma resposta indicar problema de hardware. O exemplo ilustra o recurso e não estabelece um campo ou uma regra obrigatória para todas as categorias. Preservar essas condições na versão do formulário vinculada ao chamado.
+
+## Formulário de abertura sem rascunho — 2026-11-10
+
+O usuário retificou a decisão anterior: não haverá opção de rascunho no formulário de abertura. Não implementar salvamento manual ou automático de rascunhos para retomada posterior. O chamado é registrado quando o solicitante envia o formulário, entrando na triagem e gerando as notificações conforme as regras já acordadas.
