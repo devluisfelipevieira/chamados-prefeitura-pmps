@@ -12,13 +12,15 @@ Continuar com a skill `egm-draft`, usando este documento e `concepts_brief.md`. 
 
 A discussão atual é o configurador visual de formulários. Decisões mais recentes: perguntas condicionais em linguagem simples orientam a triagem; o técnico define a categoria efetiva; somente dois tipos de formulário, uso externo e uso interno; um formulário interno pode atender vários grupos; a associação define quem pode usá-lo para abrir um chamado, sem restringir por si só a consulta posterior.
 
-**Próxima questão — ainda não respondida:** como cada formulário define a classificação inicial do chamado? Apresentar as opções ao autor, sem escolher por ele:
+**Decisão de classificação inicial — 2026-11-12:** o autor escolheu categoria conforme as respostas. Os caminhos configurados no formulário determinam uma categoria sugerida; o técnico confirma ou altera a categoria efetiva na triagem. Não oferecer categoria fixa por formulário nem seleção entre os dois modos nesta etapa.
 
-- Categoria definida no formulário: o chamado nasce nessa categoria, e o técnico pode alterá-la.
-- Categoria conforme as respostas: os caminhos das perguntas sugerem a categoria, e o técnico confirma ou altera.
-- Permitir ambas as configurações: cada formulário usa categoria fixa ou classificação conforme as respostas.
+**Decisão sobre caminhos sem categoria — 2026-11-12:** o autor escolheu exigir categoria em todos os caminhos antes da publicação. O autor aprovou as regras de classificação em 2026-11-12 e autorizou continuar o detalhamento dos formulários. Essa aprovação é restrita à classificação; o bloco completo e as demais especificações permanecem abertos.
 
-Retomar por essa questão antes de avançar. O bloco de formulários ainda não passou pela aprovação de seção. As decisões posteriores prevalecem sobre formulações antigas explicitamente substituídas neste rascunho; a consolidação editorial e as especificações técnicas pendentes ainda precisam ser concluídas.
+**Decisão sobre campos básicos — 2026-11-12:** o autor escolheu campos protegidos e ajustáveis: ordem, rótulos e textos de ajuda podem mudar, preservando presença, significado e obrigatoriedade definidos. O autor aprovou este trecho e autorizou continuar o detalhamento; o bloco completo permanece em construção.
+
+O bloco de formulários ainda não passou pela aprovação de seção. A consolidação editorial e as especificações técnicas pendentes ainda precisam ser concluídas.
+
+**Retomada das listas de cadastros:** o autor confirmou configuração somente por administradores. No campo de lista baseada em dados do sistema, o administrador escolhe a fonte entre os cadastros disponibilizados pelo sistema, como setores e computadores. As opções dessa fonte serão apresentadas ao usuário do formulário. O autor aprovou o detalhamento da escolha da fonte. O autor escolheu aceitar somente registros ativos em novos envios e exigir nova seleção se a opção for desativada durante o preenchimento, preservando os demais dados. O autor aprovou a regra de registros ativos e autorizou continuar. O autor escolheu permitir que o administrador configure seleção única ou múltipla por campo baseado em cadastro. O setor básico da abertura permanece singular. O autor aprovou a configuração de seleção única ou múltipla e autorizou continuar. O autor escolheu que o administrador defina as informações exibidas nas opções entre campos permitidos por fonte e tipo de formulário. O autor aprovou as regras de apresentação e autorizou continuar. O autor definiu tipos de cadastro criados pelo administrador no painel, disponíveis como fontes de listas, e consulta de ativos por setor. O autor escolheu um único setor de localização por ativo, sem vínculo de setores atendidos. O autor aprovou o vínculo único e autorizou continuar. O autor escolheu setor opcional no cadastro do ativo e acrescentou aviso informativo no chamado quando o setor do equipamento divergir do setor de abertura. O autor aprovou a localização opcional e o aviso informativo, autorizando continuar. O autor definiu comparação somente na abertura, sem reavaliação posterior, e botão “Já verificado” para ocultar o aviso. O autor aprovou a verificação única e a dispensa manual e solicitou sincronizar a documentação com o GitHub. Permissões do botão, ausência de localização e múltiplos equipamentos permanecem por detalhar; retomar por essas pendências. A lista concreta de campos permitidos e os limites de seleção continuam por detalhar.
 
 ## Visão geral
 
@@ -686,7 +688,7 @@ Exemplo fornecido pelo autor: perguntar se o problema envolve internet ou comput
 
 O autor substituiu a proposta de três destinos por dois tipos no mesmo configurador: **uso externo**, destinado ao solicitante, e **uso interno**, destinado aos grupos da equipe. Não oferecer modo híbrido ou formulário de uso mútuo nesta etapa. Formulários internos e seus dados não são expostos na abertura pública. A separação de tipo não cria dois configuradores independentes.
 
-Ainda definir associação dos formulários internos aos grupos, relação dos caminhos externos com categorias sugeridas e tratamento dos campos técnicos quando a categoria mudar. Preservar as respostas e versões dos formulários externos e internos separadamente, os campos básicos já escolhidos para a abertura e as permissões aplicadas no servidor.
+A associação dos formulários internos aos grupos e a classificação sugerida pelos caminhos foram definidas nas subseções seguintes. A troca de categoria mantém o formulário original, conforme a decisão registrada abaixo. Preservar as respostas e versões dos formulários externos e internos separadamente, os campos básicos já escolhidos para a abertura e as permissões aplicadas no servidor.
 
 ### Formulário interno compartilhado entre grupos
 
@@ -694,6 +696,120 @@ O autor definiu que um formulário de uso interno pode atender vários grupos. A
 
 A associação define quem pode usar o formulário interno para abrir um chamado: técnicos integrantes dos grupos associados. Validar essa autorização no servidor durante a abertura. Não interpretar a associação como regra de atribuição do atendimento ou como restrição adicional de consulta às respostas. Após a criação, aplicar as permissões vigentes de acesso ao chamado; o vínculo do formulário não concede acesso a chamados antes inacessíveis. Essa definição resolve o significado da associação aos grupos, anteriormente aberto.
 
+### Classificação inicial conforme as respostas
+
+O autor aprovou estas regras em 2026-11-12 e autorizou continuar o detalhamento dos formulários, sem aprovar o bloco completo nem autorizar implementação.
+
+O autor escolheu em 2026-11-12 que os caminhos de respostas definidos pelo administrador sugiram a categoria inicial. Não adotar categoria fixa por formulário nem um seletor entre os dois modos nesta etapa. O técnico confirma ou altera a categoria efetiva na triagem; a sugestão não comprova diagnóstico. Preservar respostas e versão originais mesmo após reclassificação.
+
+O autor definiu que todo caminho de respostas que permita concluir o formulário deve ter uma categoria sugerida associada antes da publicação. Validar essa cobertura no servidor ao publicar: se algum caminho de conclusão estiver sem categoria, recusar a publicação e indicar o caminho que precisa de ajuste. Essa regra vale para formulários externos e internos e não transforma a sugestão em diagnóstico ou retira do técnico a decisão sobre a categoria efetiva. Não preencher lacunas com categoria padrão implícita. Alterações posteriores devem passar pela mesma validação antes de serem publicadas, preservando a versão e as respostas dos chamados anteriores.
+### Troca de categoria sem troca de formulário
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento dos formulários. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+O autor escolheu manter o formulário original quando o técnico alterar a categoria do chamado. A reclassificação altera a categoria efetiva, preservando o formulário, sua versão e as respostas registradas. Não substituir o formulário nem acrescentar automaticamente campos ou exigir o preenchimento de um formulário da nova categoria.
+
+Se faltarem informações, o técnico conversa diretamente com o solicitante por mensagens fora do sistema, pelo canal de comunicação já utilizado. Depois, pode documentar no chamado as informações que considerar necessárias ao atendimento. Não exigir uma nova resposta do solicitante dentro do sistema nem um formulário complementar para concluir a reclassificação. Essa decisão não cria integração automática ou envio de mensagens pelo sistema.
+
+Preservar o histórico da mudança de categoria e a autoria dos registros técnicos. A forma de registrar essas informações deve seguir os recursos de documentação do atendimento, ainda sujeitos ao detalhamento do fluxo; não criar um novo mecanismo de conversa interna por consequência desta escolha.
+### Campos básicos protegidos e ajustáveis na abertura pública
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento dos formulários, sem autorizar implementação.
+
+O autor escolheu permitir ao administrador alterar a ordem, os rótulos e os textos de ajuda dos campos básicos pelo mesmo configurador visual. Preservar a presença e o significado de nome, setor, telefone/WhatsApp, assunto, descrição, patrimônio e imagem, assim como a obrigatoriedade definida para cada um; patrimônio e imagem permanecem opcionais. Não permitir remover, ocultar por condição ou transformar esses campos em outro tipo de informação para contornar sua proteção.
+
+Identificar cada campo básico independentemente do rótulo exibido, para que a mudança de apresentação não altere o dado registrado ou as validações aplicadas. Validar as restrições no servidor ao publicar a configuração e ao receber o preenchimento. Mudanças valem para novas versões; preservar a apresentação e as respostas da versão usada em chamados anteriores. A configuração de perguntas adicionais continua no mesmo configurador, sujeita às regras próprias ainda por detalhar.
+### Tipos de perguntas adicionais e listas de cadastros
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento das listas. O fluxo de escolha da fonte foi esclarecido posteriormente, conforme a subseção seguinte; não houve autorização de implementação.
+
+O autor escolheu disponibilizar na primeira versão texto curto, texto longo, seleção única, seleção múltipla, sim/não, número, data, horário, telefone, e-mail e endereço de site. A imagem opcional já prevista na abertura permanece. Detalhar as validações de cada tipo e sua aplicação no servidor, sem interpretar a escolha como aprovação de limites ainda não discutidos.
+
+O autor acrescentou listas de seleção alimentadas por cadastros do próprio sistema. Exemplo: o administrador cadastra setores e configura um campo para apresentar opções provenientes desse cadastro, evitando repetir manualmente os setores no formulário. A configuração identifica o cadastro usado como fonte; não implica permitir consultas SQL, conexão arbitrária a bancos externos ou acesso direto às tabelas de outro serviço.
+
+O valor selecionado deve manter uma referência ao registro escolhido e preservar o significado da resposta no momento do envio, inclusive se o cadastro for renomeado ou desativado posteriormente. O mecanismo dessa preservação ainda será detalhado. Validar no servidor se a opção pertence à fonte configurada e está disponível para aquele formulário e usuário.
+
+O autor esclareceu o fluxo e confirmou manter a configuração restrita aos administradores, conforme a subseção seguinte. Ainda definir o conjunto inicial de fontes suportadas além dos exemplos, os rótulos e dados apresentados em cada fonte, seleção única ou múltipla e tratamento das opções que deixam de estar disponíveis durante o preenchimento.
+### Escolha da fonte de dados pelo administrador
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento das listas, sem autorizar implementação.
+
+O autor confirmou que somente administradores configuram os formulários. Ao adicionar ou configurar um campo, o administrador pode escolher o tipo “Lista baseada em dados do sistema” e selecionar uma fonte entre os cadastros disponibilizados pelo sistema, como setores ou computadores. A fonte é um cadastro da aplicação, não um endereço ou uma conexão de banco fornecida pelo administrador.
+
+As opções vêm do cadastro escolhido e ficam disponíveis ao usuário que preenche aquele formulário, inclusive ao solicitante no formulário externo. Não exigir uma lista manual duplicada para representar os registros existentes. Essa configuração não concede consulta às demais informações dos registros nem acesso geral às telas ou APIs dos cadastros. Detalhar quais informações identificam as opções de cada fonte antes de concluir o contrato técnico.
+
+Para o setor informado na abertura, usar a seleção baseada no cadastro de setores e associar o chamado ao registro escolhido. O nome apresentado identifica uma opção existente; texto digitado livremente não cria um setor nem é aceito como referência a um setor inexistente. Validar no servidor a existência e a disponibilidade da opção para o formulário, sem depender apenas da seleção no navegador. Preservar as possibilidades de ajustar ordem, rótulo e texto de ajuda do campo básico, mantendo seu significado e sua proteção.
+
+Ainda definir o tratamento de registros desativados ou alterados durante o preenchimento e a preservação do nome histórico após alterações do cadastro. A escolha de fonte não elimina as permissões aplicáveis aos formulários internos nem autoriza acesso direto às tabelas de outro serviço.
+### Listas de cadastros: somente registros ativos em novos envios
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento das listas, sem autorizar implementação.
+
+O autor escolheu apresentar e aceitar somente registros ativos nas listas baseadas em cadastros do sistema para novos envios. Registros desativados deixam de ser oferecidos como opções. A desativação não remove nem substitui vínculos em chamados já registrados; preservar seu significado histórico.
+
+Validar no servidor a existência, a disponibilidade e a situação ativa da opção ao receber o envio. Se uma opção tiver sido desativada depois de apresentada ou selecionada, recusar o envio com indicação do campo afetado e pedir outra seleção. Preservar os demais dados preenchidos na página atual, conforme a regra existente de erros de envio, sem criar rascunho persistente nem substituir automaticamente o registro por outro.
+
+Não criar o chamado com a opção desativada nem tratar a validação apenas no navegador como suficiente. O plano técnico deverá detalhar a coordenação entre a validação e o registro do chamado para tratar desativações concorrentes, respeitando as fronteiras dos serviços. Essa escolha não define exclusão física de cadastros nem autoriza remover referências históricas.
+### Seleção única ou múltipla por campo de cadastro
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento, sem autorizar implementação.
+
+O autor escolheu permitir ao administrador definir, em cada campo baseado em cadastro, se o preenchimento aceita um único registro ou vários registros. A fonte continua sendo o cadastro escolhido para aquele campo. Por exemplo, um campo adicional de computadores pode permitir selecionar vários equipamentos afetados. O campo básico de setor da abertura mantém seleção única, preservando seu significado já definido.
+
+Validar o modo de seleção no servidor e preservar cada referência escolhida, com o significado histórico da resposta. Em seleção múltipla, validar existência, disponibilidade e situação ativa de todos os registros, sem aceitar duplicação do mesmo registro no campo. Se uma das opções não puder ser aceita, indicar o problema e preservar os demais dados para correção, conforme as regras de erro existentes; não descartar silenciosamente parte da seleção.
+
+Selecionar vários computadores como resposta não define automaticamente qual será o equipamento principal do chamado, nem autoriza criar chamados separados ou operações de materiais por equipamento. Esses efeitos dependem do fluxo de equipamentos, ainda por detalhar. Limites de quantidade por campo e tratamento de mudanças do modo de seleção entre versões permanecem abertos; novas configurações não reescrevem respostas de chamados anteriores.
+### Informações exibidas nas opções das listas
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento, sem autorizar implementação.
+
+O autor escolheu permitir ao administrador definir quais informações identificam cada opção de uma lista baseada em cadastro, escolhendo entre os campos permitidos para aquela fonte e para o tipo de formulário, externo ou interno. A configuração da apresentação pertence ao campo do formulário. Por exemplo, a fonte de setores pode oferecer nome e sigla; a de computadores pode oferecer patrimônio e nome. Esses são exemplos para detalhamento, não uma aprovação da lista concreta de campos públicos.
+
+O sistema deve fornecer o conjunto permitido para cada fonte e contexto; o administrador não pode selecionar arbitrariamente qualquer coluna do banco ou expor informação fora desse conjunto. Validar essa restrição no servidor ao publicar o formulário e ao fornecer suas opções. Entregar ao navegador apenas as informações autorizadas para apresentação e a referência necessária à seleção; ocultar campos apenas na interface não atende à restrição.
+
+A escolha das informações exibidas não muda o vínculo: a resposta continua referenciando o registro selecionado, independentemente de nomes ou rótulos. Preservar o significado histórico conforme as regras das listas e das versões de formulário. Ainda definir o conjunto inicial de fontes e seus campos permitidos para uso externo e interno, a composição e ordem da apresentação, e como distinguir opções com informações iguais.
+### Tipos de cadastro configuráveis e consulta de ativos por setor
+
+O autor aprovou este trecho em 2026-11-12 e autorizou detalhar o vínculo dos ativos com setores, sem autorizar implementação.
+
+O autor escolheu permitir ao administrador criar tipos de cadastro pelo painel, definir seus campos e cadastrar seus registros. Cada tipo criado deve ficar disponível como fonte no campo “Lista baseada em dados do sistema”, sem desenvolvimento específico para acrescentar cada novo tipo. Por exemplo: setores, computadores, monitores e, futuramente, switches, roteadores e pontos de acesso. Criar um tipo não fornece automaticamente integrações, descoberta de equipamentos ou comparação de hardware específica para esse tipo.
+
+As opções de uma lista são os registros do tipo escolhido: setores cadastrados, hostnames de computadores ou monitores cadastrados, conforme a fonte. Preservar a escolha de informações exibidas entre campos permitidos e a configuração de seleção única ou múltipla. Ainda definir como o novo tipo estabelece sua identificação, campos e disponibilidade para formulários externos e internos; criar um tipo não autoriza divulgar todos os seus campos publicamente. Essa decisão amplia o configurador para incluir definição de cadastros; o modelo, suas validações e os limites ainda precisam de decisão antes da implementação.
+
+O autor acrescentou a consulta de ativos de tecnologia por setor: ao abrir um setor, como Administração, apresentar os ativos vinculados a ele, abrangendo os tipos de equipamentos cadastrados, inclusive tipos acrescentados posteriormente. Essa consulta exige um vínculo explícito entre o ativo e o setor, independente dos campos escolhidos apenas para apresentação em formulários.
+
+Não deduzir a localização atual de um ativo a partir do setor informado em seu último chamado: o setor do atendimento e o setor de localização do equipamento representam fatos distintos. Ainda definir se um ativo pode estar vinculado a um ou vários setores, como registrar transferências, quais tipos representam ativos e como distinguir equipamentos ativos de registros desativados nessa consulta. A inclusão da consulta não aprova movimentações patrimoniais, descoberta automática de rede ou integração adicional.
+### Um único setor de localização por ativo
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento dos ativos, sem autorizar implementação.
+
+O autor escolheu que cada ativo tenha um único setor de localização atual. A consulta do setor apresenta os ativos vinculados a ele por esse vínculo, incluindo os diferentes tipos de equipamentos cadastrados. Não permitir vários setores simultâneos no vínculo de localização nem criar uma relação adicional de setores atendidos nesta etapa.
+
+Para equipamentos compartilhados, como switches, roteadores e pontos de acesso, esse setor representa a localização cadastrada, não todos os setores que utilizam o equipamento. A consulta de ativos do setor não representa um mapa de cobertura de rede ou de dependências dos serviços.
+
+Preservar a separação entre localização do ativo e setor informado em um chamado: abrir um atendimento ou selecionar um equipamento no formulário não transfere automaticamente sua localização. Validar no servidor que o vínculo de localização contenha no máximo um setor. Ainda definir se o setor será obrigatório no cadastro, como tratar ativos ainda sem localização e como autorizar e registrar transferências entre setores. Não decidir essas regras implicitamente pela escolha de vínculo único.
+### Localização opcional e aviso de divergência no chamado
+
+O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento, sem autorizar implementação.
+
+O autor escolheu permitir cadastro de ativo sem setor de localização. Apresentar esses registros com indicação “Localização não informada” e permitir encontrá-los por filtro. Quando houver localização informada, manter o vínculo com um único setor existente. Não atribuir setor fictício ou deduzir a localização a partir do último chamado.
+
+O autor acrescentou um aviso dentro do chamado quando o setor de localização cadastrado do equipamento for diferente do setor informado na abertura do chamado. O aviso informa o técnico sobre a divergência. Comparar os registros de setor, sem depender da grafia de seus nomes, e respeitar as permissões de acesso ao chamado e aos dados apresentados.
+
+Esse aviso é somente informativo: não gera notificação, bloqueio, transferência automática, atualização do cadastro ou outra ação automática de tratamento da divergência. Não interpretar a diferença como prova de erro ou de movimentação indevida; o técnico pode avaliar o contexto do atendimento. Preservar o funcionamento do chamado e a distinção entre setor solicitante e localização do equipamento.
+
+A comparação ocorre somente na abertura, conforme a decisão abaixo. Ainda definir como apresentar ausência de localização e como tratar vários equipamentos selecionados em respostas do formulário. O vínculo de equipamento do atendimento ainda precisa ser detalhado; não presumir que todo campo adicional de computadores se torne automaticamente o equipamento principal.
+### Verificação única na abertura e dispensa manual do aviso
+
+O autor aprovou este trecho em 2026-11-12 e pediu atualizar o repositório do GitHub. A aprovação abrange a documentação deste comportamento, sem autorizar implementação.
+
+O autor definiu que a comparação entre o setor de abertura do chamado e a localização cadastrada do equipamento acontece somente na abertura. Se houver divergência, registrar o resultado e apresentar o aviso no chamado. Não realizar comparações posteriores, periódicas ou acionadas por consulta, correção de setor, transferência do equipamento ou alteração do chamado. O aviso pode permanecer mesmo depois de a localização ser corrigida.
+
+Texto do aviso: “O sistema identificou uma incompatibilidade entre o setor informado na abertura do chamado e a localização cadastrada do equipamento [identificação do equipamento]. Recomenda-se uma verificação.” A identificação exibida deve respeitar as permissões do usuário que consulta o chamado. O aviso permanece no chamado; não criar notificação interna, mensagem externa ou fluxo adicional de comunicação com o solicitante.
+
+Disponibilizar o botão “Já verificado” para ocultar o aviso no chamado. A ação dispensa o aviso sem executar nova comparação, exigir correção ou comprovar que os setores passaram a coincidir. Preservar o resultado original e registrar quem dispensou o aviso e quando, sem alterar localização, categoria ou situação do atendimento. Depois da dispensa, não recriar o aviso a partir de verificações posteriores.
+
+Ainda definir quem pode acionar “Já verificado”, tratamento de equipamento sem localização e de vários equipamentos na abertura. Esses detalhes não autorizam reavaliação automática. O aviso documenta a divergência identificada na abertura, não a situação atual do equipamento.
 ## Referências
 
 - [Brief funcional e decisões atualizadas](./concepts_brief.md).
