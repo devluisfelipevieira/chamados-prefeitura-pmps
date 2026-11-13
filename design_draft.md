@@ -20,7 +20,7 @@ A discussão atual é o configurador visual de formulários. Decisões mais rece
 
 O bloco de formulários ainda não passou pela aprovação de seção. A consolidação editorial e as especificações técnicas pendentes ainda precisam ser concluídas.
 
-**Retomada das listas de cadastros:** o autor confirmou configuração somente por administradores. No campo de lista baseada em dados do sistema, o administrador escolhe a fonte entre os cadastros disponibilizados pelo sistema, como setores e computadores. As opções dessa fonte serão apresentadas ao usuário do formulário. O autor aprovou o detalhamento da escolha da fonte. O autor escolheu aceitar somente registros ativos em novos envios e exigir nova seleção se a opção for desativada durante o preenchimento, preservando os demais dados. O autor aprovou a regra de registros ativos e autorizou continuar. O autor escolheu permitir que o administrador configure seleção única ou múltipla por campo baseado em cadastro. O setor básico da abertura permanece singular. O autor aprovou a configuração de seleção única ou múltipla e autorizou continuar. O autor escolheu que o administrador defina as informações exibidas nas opções entre campos permitidos por fonte e tipo de formulário. O autor aprovou as regras de apresentação e autorizou continuar. O autor definiu tipos de cadastro criados pelo administrador no painel, disponíveis como fontes de listas, e consulta de ativos por setor. O autor escolheu um único setor de localização por ativo, sem vínculo de setores atendidos. O autor aprovou o vínculo único e autorizou continuar. O autor escolheu setor opcional no cadastro do ativo e acrescentou aviso informativo no chamado quando o setor do equipamento divergir do setor de abertura. O autor aprovou a localização opcional e o aviso informativo, autorizando continuar. O autor definiu comparação somente na abertura, sem reavaliação posterior, e botão “Já verificado” para ocultar o aviso. O autor aprovou a verificação única e a dispensa manual e solicitou sincronizar a documentação com o GitHub. Permissões do botão, ausência de localização e múltiplos equipamentos permanecem por detalhar; retomar por essas pendências. A lista concreta de campos permitidos e os limites de seleção continuam por detalhar.
+**Retomada das listas de cadastros:** o autor confirmou configuração somente por administradores. No campo de lista baseada em dados do sistema, o administrador escolhe a fonte entre os cadastros disponibilizados pelo sistema, como setores e computadores. As opções dessa fonte serão apresentadas ao usuário do formulário. O autor aprovou o detalhamento da escolha da fonte. O autor escolheu aceitar somente registros ativos em novos envios e exigir nova seleção se a opção for desativada durante o preenchimento, preservando os demais dados. O autor aprovou a regra de registros ativos e autorizou continuar. O autor escolheu permitir que o administrador configure seleção única ou múltipla por campo baseado em cadastro. O setor básico da abertura permanece singular. O autor aprovou a configuração de seleção única ou múltipla e autorizou continuar. O autor escolheu que o administrador defina as informações exibidas nas opções entre campos permitidos por fonte e tipo de formulário. O autor aprovou as regras de apresentação e autorizou continuar. O autor definiu tipos de cadastro criados pelo administrador no painel, disponíveis como fontes de listas, e consulta de ativos por setor. O autor escolheu um único setor de localização por ativo, sem vínculo de setores atendidos. O autor aprovou o vínculo único e autorizou continuar. O autor escolheu setor opcional no cadastro do ativo e acrescentou aviso informativo no chamado quando o setor do equipamento divergir do setor de abertura. O autor aprovou a localização opcional e o aviso informativo, autorizando continuar. O autor definiu comparação somente na abertura, sem reavaliação posterior, e botão “Já verificado” para ocultar o aviso. O autor aprovou a verificação única e a dispensa manual e solicitou sincronizar a documentação com o GitHub. Em 2026-11-13, o autor escolheu permitir que qualquer técnico com acesso ao chamado acione “Já verificado”, sem exigir participação no atendimento ou permissão específica por grupo. O autor aprovou o trecho e autorizou continuar o detalhamento. O autor aprovou mostrar apenas “Localização não informada” quando o ativo não tiver setor cadastrado e autorizou continuar o detalhamento. O autor aprovou verificar individualmente todos os equipamentos selecionados na abertura e autorizou continuar o detalhamento. O autor aprovou identificar ativos pelo tipo de cadastro, sem configurar a finalidade de cada campo, e autorizou continuar o detalhamento. O autor aprovou dispensar todos os avisos de divergência do chamado de uma vez e autorizou continuar o detalhamento. A lista concreta de campos permitidos e os limites de seleção continuam por detalhar.
 
 ## Visão geral
 
@@ -758,7 +758,7 @@ O autor escolheu permitir ao administrador definir, em cada campo baseado em cad
 
 Validar o modo de seleção no servidor e preservar cada referência escolhida, com o significado histórico da resposta. Em seleção múltipla, validar existência, disponibilidade e situação ativa de todos os registros, sem aceitar duplicação do mesmo registro no campo. Se uma das opções não puder ser aceita, indicar o problema e preservar os demais dados para correção, conforme as regras de erro existentes; não descartar silenciosamente parte da seleção.
 
-Selecionar vários computadores como resposta não define automaticamente qual será o equipamento principal do chamado, nem autoriza criar chamados separados ou operações de materiais por equipamento. Esses efeitos dependem do fluxo de equipamentos, ainda por detalhar. Limites de quantidade por campo e tratamento de mudanças do modo de seleção entre versões permanecem abertos; novas configurações não reescrevem respostas de chamados anteriores.
+Selecionar vários computadores como resposta não define automaticamente qual será o equipamento principal do chamado, nem autoriza criar chamados separados ou operações de materiais por equipamento. Esses efeitos dependem do fluxo de equipamentos, ainda por detalhar. O limite de quantidade da seleção múltipla é configurável por campo, conforme a decisão abaixo. O tratamento de mudanças do modo de seleção entre versões permanece por detalhar; novas configurações não reescrevem respostas de chamados anteriores.
 ### Informações exibidas nas opções das listas
 
 O autor aprovou este trecho em 2026-11-12 e autorizou continuar o detalhamento, sem autorizar implementação.
@@ -809,7 +809,496 @@ Texto do aviso: “O sistema identificou uma incompatibilidade entre o setor inf
 
 Disponibilizar o botão “Já verificado” para ocultar o aviso no chamado. A ação dispensa o aviso sem executar nova comparação, exigir correção ou comprovar que os setores passaram a coincidir. Preservar o resultado original e registrar quem dispensou o aviso e quando, sem alterar localização, categoria ou situação do atendimento. Depois da dispensa, não recriar o aviso a partir de verificações posteriores.
 
-Ainda definir quem pode acionar “Já verificado”, tratamento de equipamento sem localização e de vários equipamentos na abertura. Esses detalhes não autorizam reavaliação automática. O aviso documenta a divergência identificada na abertura, não a situação atual do equipamento.
+A permissão para acionar “Já verificado” está descrita abaixo. O tratamento de equipamento sem localização está descrito abaixo. A verificação de vários equipamentos na abertura está descrita abaixo; a identificação dos equipamentos pelo tipo de cadastro está descrita abaixo. A dispensa conjunta dos avisos está descrita abaixo. Esses detalhes não autorizam reavaliação automática. O aviso documenta a divergência identificada na abertura, não a situação atual do equipamento.
+### Permissão para dispensar o aviso de divergência
+
+Em 2026-11-13, o autor escolheu permitir a dispensa por qualquer técnico com acesso ao chamado. O autor aprovou este trecho e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Qualquer técnico autenticado e autorizado a acessar o chamado pode acionar “Já verificado”, mesmo sem participar do atendimento. Não exigir participação nem uma permissão específica por grupo para essa ação. Verificar no servidor o acesso ao chamado no momento da dispensa; conhecer o identificador do chamado ou visualizar anteriormente o botão não concede autorização.
+
+A dispensa oculta o aviso no chamado e preserva o resultado original da comparação, registrando quem realizou a ação e quando. Não executa nova comparação nem altera a localização do ativo, o setor do chamado ou a situação do atendimento. Como qualquer técnico com acesso pode dispensar o aviso, o registro da ação não comprova uma inspeção física nem que os setores passaram a coincidir.
+### Equipamento sem localização cadastrada na abertura
+
+O autor aprovou mostrar apenas “Localização não informada” junto ao equipamento quando ele não tiver setor de localização cadastrado na abertura do chamado. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+A ausência de localização não permite concluir que existe divergência entre setores. Nesse caso, não criar aviso de divergência nem aviso específico dispensável por “Já verificado”. A indicação não bloqueia a abertura ou o atendimento, não atribui o setor do chamado ao ativo e não exige preenchimento da localização para prosseguir.
+
+Manter a comparação restrita à abertura: informar ou alterar posteriormente a localização do ativo não inicia uma comparação nem cria um aviso retroativo nesse chamado. A indicação descreve a ausência de localização na abertura; não comprova a situação atual do cadastro.
+### Verificação de todos os equipamentos selecionados na abertura
+
+O autor aprovou comparar individualmente todos os equipamentos selecionados na abertura do chamado com o setor informado nessa abertura. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Para cada equipamento com localização cadastrada, comparar seu setor com o setor do chamado. Se forem diferentes, registrar a divergência e apresentar o aviso identificando o equipamento correspondente. Se forem iguais, não criar aviso de divergência para aquele equipamento. Para equipamento sem localização, mostrar apenas “Localização não informada”, conforme a regra aprovada. Um chamado pode conter equipamentos em cada uma dessas situações.
+
+Não limitar a comparação a um equipamento principal. Preservar a verificação somente na abertura, sem criar novas comparações por alterações posteriores do chamado ou do cadastro dos ativos. A verificação não transfere equipamentos, não altera seus cadastros e não cria chamados separados.
+
+Identificar equipamentos pelo tipo de cadastro marcado como ativo, conforme a decisão abaixo. Não interpretar listas de tipos que não representam ativos como listas de equipamentos. O autor definiu posteriormente a dispensa de todos os avisos de uma vez, conforme a subseção seguinte.
+### Dispensa conjunta dos avisos de divergência
+
+O autor aprovou que o botão “Já verificado” dispense todos os avisos de divergência do chamado de uma vez. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Apresentar uma única ação “Já verificado” para os avisos de divergência do chamado. Ao acioná-la, ocultar conjuntamente todos esses avisos, sem oferecer dispensa individual por equipamento. A regra vale também quando existir apenas um aviso. Qualquer técnico autenticado com acesso ao chamado pode realizar a ação, conforme a permissão já aprovada; validar esse acesso no servidor.
+
+Preservar os resultados originais por equipamento e registrar quem realizou a dispensa conjunta e quando, mantendo identificáveis os avisos abrangidos pela ação. A dispensa não comprova conferência física de cada equipamento nem coincidência entre os setores e não altera os cadastros, o setor ou a situação do chamado. Não executar nova comparação nem recriar os avisos depois da dispensa.
+
+A indicação “Localização não informada” não é um aviso de divergência e não é ocultada por essa ação.
+### Identificação de ativos pelo tipo de cadastro
+
+O autor aprovou que o administrador identifique, na configuração de cada tipo de cadastro, se ele representa ativos de tecnologia. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Tipos como computadores e monitores podem ser marcados como ativos; tipos como setores não representam equipamentos apenas por serem fontes de listas. Os registros dos tipos marcados como ativos usam o vínculo de localização já definido: no máximo um setor atual, com localização opcional. Essa identificação também permite reunir os ativos dos diferentes tipos na consulta por setor.
+
+Na abertura do chamado, considerar todos os registros selecionados em campos de listas cuja fonte seja um tipo marcado como ativo, tanto em seleção única quanto múltipla. Não exigir uma configuração adicional da finalidade de cada campo. Mesmo quando o equipamento tiver sido selecionado apenas como referência, ele entra na verificação de setor. Listas de tipos não marcados como ativos não entram nessa comparação.
+
+Aplicar a comparação individual e as regras de localização ausente, verificação somente na abertura e dispensa conjunta já aprovadas. Identificar o tipo e a finalidade de ativo no servidor, sem confiar apenas na configuração enviada pelo navegador. Essa escolha não define equipamento principal nem cria integração ou descoberta automática para novos tipos.
+
+A alteração da classificação segue a decisão abaixo. Não apagar histórico nem refazer comparações de chamados anteriores por consequência dessa alteração.
+### Alteração de um tipo para representar ativos
+
+O autor aprovou permitir marcar um tipo de cadastro existente como ativo, mas impedir que essa classificação seja retirada depois de seu uso como ativo. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Ao marcar um tipo existente como ativo, seus registros passam a representar ativos de tecnologia. Os registros existentes começam sem localização cadastrada, com indicação “Localização não informada”; não deduzir localização de respostas, campos livres ou chamados anteriores. Permitir cadastrar posteriormente o vínculo opcional com um único setor pelas funções de cadastro autorizadas.
+
+Usar a classificação de ativo nas novas aberturas e na consulta de ativos por setor. A mudança não executa comparações retroativas, não cria avisos em chamados anteriores e não altera suas respostas ou resultados já registrados.
+
+Depois de utilizado como ativo, impedir no servidor a retirada dessa classificação do tipo. A restrição protege o significado dos vínculos e registros existentes, mas limita a correção de uma marcação equivocada. Não oferecer uma alteração de classificação que remova silenciosamente localizações ou histórico.
+
+O primeiro uso como ativo e a possibilidade de desfazer a classificação antes dele seguem a decisão abaixo.
+### Primeiro uso que bloqueia a retirada da classificação de ativo
+
+O autor aprovou considerar primeiro uso como ativo a atribuição de localização a um de seus registros ou a seleção de um desses registros em uma nova abertura de chamado concluída enquanto o tipo estiver marcado como ativo. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+O primeiro desses eventos bloqueia a retirada da classificação para todo o tipo de cadastro. A simples existência de registros, a exibição em listas ou a seleção ainda não enviada no navegador não caracteriza esse uso. Uma tentativa de abertura recusada por validação também não o caracteriza. Referências em chamados anteriores à classificação como ativo não provocam bloqueio retroativo.
+
+Antes de qualquer desses eventos, permitir ao administrador desmarcar o tipo como ativo. Depois do primeiro uso, manter o bloqueio mesmo que a localização seja removida posteriormente ou o chamado seja encerrado ou cancelado. Não apagar a evidência do primeiro uso para permitir a retirada da classificação.
+
+Validar a restrição no servidor e coordenar a alteração de classificação com a atribuição de localização e o registro de novos chamados, para que operações simultâneas não retirem a classificação depois de um uso válido. Preservar as regras de verificação somente na abertura e de manutenção do histórico.
+## Chamado específico de transferência de ativos
+
+O autor aprovou os requisitos de um tipo específico de chamado para registrar a transferência oficial de ativos e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+O chamado deve identificar quais itens foram transferidos e registrar a origem e o destino de cada item. Uma transferência oficial deve ocorrer por esse fluxo, com vínculo entre o atendimento e os ativos envolvidos; uma simples edição da localização no cadastro não equivale ao registro oficial de transferência.
+
+Permitir anexar fotos e arquivos PDF para documentar a transferência, incluindo a imagem do documento de transferência assinado. Preservar esses arquivos de forma permanente para auditoria: não submetê-los à reciclagem ou à limpeza automática por prazo aplicada aos anexos comuns. Essa preservação é uma regra própria dos anexos de transferência, não depende de um técnico marcar manualmente preservação indeterminada. O suporte a PDF neste fluxo não amplia automaticamente os formatos permitidos na abertura pública comum.
+
+Manter a possibilidade de o técnico corrigir diretamente a localização cadastrada como retificação de localização. Distinguir essa correção de uma transferência oficial; não apresentar uma simples retificação como prova de movimentação documentada. A retificação exige permissão específica por grupo, conforme a decisão abaixo. A justificativa da retificação é opcional; registrar sempre as localizações anterior e nova, autor e data, conforme a decisão abaixo.
+
+A atualização de localização ocorre na conclusão do chamado, conforme a decisão abaixo. O documento assinado é obrigatório para concluir o fluxo, conforme a decisão abaixo. A permissão para solicitar a conclusão e iniciar as atualizações está descrita abaixo. Cancelamentos, correções e falhas parciais seguem as decisões específicas registradas neste documento; os detalhes ainda abertos devem ser resolvidos antes de concluir o desenho. Definir também os limites e validações dos arquivos e a proteção contra exclusão manual ou substituição dos documentos preservados. Não presumir assinatura eletrônica, geração automática de documento ou aprovação adicional.
+
+A verificação de divergência de setor continua restrita à abertura do chamado. A atualização de localização pela transferência ou pela retificação não provoca nova comparação nem recria avisos em chamados anteriores. O fluxo entre Atendimento e Inventário deverá respeitar a responsabilidade de cada serviço por seus dados.
+### Atualização da localização na conclusão da transferência
+
+O autor aprovou atualizar a localização dos ativos ao concluir o chamado de transferência, aplicando os destinos registrados para os itens envolvidos, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Abrir o chamado ou preencher sua relação de itens, origens e destinos não altera por si só a localização dos ativos. A conclusão do chamado é o momento que aciona a atualização para os destinos registrados. Não criar uma ação separada “Confirmar transferência” que antecipe essa atualização enquanto o chamado permanecer aberto.
+
+Se a movimentação física ocorrer antes da conclusão documental, a localização cadastrada pode permanecer antiga até a conclusão do chamado. A edição direta continua disponível como retificação de localização, conforme o requisito aprovado, mas não substitui o fluxo oficial de transferência.
+
+Preservar no registro da transferência os itens, as origens, os destinos e os documentos de auditoria. A atualização não refaz a comparação de divergência realizada na abertura nem recria avisos dispensados.
+
+Ainda definir a coordenação da conclusão com Inventário e como apresentar falhas, resultados parciais ou localização alterada por outra operação enquanto o chamado estiver aberto. O chamado somente pode ser apresentado como concluído depois da confirmação das alterações em todos os ativos, conforme a decisão abaixo. A exigência do documento assinado está definida na subseção seguinte.
+### Documento assinado obrigatório para concluir a transferência
+
+O autor aprovou exigir um documento de transferência assinado para concluir o chamado de transferência e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Permitir abrir e preparar o chamado antes de anexar o documento. Impedir sua conclusão enquanto não houver um anexo identificado como documento de transferência assinado, em imagem ou PDF. Uma foto de equipamento ou outro arquivo sem essa identificação não atende à exigência. Validar a presença e a disponibilidade do arquivo no servidor, sem considerar um envio incompleto como documento anexado.
+
+Sem o documento exigido, não concluir o chamado nem acionar a atualização de localização vinculada à conclusão. Isso pode manter a localização cadastrada antiga enquanto o comprovante estiver pendente, conforme o momento de atualização já aprovado.
+
+A presença do anexo e sua identificação não comprovam a assinatura nem a autenticidade do conteúdo. Esta decisão não cria validação automática de assinaturas, assinatura eletrônica ou uma etapa adicional de aprovação. A conferência do conteúdo cabe ao técnico, conforme o esclarecimento abaixo. A forma de identificar o documento na interface ainda precisa ser detalhada.
+
+Preservar o documento e os demais anexos da transferência permanentemente para auditoria, sem limpeza automática por prazo. As regras para correção, substituição e proteção contra exclusão manual ainda precisam ser definidas; não interpretar a exigência de presença como autorização para apagar comprovantes anteriores.
+### Correção de anexos sem remoção da evidência
+
+O autor aprovou permitir marcar um anexo da transferência como inválido ou substituído, preservando o arquivo original e registrando quem fez a marcação e o motivo, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Para corrigir um envio, manter o arquivo anterior disponível para auditoria e permitir anexar o documento correto como outro arquivo. A substituição não sobrescreve o conteúdo original nem elimina seu vínculo com o chamado. Registrar a data e a hora da marcação e, em caso de substituição, identificar o arquivo que o substitui. Apresentar claramente a situação de cada anexo para distinguir documentos vigentes dos inválidos ou substituídos.
+
+Um documento marcado como inválido ou substituído não atende à exigência de documento assinado para concluir a transferência. Conferir no servidor que exista um documento identificado como assinado, disponível e não marcado como inválido ou substituído no momento da conclusão. Essa verificação não comprova a assinatura ou a autenticidade do conteúdo.
+
+Preservar permanentemente todos os arquivos da transferência, inclusive os inválidos ou substituídos, e o histórico das correções. Marcar um arquivo não o torna elegível para reciclagem ou limpeza automática. Não oferecer exclusão física ou sobrescrita como parte desse fluxo de correção.
+
+A permissão para realizar essas marcações está descrita abaixo. As marcações não podem ser revertidas, conforme a decisão abaixo. A correção documental depois da conclusão exige reabertura, conforme a decisão abaixo. Uma correção documental posterior não deve ser interpretada implicitamente como nova transferência, reversão da movimentação ou autorização para alterar silenciosamente a localização dos ativos.
+### Permissão para marcar anexos da transferência
+
+O autor aprovou permitir que qualquer técnico com acesso ao chamado de transferência marque seus anexos como inválidos ou substituídos e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação e autorização de acesso ao chamado no momento da ação, com validação no servidor. Não exigir participação no atendimento nem uma permissão específica por grupo para essas marcações. O acesso anterior ao chamado ou o conhecimento do identificador do arquivo não substitui a autorização vigente.
+
+Preservar o arquivo original e registrar autor, data, hora e motivo da marcação, identificando o arquivo substituto quando houver substituição, conforme as regras já aprovadas. A permissão não concede exclusão física, sobrescrita de arquivos ou remoção do histórico. Como qualquer técnico com acesso pode realizar a marcação, a ação não comprova que ele participou da transferência ou conferiu a assinatura.
+
+Esta decisão trata de quem pode realizar a correção documental. A impossibilidade de reverter marcações está descrita abaixo. A correção documental depois da conclusão exige reabertura, conforme a decisão abaixo; não presumir que a permissão de acesso ao chamado resolva essas regras de estado.
+### Marcações de anexos sem reversão
+
+O autor aprovou não permitir reverter a marcação de um anexo da transferência como inválido ou substituído e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Depois de registrada a marcação, não restaurar aquele anexo à condição de documento vigente. Aplicar a restrição no servidor, inclusive para o técnico que fez a marcação e para administradores; não criar uma exceção de reversão por perfil.
+
+Se a marcação tiver sido feita por engano, permitir anexar novamente o documento como um novo arquivo e exigir uma explicação da correção, vinculando-a ao registro anterior. Preservar o arquivo anterior, sua marcação, autor, data e motivo. O novo envio mantém identidade própria no histórico, mesmo quando seu conteúdo for igual ao do arquivo anterior; não reutilizar o registro invalidado para contornar a irreversibilidade.
+
+Para atender à exigência de documento assinado na conclusão, o novo anexo deve estar identificado para essa finalidade, disponível e sem marcação de inválido ou substituído. Não transferir automaticamente a situação documental do arquivo anterior para o novo envio. Todos os arquivos continuam preservados permanentemente para auditoria.
+
+A regra de não reversão não define quando o novo envio pode ocorrer em um chamado já concluído. A correção documental depois da conclusão exige reabertura, conforme a decisão abaixo.
+### Reabertura para corrigir documentos de transferência concluída
+
+O autor aprovou exigir a reabertura do chamado para corrigir documentos depois da conclusão da transferência e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Enquanto o chamado estiver concluído, impedir o envio de novos anexos e a marcação dos existentes como inválidos ou substituídos para correção documental. Exigir a reabertura antes dessas alterações e validar a situação do chamado no servidor, além da autenticação e do acesso do técnico.
+
+Depois da reabertura, aplicar as regras documentais já aprovadas: preservar todos os arquivos, registrar autor, data e motivo das marcações, não reverter marcações anteriores e anexar novamente o documento quando necessário para corrigir um engano. A conclusão posterior continua exigindo documento identificado como assinado, disponível e não marcado como inválido ou substituído.
+
+Distinguir a reabertura para correção documental da execução da transferência. Reabrir não desfaz a movimentação já registrada e a nova conclusão documental não deve repetir a transferência nem reaplicar destinos antigos sobre a localização atual dos ativos. Preservar a evidência da movimentação original e o histórico da reabertura e das correções.
+
+A permissão para reabrir para essa finalidade está definida abaixo. A reabertura para correção documental não tem limite de prazo, conforme a decisão abaixo, e deve ser distinguida das demais finalidades de reabertura. Não aplicar implicitamente o prazo de solicitação de reabertura pelo solicitante a uma correção documental interna. Também permanece aberto o tratamento de chamados cuja transferência tenha falhado ou sido aplicada apenas parcialmente; não presumir movimentação concluída nesses casos.
+### Permissão de reabertura para correção documental
+
+O autor aprovou permitir que qualquer técnico com acesso ao chamado de transferência o reabra para corrigir documentos e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação e autorização de acesso ao chamado no momento da reabertura, com validação no servidor. Não exigir participação anterior na transferência nem uma permissão específica por grupo para essa finalidade. Registrar quem reabriu o chamado, quando e a finalidade de correção documental, preservando o histórico anterior.
+
+A reabertura permite realizar as correções documentais conforme as regras aprovadas; não desfaz nem repete a movimentação original e não concede, por si só, autorização para executar outra transferência ou alterar seus itens, origens e destinos. A conclusão documental posterior não reaplica a localização dos ativos.
+
+A reabertura para correção documental não tem limite de prazo, conforme a decisão abaixo. Essa regra específica não altera a regra de pedidos recebidos do solicitante pelo canal externo.
+### Reabertura documental sem limite de prazo
+
+O autor aprovou permitir a reabertura do chamado de transferência para correção documental sem limite de prazo após sua conclusão e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Qualquer técnico autenticado com acesso vigente ao chamado pode reabri-lo para essa finalidade, inclusive quando o erro for identificado em auditoria muito depois da transferência. Não bloquear essa reabertura por tempo decorrido nem aplicar a ela o prazo de sete dias previsto para pedidos de reabertura do solicitante.
+
+Preservar as regras específicas já aprovadas: registrar a reabertura, realizar correções com autoria e motivo, manter todos os arquivos e marcações anteriores e exigir documento assinado vigente para concluir novamente. A ausência de prazo permite corrigir a documentação histórica, mas não autoriza alterar silenciosamente a evidência da movimentação original.
+
+A reabertura e a conclusão documental posterior não desfazem nem repetem a transferência e não reaplicam destinos sobre a localização atual dos ativos. Esta exceção de prazo se restringe à correção documental da transferência; não amplia por consequência os prazos de outras finalidades de reabertura.
+### Conclusão pendente até confirmar todos os ativos
+
+O autor aprovou aguardar a confirmação da atualização de localização de todos os ativos antes de concluir o chamado de transferência e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Ao solicitar a conclusão com a documentação exigida, iniciar as atualizações de localização e manter o chamado em conclusão pendente enquanto existir qualquer item sem confirmação. Não apresentar o chamado como concluído apenas porque a solicitação foi enviada a Inventário ou porque parte dos ativos já foi atualizada.
+
+Apresentar os resultados por item, distinguindo atualizações confirmadas, pendentes e falhas conhecidas. Uma resposta perdida ou uma indisponibilidade não comprova que a atualização falhou; conferir o resultado da operação antes de tentar executá-la novamente. Preservar os resultados já confirmados e recuperar somente o que ainda precisa de confirmação ou tratamento, sem repetir movimentações nem reaplicar destinos sobre alterações posteriores.
+
+Concluir o chamado somente depois de confirmar todos os itens. Uma falha pode prolongar a conclusão pendente; não convertê-la automaticamente em conclusão com pendências. A espera não exige desfazer atualizações já confirmadas nem implica que todos os ativos sejam atualizados simultaneamente.
+
+Ainda definir o tratamento de recusas definitivas, conflitos com localização alterada por outra operação, correções dos dados da transferência e cancelamento durante a conclusão pendente. Também detalhar como proteger itens e documentos contra alterações concorrentes nessa etapa. A decisão de aguardar confirmações não escolhe implicitamente essas regras.
+
+A conclusão posterior de uma reabertura exclusivamente documental continua sem executar novamente a transferência original. O controle de confirmações deve distinguir essa correção da primeira execução das atualizações.
+### Conflito entre a origem registrada e a localização atual
+
+O autor aprovou bloquear o item e exigir revisão quando, antes de aplicar sua transferência, a localização atual do ativo não corresponder à origem registrada no chamado e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Conferir essa condição no serviço responsável pelo ativo, coordenando a verificação com a atualização para não sobrescrever uma alteração concorrente. Se houver conflito, não transferir aquele item e apresentar a origem registrada e a localização atual ao técnico autorizado. Não substituir automaticamente a origem, tratar o destino já encontrado como prova de execução desta transferência ou sobrescrever a localização atual para forçar a conclusão.
+
+Preservar a origem registrada e a evidência do conflito. Exigir revisão dos dados da transferência antes de permitir nova tentativa do item. A conferência da documentação cabe ao técnico; o sistema não verifica sua compatibilidade com os dados do item. O fluxo de correção deve manter o histórico; a escolha de bloquear não autoriza alterar silenciosamente origens ou documentos.
+
+Enquanto o item não tiver sua atualização confirmada, manter o chamado sem conclusão, conforme a regra aprovada. Preservar as atualizações de outros itens que já tenham sido confirmadas. O bloqueio se restringe ao item em conflito. Os demais itens sem conflito continuam sendo processados, conforme a decisão abaixo.
+
+A conferência de origem é uma condição para executar a transferência, distinta do aviso informativo de divergência entre o setor do chamado e a localização do equipamento. Ela não refaz aquele aviso nem altera a regra de comparação somente na abertura. Resultados incertos de tentativas anteriores devem ser conferidos pelo registro da operação antes de classificar o item como conflito ou tentar novamente.
+### Continuidade dos itens sem conflito
+
+O autor aprovou continuar o processamento dos itens sem conflito quando outro item da mesma transferência apresentar divergência entre a origem registrada e a localização atual e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Bloquear somente os itens em conflito e continuar os demais ainda não processados que atendam às condições de execução. Conferir a origem de cada item no momento de sua atualização, respeitando as alterações concorrentes. Não interpretar a ausência de conflito em um item como validação dos demais nem permitir que o prosseguimento sobrescreva localizações incompatíveis.
+
+Apresentar o resultado individual de cada item, preservando as atualizações já confirmadas. O chamado permanece em conclusão pendente até que todos os itens tenham sua atualização confirmada; o processamento parcial não equivale à conclusão da transferência inteira.
+
+Depois da revisão de um item bloqueado, recuperar apenas o que ainda precisar de execução ou confirmação, sem repetir atualizações já confirmadas. Conferir operações de resultado incerto antes de nova tentativa. Não desfazer automaticamente os itens concluídos em razão do conflito de outro item.
+
+Esta regra trata da continuidade diante de conflitos de origem. Não define implicitamente o procedimento de revisão, o cancelamento de uma transferência parcialmente aplicada ou a continuidade durante uma indisponibilidade geral do serviço de Inventário.
+### Revisão de item bloqueado no mesmo chamado
+
+O autor aprovou permitir revisar o item bloqueado por conflito de origem no próprio chamado de transferência e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Registrar os dados corrigidos e o motivo da revisão, preservando os valores anteriores, a autoria, a data e a hora da alteração e a evidência do conflito. Não substituir silenciosamente a origem pela localização atual nem eliminar o registro da tentativa anterior.
+
+Se a revisão alterar a origem ou o destino, manter o histórico dos dados corrigidos. O técnico avalia internamente se o documento precisa de correção; o sistema não exige automaticamente novo comprovante em razão dessa alteração nem vincula o arquivo à versão dos dados. Quando houver correção documental, preservar os arquivos anteriores e aplicar as regras de anexos inválidos ou substituídos.
+
+Na nova tentativa, conferir novamente a localização atual em relação à origem revisada, no serviço responsável pelo ativo e de forma coordenada com a atualização. Se houver novo conflito, manter o item bloqueado para revisão. Corrigir os dados não equivale a confirmar a movimentação nem autoriza ignorar essa conferência.
+
+Preservar os resultados dos demais itens, inclusive as atualizações já confirmadas. A revisão se aplica ao item bloqueado e não permite editar uma movimentação já confirmada para reaplicá-la. Manter o chamado em conclusão pendente até confirmar todos os itens, conforme a regra aprovada.
+
+A permissão para revisar os dados do item está descrita abaixo. Conforme o esclarecimento posterior do autor, os comprovantes são anexos do chamado, sem vínculo obrigatório com itens ou versões de origem e destino.
+### Permissão para revisar dados de item bloqueado
+
+O autor aprovou permitir que qualquer técnico com acesso ao chamado de transferência revise a origem e o destino de um item bloqueado por conflito e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação e autorização vigente de acesso ao chamado no momento da revisão, com validação no servidor. Não exigir participação no atendimento nem uma permissão específica por grupo para essa revisão. Validar também que o item esteja bloqueado e sujeito à revisão, sem estender essa permissão à edição de movimentações já confirmadas.
+
+Registrar os valores anteriores e corrigidos, o motivo, o autor, a data e a hora da revisão. A conferência do documento e a necessidade de corrigi-lo ficam com o técnico, sem exigência automática de novo comprovante por alteração dos dados. Manter a exigência de anexo identificado como documento assinado vigente no chamado e a conferência da localização atual para executar a transferência.
+
+A revisão não confirma a transferência, não altera diretamente a localização do ativo e não concede por si só permissão para retificação de localização ou outras operações. Preservar os resultados dos demais itens e o histórico dos documentos. Não exigir vínculo dos comprovantes com itens ou versões dos dados; os arquivos pertencem ao chamado.
+### Documento como confirmação interna, sem interpretação do conteúdo
+
+O autor esclareceu que o documento serve à confirmação interna e confirmou eliminar o vínculo obrigatório entre comprovantes, itens e versões de origem e destino. O autor aprovou esta redação e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação. Essa decisão substitui a exigência anterior de novo comprovante automático por alteração de origem ou destino.
+
+Manter o documento assinado como anexo do chamado. O sistema não precisa ler, extrair, comparar ou validar o conteúdo do arquivo, sua assinatura ou quais itens ele abrange. A conferência interna e a avaliação de eventual necessidade de corrigir a documentação cabem ao técnico, sem criar uma etapa adicional de aprovação.
+
+Para concluir, exigir um anexo disponível e identificado como documento assinado, sem marcação de inválido ou substituído, conforme as regras já aprovadas. Essa é uma verificação da situação do anexo, não do conteúdo. Alterar os dados de um item não invalida automaticamente o documento nem exige automaticamente outro arquivo.
+
+Preservar permanentemente os documentos e seu histórico para auditoria. Quando o técnico corrigir a documentação, manter as regras de marcação irreversível, preservação dos originais e reabertura para correção depois da conclusão. As validações dos dados estruturados da transferência, inclusive o conflito de origem e a confirmação das atualizações de localização, continuam aplicáveis independentemente do conteúdo dos anexos.
+### Cancelamento bloqueado após a primeira transferência confirmada
+
+O autor aprovou impedir o cancelamento do chamado de transferência depois da primeira atualização de localização confirmada de um de seus itens e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Depois dessa confirmação, manter o chamado em conclusão pendente enquanto houver itens sem confirmação e exigir o tratamento dos itens restantes pelas regras de recuperação e revisão aprovadas. Não oferecer cancelamento com resultado parcial nem apresentar as movimentações confirmadas como desfeitas. A restrição vale também se a localização do ativo mudar posteriormente por outra operação; preservar a evidência da transferência já executada.
+
+Validar o bloqueio no servidor com base nos resultados das operações, não apenas na situação exibida na interface. A ausência de confirmação recebida não comprova ausência de movimentação: antes de aceitar qualquer cancelamento, conferir operações com resultado incerto e coordenar o cancelamento com operações em andamento, para não cancelar enquanto uma atualização é aplicada sem conhecimento do chamado.
+
+O cancelamento antes da primeira confirmação também fica restrito ao período anterior ao início das atualizações, conforme a decisão abaixo. Não oferecer interrupção de operações já iniciadas por meio de cancelamento. Itens que se tornem impossíveis de transferir mantêm o chamado pendente sem limite de prazo, conforme a decisão abaixo. Não removê-los silenciosamente da relação para forçar a conclusão e não encerrar automaticamente o chamado com pendências.
+
+O cancelamento não serve para desfazer uma transferência já confirmada. O procedimento para uma movimentação de retorno ou correção de transferência executada ainda precisa de detalhamento, sem presumir reversão automática de localização.
+### Cancelamento somente antes do início das atualizações
+
+O autor aprovou permitir o cancelamento do chamado de transferência somente antes de iniciar as atualizações de localização dos ativos e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Depois de iniciado o processamento das atualizações, impedir o cancelamento mesmo que ainda não exista movimentação confirmada. Exigir o tratamento de falhas, conflitos e resultados incertos até resolver o processamento, conforme as regras aprovadas. Não oferecer cancelamento apenas porque uma tentativa não recebeu resposta ou foi recusada.
+
+Antes do início das atualizações, o cancelamento não executa movimentações de localização. Preservar o chamado, seus itens, dados e histórico e todos os anexos de transferência permanentemente para auditoria, inclusive quando não houve movimentação.
+
+Validar no servidor o limite de cancelamento e coordenar a transição para processamento com o pedido de cancelamento. Se o cancelamento for aceito antes do início, impedir que as atualizações desse chamado sejam iniciadas depois. Se o processamento tiver iniciado primeiro, recusar o cancelamento e informar a condição atual, sem depender apenas da disponibilidade do botão na interface.
+
+A permissão para cancelar está descrita abaixo. Exigir justificativa e registrar autor e data do cancelamento, conforme a decisão abaixo. Detalhar no contrato técnico o marco persistente de início do processamento, inclusive em relação à preparação e ao envio das operações a Inventário, para que não exista uma janela em que o chamado possa ser cancelado enquanto uma movimentação sua já está autorizada a executar.
+### Permissão para cancelar a transferência
+
+O autor aprovou permitir que qualquer técnico com acesso ao chamado de transferência o cancele antes do início das atualizações de localização e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação e autorização vigente de acesso ao chamado no momento do cancelamento, com validação no servidor. Não exigir participação no atendimento nem uma permissão específica por grupo. Verificar também que o processamento das atualizações ainda não começou; a autorização de acesso não permite contornar esse limite.
+
+Registrar quem cancelou e quando, preservando os itens, os dados, o histórico e todos os anexos para auditoria. A ação não altera a localização dos ativos. Coordenar o cancelamento com o início do processamento, conforme a regra aprovada, para impedir que atualizações sejam iniciadas depois de um cancelamento aceito.
+
+O motivo do cancelamento é obrigatório, conforme a decisão abaixo. Esta permissão não autoriza desfazer uma transferência executada, cancelar depois do início das atualizações ou apagar o chamado e seus documentos.
+### Justificativa obrigatória no cancelamento
+
+O autor aprovou exigir justificativa para cancelar o chamado de transferência e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Solicitar o motivo ao técnico e impedir o cancelamento quando a justificativa estiver vazia ou contiver somente espaços. Validar essa exigência no servidor, além das condições de acesso e de cancelamento antes do início das atualizações. Se a validação falhar, manter o chamado sem cancelamento e permitir corrigir o preenchimento.
+
+Registrar a justificativa no histórico com o autor, a data e a hora da ação. Preservar os dados e os documentos da transferência para auditoria. A justificativa não permite cancelar depois do início das atualizações, desfazer movimentações ou apagar registros.
+### Permissão para solicitar a conclusão da transferência
+
+O autor aprovou permitir que qualquer técnico com acesso ao chamado solicite a conclusão da transferência, iniciando as atualizações de localização dos ativos, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação e autorização vigente de acesso ao chamado no momento da solicitação, com validação no servidor. Não exigir participação no atendimento nem uma permissão específica por grupo para essa ação. O acesso ao chamado não permite ignorar suas condições de execução ou iniciar atualizações em um chamado cancelado.
+
+Antes de iniciar as atualizações, aplicar a exigência de anexo disponível e identificado como documento assinado, sem marcação de inválido ou substituído. O conteúdo permanece sujeito à conferência interna do técnico, sem leitura ou validação automática pelo sistema.
+
+Registrar quem solicitou a conclusão, a data e a hora. Aplicar as regras já aprovadas de bloqueio de cancelamento após o início, conferência da origem por item, continuidade dos itens sem conflito e conclusão pendente até confirmar todos os ativos. A permissão de solicitar a conclusão não equivale à confirmação de sucesso das movimentações.
+
+Em uma reabertura exclusivamente documental, a conclusão posterior continua sem executar novamente a transferência nem reaplicar destinos anteriores sobre a localização atual dos ativos. Esta escolha não concede por si só permissão para retificar diretamente a localização no cadastro.
+### Permissão específica por grupo para retificar localização
+
+O autor aprovou controlar a retificação direta de localização por uma permissão específica atribuída a grupos e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Exigir autenticação, acesso autorizado ao ativo e a permissão específica de retificação no momento da alteração, com validação no servidor responsável pelo cadastro. A permissão comum de editar o ativo não basta para alterar sua localização como retificação. Não permitir contornar essa restrição enviando o setor de localização pela edição geral do cadastro.
+
+A atribuição dessa permissão segue a gestão de grupos do sistema. Não concedê-la implicitamente a todos os técnicos por terem acesso a chamados, poderem concluir transferências ou editarem outros dados de ativos. Esta decisão não define quais grupos receberão a permissão inicialmente.
+
+A retificação corrige a localização cadastrada e permanece distinta da transferência oficial, que usa o chamado específico e sua documentação. Ela não refaz a comparação de setor nos chamados anteriores. Se ocorrer enquanto uma transferência estiver pendente, a execução dessa transferência continua sujeita à conferência da origem e ao bloqueio por conflito já aprovados.
+
+A justificativa opcional e os dados obrigatórios de histórico da retificação estão definidos abaixo. O tratamento de localização alterada durante a retificação está descrito abaixo. A escolha da permissão não cria automaticamente obrigação de chamado ou documento assinado para corrigir a localização.
+### Justificativa opcional e histórico obrigatório da retificação
+
+O autor aprovou tornar opcional a justificativa da retificação direta de localização, mantendo obrigatório o registro das localizações anterior e nova, do autor e da data da alteração, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Permitir ao técnico autorizado informar um motivo, sem impedir a correção quando esse campo estiver vazio. Quando informado, preservar o motivo junto ao evento de retificação. Não inventar uma justificativa padrão nem apresentar ausência de motivo como prova de que a alteração foi uma transferência oficial.
+
+Registrar sempre a localização anterior, a nova localização, quem realizou a alteração e quando, identificando o evento como retificação. Representar explicitamente a ausência de localização quando ela fizer parte dos valores registrados, preservando a regra de localização opcional. Esse histórico é obrigatório mesmo sem justificativa.
+
+Exigir no servidor o acesso ao ativo e a permissão específica de retificação atribuída por grupo. Preservar a distinção entre correção de cadastro e transferência oficial pelo chamado específico. A retificação não refaz avisos de divergência de chamados anteriores. O tratamento de alterações concorrentes está descrito abaixo.
+### Recusa de retificação baseada em localização desatualizada
+
+O autor aprovou recusar a tentativa de salvar uma retificação quando a localização do ativo tiver mudado desde a abertura da tela e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Ao salvar, conferir no servidor responsável pelo ativo se houve alteração de localização desde a leitura usada pelo técnico. Coordenar essa conferência com a gravação para que uma alteração concorrente não seja sobrescrita entre a verificação e a atualização. Detectar também alterações intermediárias, mesmo que a localização tenha voltado ao setor inicialmente apresentado; o mecanismo técnico de controle será detalhado no contrato de atualização.
+
+Se houver mudança, recusar a retificação, apresentar a localização atual ao técnico autorizado e exigir revisão antes de um novo envio. Não aplicar automaticamente o destino pretendido nem oferecer uma confirmação que force a sobrescrita na mesma tentativa. A recusa não altera a localização e não registra a retificação como realizada.
+
+Um novo envio após revisão continua sujeito à verificação de concorrência, ao acesso vigente ao ativo e à permissão específica por grupo. Quando a retificação for efetivamente aplicada, registrar a localização imediatamente anterior à gravação, a nova localização, o autor, a data e a justificativa quando informada.
+
+A regra vale diante de alterações provocadas por outra retificação ou por uma transferência. Não refaz os avisos informativos dos chamados e não permite contornar o bloqueio de conflito de origem na execução de transferências.
+### Transferência com origem sem localização cadastrada
+
+O autor aprovou permitir a transferência de um ativo sem localização cadastrada, registrando a origem como “Localização não informada” e exigindo informar o setor de destino, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Não exigir retificação prévia nem atribuir um setor fictício para viabilizar o chamado. Registrar explicitamente a ausência de localização na origem do item, distinguindo-a de um setor cadastrado. Essa origem representa a ausência de informação no cadastro, não a identificação do local físico de saída.
+
+Exigir um setor de destino existente e validar sua disponibilidade para a operação no serviço responsável. A localização do ativo passa ao destino somente pela execução vinculada à conclusão, sujeita à confirmação por item e às demais regras da transferência. A simples preparação do chamado não preenche a localização do ativo.
+
+Ao executar, conferir que a localização atual continua sem informação. Se outro processo tiver atribuído um setor, tratar como conflito com a origem registrada, bloquear o item e exigir revisão no mesmo chamado. Não substituir automaticamente a origem ausente pelo novo setor nem ignorar a alteração por ter sido uma transferência iniciada sem localização.
+
+Preservar a origem sem localização no histórico da movimentação confirmada, junto ao destino e à identificação do ativo. Manter a exigência de anexo identificado como documento assinado e sua preservação para auditoria, sem interpretar o conteúdo do documento ou vinculá-lo obrigatoriamente ao item.
+### Bloqueio da edição comum dos itens após o início do processamento
+
+O autor aprovou bloquear a edição comum de todos os itens da transferência depois do início do processamento das atualizações de localização, mantendo somente a revisão específica dos itens bloqueados por conflito, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Depois do início, não permitir acrescentar ou remover itens, trocar o ativo de um item ou alterar suas origens e destinos pela edição comum, inclusive quando um item ainda não tiver sido enviado a Inventário. Preservar a relação de itens usada para iniciar a execução e seus dados no histórico.
+
+Aplicar a restrição no servidor e coordenar as gravações com o início do processamento. Uma tela aberta anteriormente não autoriza salvar alterações depois dessa transição. Se o processamento tiver iniciado antes da gravação, recusar a edição comum e informar a condição atual ao técnico autorizado.
+
+Para um item efetivamente bloqueado por conflito, manter o fluxo específico de revisão no mesmo chamado, com motivo, autoria e preservação dos valores anteriores. Essa exceção não permite remover o item, trocar o ativo ou alterar movimentações já confirmadas. Antes de nova execução, continuar exigindo a conferência da origem revisada e o tratamento de resultados incertos.
+
+A revisão de um item bloqueado não reabre a edição comum dos demais e não desfaz resultados confirmados. A reabertura exclusivamente documental também não libera alterações nos itens da movimentação original.
+
+Esta decisão trata dos dados estruturados dos itens. As alterações nos anexos durante a conclusão pendente ficam bloqueadas, conforme a decisão abaixo.
+### Anexos bloqueados durante a conclusão pendente
+
+O autor aprovou bloquear alterações nos anexos enquanto o chamado de transferência estiver em conclusão pendente e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Desde o início do processamento das atualizações de localização até a conclusão do chamado, impedir novos anexos, marcações de inválido ou substituído e alterações na identificação de documentos assinados. Preservar a consulta aos arquivos e ao histórico conforme as permissões vigentes. O bloqueio não permite exclusão, sobrescrita ou limpeza dos documentos.
+
+Validar a restrição no servidor e coordenar a transição para processamento com as alterações documentais, para que uma tela aberta ou um envio iniciado anteriormente não modifique os anexos depois do bloqueio. Antes de iniciar o processamento, continuar exigindo documento identificado como assinado, disponível e não marcado como inválido ou substituído.
+
+Se for necessário corrigir um documento durante a espera, adiar a correção até concluir a transferência e reabrir o chamado para a finalidade documental. A regra vale também quando houver itens bloqueados por conflito: a revisão dos dados desses itens não libera a edição dos anexos. Conforme o esclarecimento aprovado, alterar origem ou destino não exige automaticamente novo documento pelo sistema; a conferência do conteúdo permanece interna.
+
+Depois da conclusão, aplicar a reabertura documental já definida, sem limite de prazo e sem repetir a transferência. Preservar permanentemente os arquivos originais e as correções posteriores para auditoria. O bloqueio durante a conclusão pendente pode adiar a correção de documentos enquanto persistirem falhas na transferência; não criar uma liberação implícita por tempo de espera.
+### Permanência pendente quando um item não puder ser transferido
+
+O autor aprovou manter as regras atuais mesmo quando um item se tornar definitivamente impossível de transferir depois de outros itens terem sido movimentados e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Manter o chamado em conclusão pendente até confirmar a transferência de todos os itens, sem prazo máximo de espera. Não criar exceção de encerramento parcial, marcar um item não realizado como sucesso, removê-lo da relação ou liberar cancelamento para encerrar o chamado. Preservar as movimentações já confirmadas e seus resultados individuais.
+
+A situação pode permanecer pendente indefinidamente se não houver solução para o item. Manter visíveis o impedimento e os resultados por item, sem apresentar a transferência integral como concluída e sem repetir atualizações confirmadas. Esta decisão não cria novas tentativas automáticas ilimitadas nem define sua frequência; o mecanismo de recuperação ainda deve ser detalhado.
+
+Durante essa permanência, continuam bloqueadas a edição comum dos itens e as alterações dos anexos. A revisão específica de itens bloqueados por conflito permanece permitida conforme as regras aprovadas. Não criar liberação documental por tempo decorrido nem reabertura documental de um chamado que ainda não foi concluído.
+
+O autor foi informado de que essa escolha pode impedir a conclusão do chamado e adiar indefinidamente a correção de seus anexos. Manter essa consequência explícita no desenho, sem substituí-la por um encerramento parcial não autorizado.
+### Limites dos anexos de transferência
+
+O autor aprovou aplicar aos anexos da transferência os mesmos limites de quantidade e tamanho dos envios técnicos: até 5 arquivos de 10 MB cada por envio, totalizando até 50 MB de arquivos por envio, sem limite acumulado por chamado, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Permitir novos envios enquanto a situação do chamado admitir alterações documentais. Manter o bloqueio durante a conclusão pendente e a exigência de reabertura para corrigir documentos depois da conclusão. Os limites por envio não autorizam modificar anexos em uma etapa bloqueada.
+
+Aplicar esses limites às fotos e PDFs previstos no fluxo de transferência. Para fotos, usar os formatos de imagem já aprovados, JPEG, PNG e WebP. A escolha de limites iguais não acrescenta CSV, Excel ou vídeo aos tipos previstos para a transferência.
+
+Validar quantidade e tamanho no servidor e compatibilizar os limites de entrada com os arquivos e metadados. Um arquivo acima de 10 MB deve ser recusado para correção do envio, sem conversão ou divisão automática presumida. Não apresentar como disponível um arquivo cujo recebimento e persistência não tenham sido confirmados.
+
+Preservar permanentemente todos os anexos recebidos da transferência, inclusive os posteriormente marcados como inválidos ou substituídos. A ausência de limite acumulado por chamado não representa capacidade ilimitada do armazenamento; não remover documentos de auditoria automaticamente para liberar espaço.
+### Abertura de transferência somente pelo formulário interno
+
+O autor aprovou permitir a abertura de chamados de transferência somente pela equipe, por formulário interno, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+O técnico autenticado registra os itens, suas origens e destinos no painel interno. Aplicar os grupos autorizados a usar o formulário, conforme as regras de formulários internos já aprovadas. A associação dos grupos controla a abertura por aquele formulário e não restringe por si só a consulta posterior ao chamado.
+
+Não disponibilizar o formulário de transferência na abertura pública sem login. Pedidos de transferência recebidos pelo canal externo podem ser registrados pela equipe no formulário interno; esse registro não implica integração automática com WhatsApp ou Chatwoot.
+
+A escolha de uso interno não cria um terceiro tipo de público no configurador. A transferência é um fluxo específico dentro do uso interno, mantendo as regras de acesso ao chamado, documentação, execução e auditoria já aprovadas. A permissão de consultar um chamado existente ou solicitar sua conclusão não concede implicitamente autorização para abrir outro por um formulário não disponibilizado ao grupo do técnico.
+### Formulário próprio de transferência fornecido pelo sistema
+
+O autor aprovou um formulário próprio de transferência fornecido pelo sistema, em vez de permitir configurar essa finalidade em vários formulários internos, e autorizou continuar o detalhamento. A aprovação não abrange o fluxo técnico completo nem autoriza implementação.
+
+Concentrar a abertura de transferências nesse formulário interno. Permitir ao administrador ajustar sua apresentação e os grupos autorizados a usá-lo, preservando os campos e as regras obrigatórias da transferência. Não permitir remover ou descaracterizar a identificação dos itens, origens e destinos, nem contornar as exigências documentais e de execução pela configuração visual.
+
+Identificar o fluxo de transferência de forma independente do nome exibido do formulário e da categoria atribuída na triagem. Renomear o formulário ou reclassificar a categoria do chamado não transforma uma transferência em atendimento comum nem desativa suas regras. Selecionar ativos em outro formulário não o converte automaticamente em transferência oficial.
+
+Manter o formulário dentro do tipo de uso interno, sem criar outro tipo de público nem disponibilizá-lo na abertura pública. A relação de grupos autorizados segue as regras de abertura por formulário interno já aprovadas. A escolha não permite criar cópias independentes com a finalidade de transferência nesta etapa.
+
+Preservar a versão utilizada e os dados registrados em cada chamado quando houver ajustes de apresentação. Detalhar a configuração concreta dos campos protegidos e sua compatibilidade com as demais regras do configurador antes de concluir o contrato técnico.
+### Limite de seleção múltipla configurável por campo
+
+O autor aprovou permitir ao administrador definir, em cada campo de lista baseada em cadastro com seleção múltipla, a quantidade máxima de registros selecionados e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+O limite pertence à configuração do campo na versão publicada do formulário, não ao cadastro usado como fonte. Campos diferentes podem usar a mesma fonte com limites diferentes. Manter a seleção única do campo básico de setor, sem transformá-lo em seleção múltipla por essa configuração.
+
+Validar no servidor a configuração ao publicar e a quantidade selecionada ao receber o preenchimento. Se a seleção ultrapassar o limite do campo, recusar o envio com indicação do campo afetado e preservar os demais dados na página para correção, conforme as regras de envio já aprovadas. Não descartar silenciosamente registros selecionados nem truncar a resposta para fazê-la caber no limite.
+
+Manter as demais validações de existência, disponibilidade, situação ativa e ausência de registros duplicados. O limite não dispensa a verificação de cada opção nem concede acesso a dados além dos permitidos para a fonte e o contexto do formulário.
+
+Alterações do limite valem para novas versões publicadas e não reescrevem respostas anteriores. É permitido publicar o campo sem máximo explícito, conforme a decisão abaixo. Ainda definir o valor inicial de um novo campo e os limites técnicos permitidos na configuração. Esta decisão não define automaticamente o limite da relação de itens do formulário próprio de transferência.
+### Máximo opcional nos campos de seleção múltipla
+
+O autor aprovou permitir publicar campos de listas baseadas em cadastro com seleção múltipla sem definir uma quantidade máxima de registros e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+O administrador pode informar um máximo por campo ou deixá-lo sem definição. A ausência desse valor não impede a publicação e significa que não há máximo funcional configurado para aquele campo. Não interpretar a ausência como zero nem atribuir um máximo funcional implícito.
+
+Quando houver máximo configurado, validar a quantidade no servidor conforme a regra aprovada. Quando não houver, continuar validando individualmente os registros selecionados, sua disponibilidade, situação ativa, permissões e ausência de duplicações. Não descartar opções silenciosamente.
+
+Os limites técnicos de tamanho de requisição e de processamento continuam aplicáveis, mesmo sem máximo funcional. Eles deverão ser definidos no contrato técnico e tratados com erro explícito quando excedidos, sem criar o chamado com apenas parte da seleção. A possibilidade de deixar o máximo indefinido não representa capacidade ilimitada.
+
+Preservar essa configuração na versão do formulário usada no chamado. Mudanças posteriores não alteram respostas históricas. A decisão não define por si só se um campo recém-criado começa sem máximo ou com algum valor inicial; esse comportamento ainda precisa ser definido.
+### Limpeza de respostas quando um campo condicional é ocultado
+
+O autor aprovou limpar os valores de campos condicionais quando uma mudança de resposta fizer com que deixem de ser exibidos durante o preenchimento e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Ao mudar uma resposta que altera o caminho do formulário, limpar os valores dos campos que passam a ficar ocultos, inclusive os campos dependentes afetados pela mesma mudança. Se o usuário voltar ao caminho anterior e os campos reaparecerem, exigir novo preenchimento conforme suas regras; não restaurar os valores apagados nem mantê-los como respostas de um caminho abandonado.
+
+Campos ocultos pelo caminho atual não são obrigatórios, não integram as respostas registradas e não participam da classificação sugerida. Recalcular o caminho aplicável a partir das respostas atuais, sem usar valores apagados para manter condições ou categorias de um caminho anterior.
+
+Validar o caminho e os campos aplicáveis no servidor com base na versão do formulário utilizada. Valores de campos não aplicáveis enviados pelo navegador não podem ser registrados como respostas nem influenciar a classificação. A validação no servidor não depende de o navegador ter executado a limpeza visual.
+
+A limpeza ocorre durante o preenchimento e não altera respostas de chamados já registrados. Não cria rascunho persistente nem se aplica aos campos básicos protegidos, que não podem ser ocultados por condição. Preservar os demais valores de campos ainda aplicáveis quando houver erro de envio, conforme as regras já aprovadas.
+### Envio pela versão aberta antes de nova publicação
+
+O autor aprovou aceitar o envio pela versão do formulário que o usuário abriu, mesmo que uma nova versão seja publicada durante o preenchimento, e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Identificar a versão utilizada e validar o preenchimento no servidor pelas regras daquela versão, incluindo campos, obrigatoriedade, condições, limites configurados e caminhos de classificação sugerida. Registrar o chamado com essa versão e suas respostas, sem migrar silenciosamente o preenchimento para a versão mais recente nem exigir atualização apenas porque houve nova publicação.
+
+Uma nova publicação não reescreve as versões anteriores. Preservar a configuração necessária à validação e à apresentação histórica das respostas. Não confiar em uma definição de formulário enviada pelo navegador como substituto da versão mantida pelo servidor.
+
+Manter as verificações atuais de autenticação, acesso ao formulário e disponibilidade das opções de cadastro. Em particular, a versão anterior não autoriza selecionar um registro que foi desativado durante o preenchimento nem usar um formulário interno depois da perda do acesso. Aplicar as regras de erro já aprovadas, preservando os demais dados na página quando possível para correção, sem criar rascunho persistente.
+
+Esta decisão trata da substituição por uma nova versão publicada. A desativação impede também o envio de preenchimentos já iniciados, conforme a decisão abaixo. Um preenchimento iniciado tem validade de 30 minutos desde a abertura da versão, conforme a decisão abaixo.
+### Desativação impede envios de preenchimentos já iniciados
+
+O autor aprovou recusar também os envios de preenchimentos já iniciados quando o administrador desativar o formulário e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Impedir novas aberturas e, ao receber um envio, verificar no servidor se o formulário continua ativo. Se estiver desativado, informar que não está mais disponível e não criar o chamado, ainda que a versão utilizada tenha sido aberta antes da desativação. Não conceder exceção por horário de início ou por manter a página aberta.
+
+Coordenar a verificação da situação do formulário com o registro do chamado para tratar desativação e envio concorrentes. Uma recusa não deve ser apresentada como abertura concluída nem produzir um chamado parcial. Não criar rascunho persistente ou migrar as respostas automaticamente para outro formulário como consequência dessa recusa.
+
+Preservar os chamados registrados anteriormente, suas versões, respostas e histórico. Desativar o formulário não cancela esses chamados nem apaga suas informações. Esta regra é distinta da publicação de uma nova versão: enquanto o formulário permanecer ativo, a versão aberta continua aceita conforme a decisão anterior.
+### Validade de 30 minutos para o preenchimento iniciado
+
+O autor aprovou limitar a validade de um preenchimento a 30 minutos desde a abertura da versão do formulário e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Contar o prazo a partir da abertura daquela versão para preenchimento. A atividade na página não reinicia nem prolonga esse prazo. Ao vencer, recusar o envio, informar a expiração e exigir atualizar o formulário antes de enviar novamente. Não criar o chamado com um preenchimento expirado.
+
+Dentro dos 30 minutos, aceitar a versão aberta mesmo que outra seja publicada, conforme a decisão anterior. A desativação do formulário impede o envio imediatamente, sem aguardar o fim do prazo. Continuar verificando acesso, sessão quando aplicável e disponibilidade dos registros selecionados.
+
+Validar a abertura e o vencimento no servidor, sem confiar somente no horário ou em um contador informado pelo navegador. Detalhar no contrato técnico como comprovar a abertura da versão e coordenar a validade com a recepção do envio. Esse controle não cria rascunho persistente das respostas.
+
+A validade do preenchimento é independente da sessão do técnico: uma sessão válida não prolonga o formulário, e um formulário dentro do prazo não permite enviar por sessão expirada ou acesso revogado. Atualizar o formulário inicia um novo preenchimento pela versão então disponível, com reaproveitamento dos campos compatíveis na página e revisão pelo usuário, conforme a decisão abaixo.
+### Reaproveitamento de campos compatíveis após expiração
+
+O autor aprovou reaproveitar os valores de campos compatíveis na página ao atualizar um formulário cujo prazo de preenchimento venceu e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Carregar a versão atualmente disponível e iniciar um novo prazo de 30 minutos. Reaproveitar os valores ainda presentes na página somente em campos compatíveis da nova versão e solicitar ao usuário que revise o preenchimento antes de enviá-lo. Não enviar automaticamente nem criar o chamado com base na versão expirada.
+
+Identificar os campos por sua identidade na configuração, sem associá-los apenas pelo rótulo exibido. Não copiar valores para um campo diferente que reutilize o mesmo nome. Exigir a mesma identificação, tipo de pergunta, fonte de cadastro e modo de seleção para reaproveitar o valor, conforme a decisão abaixo.
+
+Aplicar as condições e validações da versão atual aos valores reaproveitados. Limpar os valores de campos que fiquem ocultos, conforme a regra aprovada, e exigir correção dos que não atendam às regras atuais. Opções de cadastro desativadas não se tornam válidas por terem sido selecionadas anteriormente. Não descartar silenciosamente parte de uma seleção para acomodá-la a um limite menor.
+
+O reaproveitamento depende dos dados ainda disponíveis na página: não criar rascunho persistente no servidor ou armazenamento durável de respostas no navegador por essa decisão. Não prometer recuperação depois de fechar ou perder a página. Arquivos podem exigir nova seleção; nunca apresentá-los como anexados sem confirmação de recebimento e persistência.
+
+Se o formulário estiver desativado ou o usuário tiver perdido o acesso, não permitir novo preenchimento ou envio por consequência do reaproveitamento. No envio, validar novamente a versão, seu prazo, as respostas e as permissões no servidor.
+### Compatibilidade estrutural sem conversão de respostas
+
+O autor aprovou exigir a mesma estrutura do campo para reaproveitar valores ao atualizar um formulário expirado e autorizou continuar o detalhamento. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+Reaproveitar um valor somente quando o campo mantiver a mesma identificação, o mesmo tipo de pergunta e, quando aplicável, a mesma fonte de cadastro e o mesmo modo de seleção. Mudanças de rótulo, ordem ou texto de ajuda não impedem o reaproveitamento. Não associar campos apenas por nomes semelhantes.
+
+Quando houver mudança estrutural, não converter automaticamente a resposta: apresentar o campo para novo preenchimento. Isso inclui mudanças entre texto curto e longo, entre seleção única e múltipla ou entre fontes de cadastro, mesmo quando o valor anterior pareça conversível. Não reaproveitar respostas de campos removidos ou recriados com outra identificação.
+
+A compatibilidade estrutural não dispensa as validações da versão atual. Alterações de obrigatoriedade, limites ou condições podem exigir correção de um valor reaproveitado. Limpar respostas de campos ocultos, validar as opções atualmente disponíveis e não truncar seleções silenciosamente para atender a um limite menor.
+
+Informar ao usuário quais campos precisam ser preenchidos novamente e exigir revisão antes do envio. Manter o reaproveitamento restrito aos valores disponíveis na página, sem rascunho persistente e sem alterar respostas de chamados anteriores.
+### Condições de exibição combinadas por todas ou qualquer uma
+
+O autor aprovou permitir várias condições de exibição por pergunta, combinadas por “todas as condições” ou “qualquer uma das condições”, e solicitou sincronizar a documentação com o GitHub. A aprovação não abrange o plano técnico completo nem autoriza implementação.
+
+O administrador define as condições com base nas respostas de outras perguntas e escolhe um único modo de combinação para a regra daquela pergunta. Em “todas”, a pergunta aparece somente quando todas as condições forem atendidas. Em “qualquer uma”, aparece quando pelo menos uma condição for atendida. Não oferecer grupos aninhados nem misturar os dois modos dentro da mesma regra nesta etapa.
+
+Por exemplo, mostrar “As pessoas afetadas estão no mesmo setor?” somente quando o problema informado for acesso a um sistema e o alcance informado for várias pessoas. Uma pergunta diferente pode usar “qualquer uma” para aparecer em mais de uma situação. Os exemplos ilustram a capacidade do configurador, sem instituir perguntas obrigatórias em todos os formulários.
+
+Aplicar a mesma interpretação no navegador e no servidor, usando a versão do formulário correspondente. Quando a regra deixar de ser atendida, limpar a resposta da pergunta e das dependências que se tornarem ocultas, conforme a decisão anterior. Respostas ocultas não podem manter condições verdadeiras, influenciar a classificação ou ser registradas como respostas aplicáveis.
+
+Preservar a proteção dos campos básicos, que não podem ser ocultados por condição, e a validação de categoria sugerida em todos os caminhos que permitam concluir o formulário. A escolha de múltiplas condições não dispensa essa cobertura antes da publicação.
+
+Antes de concluir o contrato técnico, detalhar os operadores disponíveis por tipo de pergunta, o tratamento de respostas ainda não preenchidas e a validação de dependências inválidas ou circulares. Esta escolha não autoriza scripts, expressões arbitrárias ou consultas ao banco na configuração das regras.
+## Continuidade após esta sessão
+
+O autor aprovou as subseções acrescentadas nesta sessão, incluindo as regras de divergência de setor, classificação de tipos como ativos, transferência oficial, retificação de localização e continuidade do configurador. A última decisão aprovada permite várias condições de exibição por pergunta, combinadas por “todas” ou “qualquer uma”. O autor solicitou enviar a documentação ao GitHub.
+
+Retomar o detalhamento do configurador pelos operadores de condição por tipo de pergunta, respostas ainda não preenchidas e validação de dependências. Permanecem pendências técnicas explicitamente registradas nas subseções, inclusive nos contratos de execução das transferências. O bloco completo do plano técnico ainda não foi aprovado; alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. Não há autorização de implementação.
+
+As decisões posteriores do desenho, especialmente o fluxo de transferência acrescentado nesta sessão, ainda deverão ser reconciliadas com o brief na finalização. Não interpretar a ausência dessas decisões no brief anterior como descarte das escolhas aprovadas aqui.
 ## Referências
 
 - [Brief funcional e decisões atualizadas](./concepts_brief.md).
