@@ -1292,13 +1292,377 @@ Aplicar a mesma interpretação no navegador e no servidor, usando a versão do 
 Preservar a proteção dos campos básicos, que não podem ser ocultados por condição, e a validação de categoria sugerida em todos os caminhos que permitam concluir o formulário. A escolha de múltiplas condições não dispensa essa cobertura antes da publicação.
 
 Antes de concluir o contrato técnico, detalhar os operadores disponíveis por tipo de pergunta, o tratamento de respostas ainda não preenchidas e a validação de dependências inválidas ou circulares. Esta escolha não autoriza scripts, expressões arbitrárias ou consultas ao banco na configuração das regras.
-## Continuidade após esta sessão
+### Perguntas condicionais somente a partir de opções fixas
 
-O autor aprovou as subseções acrescentadas nesta sessão, incluindo as regras de divergência de setor, classificação de tipos como ativos, transferência oficial, retificação de localização e continuidade do configurador. A última decisão aprovada permite várias condições de exibição por pergunta, combinadas por “todas” ou “qualquer uma”. O autor solicitou enviar a documentação ao GitHub.
+O autor definiu que o encadeamento de perguntas se aplica somente a perguntas com opções de resposta fixas. Texto livre, números, datas, horários e contatos digitados não determinam a exibição de perguntas seguintes. A proposta anterior de comparar valores digitados não foi adotada. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
 
-Retomar o detalhamento do configurador pelos operadores de condição por tipo de pergunta, respostas ainda não preenchidas e validação de dependências. Permanecem pendências técnicas explicitamente registradas nas subseções, inclusive nos contratos de execução das transferências. O bloco completo do plano técnico ainda não foi aprovado; alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. Não há autorização de implementação.
+O administrador pode oferecer a opção “Prefiro descrever o problema”, em vez de “Outros”. Ao selecioná-la, disponibilizar um campo para o usuário descrever o problema. Essa descrição não pode originar novas perguntas condicionais, seja pelo conteúdo digitado, seja pela presença ou ausência de texto. Não interpretar palavras da descrição para continuar a árvore de perguntas ou inferir diagnóstico.
 
-As decisões posteriores do desenho, especialmente o fluxo de transferência acrescentado nesta sessão, ainda deverão ser reconciliadas com o brief na finalização. Não interpretar a ausência dessas decisões no brief anterior como descarte das escolhas aprovadas aqui.
+O campo de descrição é a entrada de texto associada à opção escolhida, não o início de outro encadeamento. Essa escolha não elimina os campos básicos protegidos nem as demais perguntas independentes aplicáveis ao formulário. Preservar as regras já aprovadas de limpeza de respostas quando um caminho deixa de ser aplicável e de validação no servidor pela versão utilizada.
+
+A combinação de condições por “todas” ou “qualquer uma” permanece conforme aprovada. Distinguir encadeamento de perguntas de grupos aninhados de condições: permitir perguntas seguintes conforme opções fixas não autoriza misturar modos em grupos aninhados de regras.
+
+A descrição livre não substitui a exigência já aprovada de uma categoria sugerida em cada caminho de conclusão. O caminho “Prefiro descrever o problema” também precisa dessa associação antes da publicação, sem extrair categoria do texto; o técnico confirma ou altera a categoria efetiva na triagem.
+
+Ainda definir os operadores concretos sobre opções fixas, o tratamento de respostas vazias e a validação de dependências. Também permanecem abertos: se listas alimentadas por cadastros podem controlar perguntas seguintes; a obrigatoriedade e os limites da descrição associada; e o comportamento de seleção múltipla caso “Prefiro descrever o problema” seja escolhida junto de outras opções. Não presumir essas decisões a partir desta definição.
+
+### Operadores positivos e negativos sobre opções fixas
+
+O autor escolheu a opção B: permitir condições positivas e negativas sobre perguntas com opções fixas. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Em seleção única, disponibilizar “é” e “não é” uma opção. Em seleção múltipla, disponibilizar “inclui” e “não inclui” uma opção por condição. Para sim/não, permitir condições sobre as respostas explícitas “sim” e “não”. Combinar as condições por “todas” ou “qualquer uma”, conforme a regra já aprovada, sem grupos aninhados de condições.
+
+Por exemplo, uma pergunta pode aparecer quando a resposta é “Internet” ou quando a resposta não é “Impressora”. A condição negativa abrange outras opções da versão utilizada: se uma nova opção for acrescentada em uma versão posterior, ela também poderá satisfazer “não é Impressora”. O administrador precisa conferir esse efeito na configuração da nova versão. Chamados anteriores preservam sua versão e suas respostas.
+
+Comparar a identificação da opção, não o rótulo exibido. Validar no servidor se a opção pertence à pergunta na versão utilizada e aplicar a mesma interpretação das condições no navegador e no servidor. Os operadores não autorizam condições sobre texto livre, números, datas, horários ou contatos digitados.
+
+Preservar a exceção aprovada para “Prefiro descrever o problema”: disponibilizar sua descrição associada, sem abrir novas perguntas nesse caminho, inclusive por consequência de uma condição negativa que corresponda a essa escolha. O conteúdo da descrição não participa de condições. Seu uso conjunto com outras opções em seleção múltipla ainda precisa ser definido.
+
+Não interpretar esta escolha como decisão sobre perguntas ainda sem resposta. O tratamento da ausência de resposta, inclusive em “não é” e “não inclui”, permanece aberto e deve ser definido antes de concluir a avaliação das condições. A possibilidade de usar listas alimentadas por cadastros como origem de condições também permanece aberta.
+
+### Condições sobre perguntas ainda sem resposta
+
+O autor escolheu a opção A: exigir uma resposta para satisfazer qualquer comparação com opções. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Enquanto a pergunta de origem estiver sem resposta, nenhuma comparação com suas opções é atendida, incluindo “não é” e “não inclui”. Por exemplo, “mostrar se o problema não é Impressora” só passa a valer quando houver uma resposta diferente de Impressora. Em seleção múltipla sem itens selecionados, “não inclui Impressora” também não é atendida. Uma pergunta opcional deixada vazia não abre um caminho negativo por ausência de seleção.
+
+Distinguir ausência de resposta da escolha explícita “não” em uma pergunta sim/não. A escolha “não” é uma resposta válida e pode satisfazer a condição correspondente. Não converter ausência de resposta em “não”.
+
+Aplicar essa regra a cada condição individual antes de combinar os resultados. Em “todas”, todas as condições precisam ser atendidas. Em “qualquer uma”, uma condição atendida pode mostrar a pergunta mesmo se outra condição tiver origem ainda sem resposta. Não exigir que todas as perguntas de origem estejam respondidas para avaliar uma combinação por “qualquer uma”.
+
+Respostas de perguntas ocultas são limpas conforme a regra já aprovada e não podem sustentar condições, inclusive negativas. Se uma pergunta reaparecer sem resposta, suas comparações continuam não atendidas até novo preenchimento. Não restaurar valores antigos para avaliar a regra.
+
+Aplicar a mesma interpretação no navegador e no servidor, pela versão utilizada. Validar a cobertura de categoria sugerida nos caminhos que permitam concluir o formulário, inclusive quando perguntas opcionais ficarem sem resposta. Esta escolha não cria operadores de presença ou ausência, não altera a obrigatoriedade dos campos e preserva a exceção de “Prefiro descrever o problema”.
+
+### Dependências somente de perguntas anteriores
+
+O autor escolheu a opção A: cada pergunta pode depender somente de perguntas posicionadas antes dela no formulário. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+No configurador, disponibilizar como origem de condição somente perguntas anteriores elegíveis, respeitando a restrição a opções fixas já definida. Por exemplo, posicionar “Qual é o problema?” antes de “Outras pessoas também estão com esse problema?” quando a segunda depender da resposta da primeira. Uma pergunta não pode depender dela mesma nem de uma pergunta posterior.
+
+Validar as referências e a ordem no servidor antes da publicação de cada versão. Reordenar, remover ou alterar uma pergunta ou suas opções pode invalidar condições existentes. Se houver referência inexistente, opção que não pertença à pergunta de origem ou origem que não esteja antes da pergunta dependente, recusar a publicação e indicar a condição que precisa de ajuste. Não remover, inverter ou substituir condições silenciosamente para permitir a publicação.
+
+A ordem estrita das dependências impede ciclos: uma cadeia de dependências não pode voltar à pergunta inicial se cada origem estiver antes de sua dependente. Aplicar essa restrição a todas as condições, tanto na combinação por “todas” quanto por “qualquer uma”, sem depender apenas das limitações visuais do configurador.
+
+Validar o preenchimento conforme a ordem, as condições e as referências da versão utilizada. Alterações em uma nova versão não reescrevem as condições nem as respostas de chamados anteriores. Preservar os campos básicos protegidos, a limpeza de respostas ocultas, o tratamento aprovado de perguntas sem resposta, a exceção de “Prefiro descrever o problema” e a cobertura de categoria sugerida em todos os caminhos de conclusão.
+
+### Listas baseadas em cadastros como origem de condições
+
+O autor escolheu a opção B: permitir que listas alimentadas por cadastros também controlem a exibição de perguntas seguintes. Essa decisão esclarece o alcance de “opções fixas”: além das opções definidas no formulário, são elegíveis seleções de registros existentes em uma fonte de cadastro configurada. Não inclui texto digitado livremente. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Em listas de seleção única, permitir “é” e “não é” um registro específico. Em listas de seleção múltipla, permitir “inclui” e “não inclui” um registro específico. Comparar a identificação do registro na fonte configurada, não seu nome ou rótulo. Por exemplo, selecionar determinado setor pode fazer aparecer uma pergunta específica. Renomear o registro não muda sua identificação na condição.
+
+Não permitir condições sobre outras propriedades do registro, consultas arbitrárias ou acesso adicional aos dados do cadastro. Preservar as restrições de fonte, disponibilidade, situação ativa e exposição de informações já aprovadas. A origem da condição precisa ser uma pergunta anterior; ausência de resposta não satisfaz nenhuma comparação, inclusive negativa.
+
+A inclusão de registros novos pode fazer com que novas escolhas satisfaçam condições negativas existentes. A desativação de um registro impede sua seleção em novos envios e pode tornar um caminho positivo inacessível. A escolha desta funcionalidade não resolve como revisar ou sinalizar condições afetadas por mudanças de cadastro, nem autoriza alterar regras publicadas silenciosamente. Definir esse tratamento antes de concluir o contrato técnico.
+
+Preservar a cobertura de categoria sugerida em todos os caminhos de conclusão e a versão utilizada por cada chamado. Esta decisão não autoriza adicionar a opção “Prefiro descrever o problema” às listas de cadastros como se fosse um registro: seu uso nesse contexto, caso necessário, exige definição própria. A exceção já aprovada para essa opção nas perguntas com escolhas continua válida.
+
+### Desativação permitida com aviso sobre condições afetadas
+
+O autor escolheu a opção A: permitir desativar um registro usado em condições de formulários e avisar o administrador sobre as condições afetadas. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+O vínculo com condições publicadas não bloqueia, por si só, a desativação do registro. Apresentar ao administrador os formulários ativos e as condições de suas versões atuais que referenciam o registro desativado. Esse aviso não exige ajuste prévio do formulário nem cria uma aprovação adicional para desativar. O mecanismo de apresentação e de identificação das referências entre serviços será detalhado no contrato técnico; esta decisão não define um novo canal de notificação.
+
+Após a desativação, o registro deixa de ser oferecido e não é aceito em novos envios, inclusive se tiver sido selecionado antes de ser desativado, conforme a regra já aprovada. Preservar as condições sem removê-las, substituí-las ou invertê-las automaticamente. O formulário continua disponível; não desativá-lo automaticamente por essa referência.
+
+Um caminho que exija selecionar o registro desativado deixa de poder ser escolhido. Por exemplo, se uma pergunta aparece somente ao selecionar determinado setor, a desativação desse setor impede novas seleções que abram essa pergunta. Isso não implica ocultar uma pergunta que também possa aparecer por outra condição válida combinada por “qualquer uma”. Os demais caminhos continuam sujeitos às regras da versão utilizada, incluindo resposta obrigatória, condições e categoria sugerida.
+
+Manter o significado dos operadores negativos: a desativação não altera “não é” ou “não inclui”. Outras seleções válidas continuam sendo comparadas à identificação referenciada, e ausência de resposta continua sem satisfazer qualquer comparação. Não usar respostas antigas de campos ocultos ou seleções desativadas para sustentar condições.
+
+Preservar as versões, respostas, referências e histórico dos chamados anteriores. O aviso não garante que a revisão administrativa será realizada; podem permanecer condições sem opção selecionável até que o administrador ajuste e publique nova versão. Definir no contrato técnico o tratamento de concorrência e da identificação das referências, respeitando a propriedade dos cadastros entre serviços.
+
+### Opção de descrição exclusiva em perguntas de seleção múltipla
+
+O autor escolheu a opção A: “Prefiro descrever o problema” é exclusiva mesmo quando a pergunta permite seleção múltipla. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Permitir selecionar várias opções comuns ou selecionar “Prefiro descrever o problema”, nunca as duas situações na mesma resposta. Ao selecionar a opção de descrição, desmarcar as opções comuns e disponibilizar o campo de descrição associado. Ao selecionar uma opção comum, desmarcar a opção de descrição. Não restaurar automaticamente escolhas anteriores ao alternar entre esses modos.
+
+Recalcular as condições a partir da seleção atual. Limpar os valores de perguntas que deixem de ser aplicáveis, conforme a regra já aprovada. Se a opção de descrição for desmarcada e seu campo ficar oculto, limpar também o texto associado. Preservar os valores dos demais campos que continuarem aplicáveis.
+
+A opção de descrição abre somente sua entrada de texto, sem iniciar novas perguntas nesse caminho. Manter os campos básicos protegidos e as perguntas independentes aplicáveis ao formulário. A descrição digitada não participa das condições nem determina a categoria sugerida; configurar a categoria desse caminho antes da publicação, conforme a regra já aprovada.
+
+Validar a exclusividade no servidor pela versão utilizada. Se o envio combinar a opção de descrição com opções comuns, recusar com indicação da pergunta afetada e preservar os demais dados na página para correção. Não escolher silenciosamente quais opções manter nem criar o chamado com resposta parcial. Manter as validações de opções existentes, ausência de duplicações e limite configurado de seleção múltipla. A descrição é um valor associado à opção, não outra opção selecionada.
+
+A descrição associada é obrigatória quando a opção é selecionada, conforme a decisão seguinte; seus limites de tamanho permanecem por definir. Esta escolha não adiciona automaticamente a opção de descrição a listas baseadas em cadastros nem a todas as perguntas do formulário.
+
+### Descrição associada obrigatória quando a opção for selecionada
+
+O autor escolheu a opção A: selecionar “Prefiro descrever o problema” exige preencher a descrição associada. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Exigir texto no campo associado sempre que essa opção estiver selecionada, inclusive quando a pergunta de origem for opcional. A pessoa pode deixar uma pergunta opcional sem resposta, mas, se escolher descrever, precisa fornecer o texto correspondente. Não disponibilizar configuração para tornar esse texto opcional.
+
+Validar a exigência no navegador e no servidor, pela versão utilizada. Texto vazio ou composto somente por espaços não satisfaz a obrigatoriedade. Se faltar a descrição, recusar o envio com indicação do campo afetado e preservar os demais dados aplicáveis na página para correção, sem criar chamado parcial nem rascunho persistente. Os limites de tamanho do texto ainda precisam ser definidos.
+
+Manter o campo básico protegido de descrição e sua obrigatoriedade já definida. O texto associado à opção não o remove nem o substitui, e não deve ser copiado automaticamente entre os dois campos por esta decisão. Isso pode exigir que o usuário repita informações já registradas na descrição geral; a escolha de exigir a explicação associada foi mantida pelo autor.
+
+A descrição associada só é aplicável enquanto “Prefiro descrever o problema” estiver selecionada. Se essa opção for desmarcada ou a pergunta de origem ficar oculta, limpar o texto conforme a regra aprovada e deixar de exigir seu preenchimento. Se a opção voltar a ser selecionada, exigir novo preenchimento, sem restaurar o texto apagado.
+
+Preservar a exclusividade da opção em seleção múltipla e a ausência de novas perguntas derivadas da descrição. Não usar o texto para avaliar condições nem inferir a categoria sugerida; a categoria do caminho precisa estar configurada antes da publicação.
+
+### Tamanho máximo da descrição associada configurável por pergunta
+
+O autor escolheu a opção B: permitir ao administrador configurar, em cada pergunta, o tamanho máximo da descrição associada a “Prefiro descrever o problema”. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+O máximo pertence à configuração da descrição associada naquela pergunta, não a um limite único compartilhado por todos os formulários. Perguntas diferentes podem ter máximos diferentes. Preservar a configuração na versão publicada e validar o preenchimento conforme a versão utilizada, sem aplicar retroativamente alterações a respostas de chamados anteriores.
+
+Quando houver máximo configurado, informar o limite ao usuário e validar o tamanho no navegador e no servidor. Se o texto ultrapassar o máximo, recusar o envio com indicação do campo afetado e preservar os demais dados aplicáveis na página para correção. Não truncar o texto silenciosamente nem criar o chamado com apenas parte da descrição.
+
+A configuração de tamanho não permite tornar a descrição opcional: selecionar “Prefiro descrever o problema” continua exigindo texto que não seja vazio nem composto somente por espaços. Manter a limpeza do texto quando deixar de ser aplicável e a proibição de usar seu conteúdo para abrir perguntas seguintes ou inferir categoria.
+
+Antes de concluir o contrato técnico, definir o valor inicial para novas perguntas, o intervalo permitido de configuração, a unidade de contagem e se é permitido publicar sem máximo funcional explícito. A escolha de configuração por pergunta não resolve essas questões nem representa capacidade ilimitada. Limites técnicos de requisição e processamento também precisam ser definidos. Não alterar os limites da descrição básica ou dos demais campos de texto como consequência desta decisão.
+
+### Máximo opcional para a descrição associada
+
+O autor escolheu a opção B: permitir publicar perguntas com “Prefiro descrever o problema” sem informar um máximo funcional para a descrição associada. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+O administrador pode configurar um máximo por pergunta ou deixar o valor em branco. A ausência não impede a publicação e significa que não há máximo funcional configurado para aquele campo. Não interpretar como zero nem atribuir um máximo funcional implícito. Preservar essa configuração na versão utilizada.
+
+Quando houver máximo configurado, informar e validar o limite conforme a regra aprovada. Quando não houver, continuam aplicáveis os limites técnicos de tamanho da requisição e de processamento. Não apresentar a ausência de máximo funcional como capacidade ilimitada. Definir esses limites técnicos e sua comunicação ao usuário no contrato técnico, considerando os demais campos e anexos enviados.
+
+Ao exceder um limite aplicável, produzir erro explícito, sem truncar a descrição nem criar chamado parcial. Preservar os dados na página para correção quando possível, conforme as regras de envio já aprovadas. Os limites da requisição não podem ser confundidos com um limite de caracteres próprio do campo.
+
+A descrição continua obrigatória quando a opção correspondente for selecionada: ausência de máximo não permite texto vazio ou composto somente por espaços. Preservar a exclusividade da opção, a limpeza do texto quando deixar de ser aplicável e a proibição de derivar novas perguntas ou categoria a partir do conteúdo digitado.
+
+Esta decisão não determina se uma pergunta recém-criada começa sem máximo ou com um valor inicial preenchido. O comportamento inicial, o intervalo permitido para máximos explícitos e a unidade de contagem continuam pendentes. Não alterar respostas históricas nem os limites dos demais campos por esta escolha.
+
+### Máximo da descrição associada inicialmente em branco
+
+O autor escolheu a opção A: ao acrescentar “Prefiro descrever o problema” a uma nova pergunta, iniciar o máximo da descrição associada em branco. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Não preencher um máximo funcional automaticamente. O administrador pode informar um máximo por pergunta ou manter o campo em branco e publicar, conforme a decisão já aprovada. Apresentar o campo de configuração de modo a distinguir ausência de máximo funcional de um valor numérico, sem interpretar o vazio como zero.
+
+O estado inicial vale para novas configurações, sem apagar máximos explicitamente definidos em perguntas existentes ou alterar versões publicadas. Preservar o máximo escolhido, inclusive sua ausência, na versão utilizada pelo preenchimento e pelo chamado.
+
+A ausência de máximo funcional não representa capacidade ilimitada: manter os limites técnicos aplicáveis, ainda por detalhar. Preservar a obrigatoriedade da descrição ao selecionar a opção, a validação no servidor e a recusa explícita de conteúdo que exceda um limite aplicável, sem corte silencioso.
+
+O intervalo permitido para máximos explícitos e a unidade de contagem continuam pendentes. Esta escolha não altera os valores iniciais ou limites de outros campos do configurador.
+
+### Máximos explícitos entre 1 e 10.000 caracteres
+
+O autor escolheu a opção A: quando o administrador informar um máximo para a descrição associada a “Prefiro descrever o problema”, aceitar somente números inteiros de 1 a 10.000, inclusive. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+O intervalo define os valores permitidos na configuração do máximo, não um tamanho mínimo obrigatório da resposta. Por exemplo, configurar 500 permite uma descrição não vazia com até 500 caracteres; não exige escrever 500. Preservar a obrigatoriedade já aprovada e a recusa de texto composto somente por espaços.
+
+Validar a configuração no servidor antes da publicação. Zero, números negativos, frações, valores não numéricos e valores acima de 10.000 impedem a publicação, com indicação da pergunta e da configuração a corrigir. Não arredondar, reduzir ou substituir valores silenciosamente. Preservar o máximo válido na versão publicada e aplicar a regra daquela versão no preenchimento.
+
+Manter a possibilidade de deixar o máximo em branco e o estado inicial em branco para novas perguntas. A ausência significa que não há máximo funcional configurado para aquele campo: não aplicar 10.000 automaticamente. Por isso, 10.000 não é um teto universal de conteúdo aceito pelo sistema nem uma definição do limite técnico da requisição.
+
+Quando houver máximo configurado, informar o limite e recusar descrições que o ultrapassem, sem truncamento nem criação parcial do chamado. Os limites técnicos de campos e requisições ainda precisam ser compatibilizados com os demais dados e anexos antes de concluir o contrato técnico. O intervalo escolhido é uma decisão de produto, sem teste de capacidade realizado nesta etapa. A unidade de contagem de caracteres permanece pendente.
+
+### Contagem por caracteres percebidos pelo usuário
+
+O autor escolheu a primeira opção (A): contar caracteres percebidos pelo usuário, usando agrupamentos definidos pelas regras Unicode de segmentação de grafemas. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Aplicar essa unidade ao máximo configurado para a descrição associada a “Prefiro descrever o problema”. Por exemplo, “👍🏽” conta como uma unidade, e uma letra acompanhada de acento combinante também conta como uma unidade. Não usar bytes, pontos de código isolados ou o comprimento nativo de uma string JavaScript como substitutos dessa contagem.
+
+Usar a mesma interpretação no contador do navegador e na validação do servidor. Antes de concluir o contrato técnico, definir implementações e versões compatíveis das regras de segmentação e uma representação consistente das quebras de linha. Contar espaços e quebras de linha; texto composto somente por espaços continua sem satisfazer a obrigatoriedade já aprovada. A unidade não autoriza remover ou alterar conteúdo silenciosamente para acomodar o limite.
+
+Preservar a regra de contagem correspondente à versão utilizada pelo preenchimento. Quando houver máximo configurado, recusar texto que ultrapasse esse máximo, indicar o campo afetado e preservar os dados aplicáveis na página para correção, sem truncamento nem chamado parcial. Quando o máximo estiver em branco, não aplicar um máximo funcional implícito.
+
+Um agrupamento visível pode conter vários elementos e ocupar muitos bytes. A contagem por grafemas não substitui os limites técnicos de tamanho e processamento, ainda por definir, nem representa capacidade ilimitada. Validar futuramente exemplos com acentos combinantes e emojis compostos para verificar que navegador e servidor exibem e aplicam a mesma contagem. Esta decisão não altera automaticamente a unidade de outros campos do configurador.
+
+### Prioridade explícita entre regras de categoria sugerida
+
+O autor escolheu a opção B: o administrador define uma ordem de prioridade entre as regras de categoria sugerida. Quando várias regras forem aplicáveis ao mesmo preenchimento, usar a de maior prioridade. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Permitir que combinações válidas de respostas atendam a regras que sugiram categorias diferentes. Por exemplo, se selecionar “Internet” e “Impressora” ativar duas regras de categoria, a prioridade configurada determina qual delas fornece a sugestão inicial. Não usar a ordem visual das perguntas nem a ordem em que o usuário marcou as opções como prioridade implícita.
+
+Exigir uma ordem sem empates entre as regras de categoria da versão publicada. Validar no servidor antes da publicação; uma prioridade ausente ou ambígua precisa ser corrigida na configuração, sem escolher arbitrariamente uma categoria. A forma de edição e representação dessa ordem será detalhada no contrato técnico. A ordem das regras de categoria é distinta da ordem das perguntas e não altera suas condições de exibição.
+
+Avaliar as regras com base nas respostas aplicáveis e nas condições da versão utilizada, respeitando a limpeza de campos ocultos, o tratamento de perguntas sem resposta e a restrição às origens de condição aprovadas. A descrição livre não participa da escolha. Selecionar a regra aplicável de maior prioridade não descarta respostas nem impede a exibição de perguntas pertencentes a outros caminhos válidos.
+
+Preservar a exigência de cobertura: todo caminho que permita concluir precisa ter ao menos uma regra de categoria aplicável, inclusive o caminho “Prefiro descrever o problema”. A prioridade resolve conflitos entre regras aplicáveis; não preenche caminhos sem categoria e não cria uma categoria padrão implícita. Validar essa cobertura antes da publicação de cada versão.
+
+Preservar as regras, sua ordem e a categoria sugerida conforme a versão utilizada, sem recalcular chamados anteriores pela configuração mais recente. O técnico continua confirmando ou alterando a categoria efetiva na triagem, sem trocar o formulário original. Esta escolha não cria chamados separados por categoria nem altera a participação técnica.
+
+### Máximo de itens inicialmente em branco nas listas de cadastros
+
+O autor escolheu a opção A: novas listas baseadas em cadastros com seleção múltipla começam com “Máximo de itens” em branco. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Não preencher um máximo funcional automaticamente. O administrador pode informar um máximo por campo ou manter o valor em branco e publicar, conforme a decisão já aprovada. A ausência significa que não há máximo funcional configurado para a quantidade de registros daquele campo; não interpretar como zero nem como capacidade ilimitada.
+
+Aplicar esse estado inicial a novos campos, sem apagar máximos definidos em campos existentes nem alterar versões publicadas. Preservar a configuração, inclusive a ausência de máximo, na versão utilizada pelo preenchimento e pelo chamado. Campos diferentes podem usar a mesma fonte de cadastro com máximos diferentes.
+
+Quando houver máximo configurado, validar a quantidade no servidor e recusar seleções acima do limite com indicação do campo afetado, preservando os demais dados na página para correção. Não truncar seleções nem criar o chamado com somente parte dos registros. Com ou sem máximo funcional, validar cada registro quanto à existência, fonte, disponibilidade, situação ativa, acesso e ausência de duplicações.
+
+Manter os limites técnicos de requisição e processamento, ainda por detalhar. Esta decisão não transforma o setor básico em seleção múltipla, não define o limite dos itens do formulário próprio de transferência e não aplica às quantidades de registros o intervalo de caracteres da descrição associada. O intervalo permitido para máximos explícitos de itens permanece pendente.
+
+### Máximos explícitos de itens entre 1 e 100
+
+O autor escolheu a opção A: quando o administrador preencher “Máximo de itens” de uma lista baseada em cadastro com seleção múltipla, aceitar somente números inteiros de 1 a 100, inclusive. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+O valor limita a quantidade de registros distintos selecionados naquele campo; não exige selecionar essa quantidade nem limita o número de opções disponíveis no cadastro. Por exemplo, um máximo de 5 permite selecionar até cinco registros válidos. A obrigatoriedade de responder à pergunta continua sendo uma configuração separada.
+
+Validar a configuração no servidor antes da publicação. Zero, negativos, frações, valores não numéricos e valores acima de 100 impedem a publicação, com indicação da configuração a corrigir. Não arredondar, reduzir ou substituir valores silenciosamente. Preservar o máximo válido na versão publicada e validar o envio pela versão utilizada.
+
+Manter a possibilidade de publicar com o máximo em branco e o estado inicial em branco para novos campos. Nesse caso, não há máximo funcional configurado: não aplicar 100 automaticamente. Assim, 100 não é um teto universal de seleção nem uma definição do limite técnico da requisição.
+
+Se a quantidade enviada exceder o máximo configurado, recusar o envio com indicação do campo afetado e preservar os demais dados aplicáveis na página para correção, sem truncar a seleção ou criar chamado parcial. Continuar validando cada registro e a ausência de duplicações, independentemente do máximo.
+
+O intervalo é uma decisão de produto, sem teste de capacidade realizado nesta etapa. Compatibilizar limites técnicos com quantidade de campos, registros, metadados e anexos no contrato técnico. Esta escolha não altera a seleção única do setor básico nem define o limite dos itens do formulário próprio de transferência.
+
+### Identificação do computador pelo patrimônio na abertura do solicitante
+
+O autor autorizou substituir a seleção pública de computador por lista pela informação do patrimônio digitado pelo solicitante. A proposta de apresentar hostname em uma lista pública de computadores foi retirada deste fluxo. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Na abertura do solicitante, oferecer o campo para digitar o patrimônio do computador, preservando seu caráter opcional já definido. Não exigir que o solicitante procure ou selecione seu computador em uma lista do inventário. A mudança não altera as listas de computadores dos formulários internos, que permanecem disponíveis conforme suas configurações e permissões.
+
+Quando o patrimônio for informado, o sistema procura o computador cadastrado correspondente. Encontrando uma correspondência única válida, associar o chamado ao computador identificado. Preservar o patrimônio informado na abertura e a referência ao computador associado, sem depender de uma lista pública ou de uma seleção por hostname. Consultar o cadastro pelo serviço responsável, respeitando sua propriedade exclusiva; detalhar o contrato dessa busca antes da implementação.
+
+Se não encontrar um computador com o patrimônio informado, permitir registrar o chamado e apresentar ao técnico um aviso para alinhar com o solicitante se houve erro na informação ou falta de cadastro. Preservar o patrimônio informado para essa verificação. Não criar um computador automaticamente nem associar a outro por semelhança. O aviso não comprova erro do solicitante ou ausência real do equipamento. Sua dispensa e a forma de corrigir posteriormente o vínculo ainda precisam ser definidas.
+
+A busca não cria uma consulta pública ao inventário e não autoriza apresentar ao solicitante hostname, localização, histórico ou outros dados do registro encontrado. A associação identificada pelo sistema tampouco comprova a identidade do solicitante ou que ele utiliza aquele computador. Preservar as restrições de acesso público já aprovadas.
+
+Esta definição substitui as referências anteriores à seleção pública de computador por lista para identificar a máquina do solicitante. Não elimina listas públicas de outras fontes, como setores, nem altera os formulários internos. Manter a comparação informativa de setor na abertura quando houver computador associado, conforme as regras já aprovadas, sem confundir seu aviso de divergência com o aviso de patrimônio não localizado.
+
+Antes de concluir o contrato técnico, definir a comparação e normalização do patrimônio, a unicidade desse identificador, o tratamento de registros desativados, correspondências ambíguas e indisponibilidade da busca. Não tratar falha de consulta como resultado de computador não encontrado. Também definir o momento da busca, a apresentação concreta do aviso e a correção do vínculo pelo técnico. Não decidir esses casos por associação arbitrária, cadastro automático ou omissão silenciosa de falha.
+
+### Patrimônio único entre computadores
+
+O autor escolheu a opção A: impedir patrimônio repetido entre computadores, inclusive entre registros ativos e desativados. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Quando informado, o patrimônio precisa identificar um único registro no cadastro de computadores. Recusar criação ou alteração que repita um patrimônio existente, independentemente da situação ativa do registro. A desativação de um computador não libera seu patrimônio para atribuição a outro computador. Esta regra não define um procedimento de reutilização de plaquetas.
+
+Permitir vários computadores sem patrimônio informado não caracteriza duplicação: a unicidade se aplica ao identificador preenchido. Esta decisão não torna o patrimônio obrigatório no cadastro nem altera seu caráter opcional na abertura do solicitante. Não usar um valor fictício compartilhado para representar a ausência de patrimônio.
+
+Aplicar a mesma regra de comparação no cadastro e na busca usada na abertura. A normalização do identificador ainda precisa ser definida. Garantir a unicidade também diante de cadastros ou alterações concorrentes, no serviço proprietário dos computadores; detalhar sua implementação no contrato técnico.
+
+Regularizar eventuais patrimônios duplicados em dados existentes antes de habilitar a associação automática sobre esses dados. Não selecionar arbitrariamente um dos computadores, excluir registros ou fundir seus históricos como solução implícita. Se uma inconsistência produzir múltiplas correspondências apesar da regra, não associar automaticamente; definir o tratamento explícito dessa falha no contrato técnico.
+
+Preservar o patrimônio informado e a referência ao computador associado no chamado, conforme o fluxo aprovado. Encontrar um registro desativado não autoriza associá-lo automaticamente: esse comportamento permanece por definir. A unicidade aprovada se limita ao cadastro de computadores e não se estende automaticamente a outros tipos de ativos.
+
+### Computador desativado: abertura sem associação automática
+
+O autor escolheu a opção A: se o patrimônio informado corresponder a um computador desativado, registrar o chamado sem associação automática e avisar o técnico. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Permitir a abertura com o patrimônio informado. Não vincular automaticamente o chamado ao computador desativado, não reativar o registro e não criar outro computador. Preservar o identificador informado e o resultado da verificação na abertura para análise técnica, sem tratar esse resultado como computador não encontrado.
+
+Apresentar à equipe um aviso específico de que o patrimônio corresponde a um computador desativado, orientando verificar a situação com o solicitante. Não dar ao solicitante acesso aos dados internos do registro por causa dessa correspondência. A identificação apresentada ao técnico deve respeitar suas permissões de consulta.
+
+A unicidade do patrimônio permanece válida entre computadores ativos e desativados. A abertura sem vínculo não libera o identificador para outro registro e não altera o histórico do computador encontrado. Como não há computador associado automaticamente nesse caso, não produzir por esse fluxo um aviso de divergência de setor baseado em vínculo inexistente.
+
+A correção posterior da situação e do vínculo, suas permissões e a dispensa do aviso ainda precisam ser definidas. Não presumir que corrigir o cadastro associe chamados anteriores automaticamente ou elimine seus avisos. Indisponibilidade da consulta continua sendo um resultado distinto, ainda por detalhar.
+
+### Patrimônios numéricos comparados sem zeros à esquerda
+
+O autor escolheu a opção B: para patrimônios compostos somente por dígitos, ignorar zeros à esquerda na comparação. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Considerar “00123” e “123” o mesmo patrimônio na busca do computador e na verificação de unicidade do cadastro. Aplicar a mesma regra em criação e alteração de computadores, inclusive para registros desativados. Não permitir que computadores diferentes recebam identificadores que se tornem iguais após essa comparação.
+
+Preservar o patrimônio originalmente informado pelo solicitante, independentemente da representação usada para comparar. A equivalência não autoriza reescrever silenciosamente os dados históricos nem alterar a apresentação do patrimônio no cadastro. Definir a representação de comparação no serviço proprietário, sem depender apenas de tratamento no navegador.
+
+Antes de habilitar a regra sobre dados existentes, identificar e regularizar eventuais colisões, como computadores distintos cadastrados com “00123” e “123”. Não fundir registros, excluir histórico ou escolher arbitrariamente uma correspondência. Garantir a unicidade também em alterações concorrentes, conforme o contrato técnico a detalhar.
+
+A regra aprovada se limita a identificadores numéricos. Ela não autoriza remover letras, separadores ou espaços internos, nem converter texto alfanumérico em número. O tratamento desses formatos, de espaços nas extremidades e de identificadores compostos somente por zeros permanece por definir. Não transformar ausência de patrimônio em zero.
+
+Manter a distinção entre computador ativo encontrado, computador desativado encontrado, patrimônio não localizado e falha na consulta. A equivalência de zeros não modifica o fluxo aprovado para cada situação nem permite busca aproximada por outros critérios.
+
+### Patrimônio composto somente por dígitos
+
+O autor escolheu a opção A: quando preenchido, o patrimônio do computador aceita somente dígitos de 0 a 9. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Aplicar o formato à entrada do solicitante e ao cadastro de computadores. Letras, hífens e outros separadores não são aceitos como parte do identificador. Não remover esses caracteres silenciosamente para tentar encontrar uma correspondência. O tratamento de espaços nas extremidades permanece por definir; espaços internos não integram o formato numérico aprovado.
+
+Manter a comparação sem zeros à esquerda: “00123” e “123” correspondem ao mesmo patrimônio para busca e unicidade, inclusive entre computadores ativos e desativados. Preservar o valor originalmente informado no registro da abertura, conforme a regra já aprovada. Tratar o identificador como sequência de dígitos, sem pressupor uma conversão para tipo numérico de tamanho limitado.
+
+Validar o formato no navegador e no servidor. Se o valor informado tiver formato inválido, indicar o campo para correção e preservar os demais dados aplicáveis na página, sem criar um chamado parcial nem executar uma associação com identificador alterado. Distinguir erro de formato de patrimônio válido sem computador encontrado; neste segundo caso, permanece a abertura com aviso ao técnico já aprovada.
+
+A ausência de patrimônio continua permitida e não deve ser convertida em zero. O tratamento de valores compostos somente por zeros, o comprimento máximo e os espaços nas extremidades permanecem pendentes. Verificar os formatos existentes e regularizar eventuais incompatibilidades antes de aplicar a regra ao cadastro, sem excluir ou reescrever histórico automaticamente.
+
+### Patrimônio composto somente por zeros não é válido
+
+O autor escolheu a opção A: recusar patrimônios compostos somente por zeros. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Quando preenchido, o patrimônio deve conter somente dígitos de 0 a 9 e pelo menos um dígito de 1 a 9. Valores como “0”, “00” e “0000” são inválidos. Essa regra não impede zeros à esquerda de um valor válido: “00123” continua equivalente a “123” para busca e unicidade.
+
+Aplicar a validação no navegador e no servidor, tanto na abertura do solicitante quanto na criação ou alteração do cadastro de computadores. Informar que o patrimônio não pode ser composto somente por zeros. Na abertura, permitir corrigir o campo ou deixá-lo vazio, conforme seu caráter opcional, preservando os demais dados aplicáveis na página. Não converter o valor inválido em ausência silenciosamente.
+
+Não executar associação automática com um patrimônio inválido nem tratá-lo como uma busca concluída sem computador encontrado. A abertura com aviso de patrimônio não localizado continua reservada ao identificador válido que não tenha correspondência no cadastro.
+
+Verificar e regularizar eventuais valores compostos somente por zeros nos dados existentes antes de aplicar a restrição ao cadastro. Não usar zero como marcador de patrimônio desconhecido, não excluir computadores ou histórico automaticamente e não atribuir identificadores fictícios por esta decisão. Comprimento máximo e tratamento dos espaços nas extremidades continuam pendentes.
+
+### Desconsiderar espaços nas extremidades do patrimônio
+
+O autor escolheu a opção A: desconsiderar espaços antes e depois do patrimônio na validação e na comparação. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Retirar os espaços das extremidades da representação usada para validar, buscar e verificar a unicidade do patrimônio. Depois, aplicar o formato somente de dígitos, a exigência de pelo menos um dígito diferente de zero e a comparação sem zeros à esquerda. Por exemplo, “ 00123 ” corresponde ao mesmo identificador que “123”.
+
+Não remover espaços entre dígitos, letras ou separadores: “00 123” continua inválido, assim como identificadores com hífens ou letras. Uma entrada composta somente por espaços representa ausência de patrimônio, permitida pelo caráter opcional do campo; não convertê-la em zero nem executar busca por identificador vazio.
+
+Aplicar a mesma regra ao cadastro de computadores e à abertura do solicitante, no navegador e no servidor, mantendo a validação autoritativa no serviço proprietário. Detalhar no contrato técnico o conjunto de caracteres de espaço desconsiderados para evitar diferenças entre as implementações.
+
+Preservar o valor originalmente informado na abertura, conforme a decisão já aprovada, distinguindo-o da representação utilizada para comparação. A regra não autoriza reescrever dados históricos automaticamente. O comprimento máximo do identificador permanece pendente, assim como os demais contratos de busca e de correção posterior do vínculo.
+
+### Patrimônio com até 20 dígitos
+
+O autor escolheu a opção A: limitar o patrimônio preenchido a 20 dígitos. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Aplicar o limite na abertura do solicitante e no cadastro de computadores. Desconsiderar espaços nas extremidades e contar todos os dígitos restantes, inclusive zeros à esquerda, antes de remover zeros para comparação. Um identificador com mais de vinte dígitos é inválido mesmo que a remoção dos zeros à esquerda produza uma representação menor.
+
+Manter as regras aprovadas: somente dígitos de 0 a 9, pelo menos um dígito diferente de zero e equivalência de zeros à esquerda para busca e unicidade. Patrimônio vazio continua permitido. O limite não estabelece uma quantidade mínima de vinte dígitos nem exige completar valores menores com zeros.
+
+Validar no navegador e no servidor. Se o comprimento exceder o limite, indicar o campo para correção e preservar os demais dados aplicáveis na página. Não cortar dígitos, transformar a entrada em ausência ou buscar por apenas parte do identificador. Formato ou comprimento inválido não equivale a patrimônio válido sem computador encontrado.
+
+Tratar o patrimônio como texto de dígitos, sem depender da capacidade de um inteiro de tamanho limitado. Preservar o valor originalmente informado na abertura conforme a regra aprovada, distinguindo-o da representação usada para comparação. Verificar eventuais identificadores existentes com mais de vinte dígitos antes de aplicar a restrição ao cadastro, sem reescrever ou excluir registros históricos automaticamente.
+
+O limite foi escolhido pelo autor, sem levantamento dos comprimentos existentes nesta etapa. Permanecem pendentes o momento e o contrato da busca, o tratamento de sua indisponibilidade, a correção posterior do vínculo e a dispensa dos avisos ao técnico.
+
+### Busca do computador durante o envio da abertura
+
+O autor escolheu a opção A: buscar o computador pelo patrimônio durante o processamento do envio do formulário. O autor aprovou esta subseção e autorizou continuar o detalhamento. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Depois de validar o patrimônio informado, consultar o cadastro pelo serviço responsável antes de concluir o registro inicial do chamado. Patrimônio vazio não gera consulta. A busca não exige que o solicitante selecione um computador e não expõe os dados internos encontrados.
+
+Quando a consulta for concluída com correspondência única de computador ativo, registrar o chamado com essa associação. Quando não houver correspondência, registrar o chamado sem vínculo e com o aviso de patrimônio não localizado. Quando a correspondência for um computador desativado, registrar sem associação automática e com o aviso específico já aprovado. Preservar o patrimônio informado e o resultado da verificação.
+
+Para computador associado, realizar a comparação informativa de setor na abertura conforme a regra já aprovada, sem criar verificações posteriores automáticas por esta decisão. Nos casos sem associação, não produzir aviso de divergência de setor baseado em vínculo inexistente. Distinguir esse aviso dos resultados da busca por patrimônio.
+
+A consulta acrescenta tempo ao processamento do envio. Definir seu prazo e o tratamento de erro ou indisponibilidade antes de concluir o contrato técnico. A escolha de buscar durante o envio não decide se uma falha deve impedir o registro ou permitir abertura com pendência explícita; não presumir nenhuma dessas alternativas e não tratar erro como computador não encontrado.
+
+Confirmar a abertura ao solicitante somente após o registro efetivo, sem divulgar dados internos do computador. Detalhar a coordenação entre consulta, mudanças concorrentes no cadastro e registro do chamado, assim como a prevenção de duplicidade em novas tentativas do mesmo envio. Não apresentar sucesso de abertura se o registro falhar.
+
+### Falha na consulta: abertura com identificação pendente e definição manual
+
+O autor escolheu a opção B e definiu que, se a consulta falhar, o técnico pode definir a máquina manualmente. O autor aprovou esta subseção e solicitou salvar e enviar a documentação ao GitHub para encerrar a sessão. Não há aprovação do plano técnico completo nem autorização de implementação.
+
+Tentar buscar o computador durante o envio, conforme a regra aprovada. Se a consulta de um patrimônio válido falhar ou exceder o prazo, permitir registrar o chamado sem computador associado e com identificação pendente. Preservar o patrimônio originalmente informado e o resultado de falha. Confirmar a abertura somente após o registro efetivo do chamado.
+
+Apresentar à equipe indicação de que não foi possível concluir a consulta, distinta dos avisos de patrimônio não localizado e computador desativado. Não afirmar que o computador está ausente do cadastro. O solicitante não recebe acesso aos dados internos como consequência desse tratamento.
+
+Disponibilizar ao técnico a definição manual do computador no chamado, usando um registro existente do cadastro interno. Essa definição deve associar explicitamente o chamado ao computador escolhido, sem exigir um novo envio do solicitante ou criar uma máquina automaticamente. Preservar o patrimônio originalmente informado mesmo quando o computador definido pelo técnico tiver outro patrimônio.
+
+Registrar a autoria e o instante da definição manual, preservando o resultado da tentativa inicial para rastreabilidade. Validar no servidor o acesso ao chamado e ao registro escolhido. A permissão concreta para alterar o vínculo, a exigência de participação no chamado, a aceitação de computadores desativados e eventual justificativa para divergência de patrimônio ainda precisam ser definidas.
+
+A definição manual é o caminho de recuperação explicitamente autorizado para esta falha. Esta escolha não aprova tentativas automáticas posteriores nem permite sobrescrever uma definição manual por um resultado tardio da consulta inicial. Detalhar a coordenação entre consulta, registro e edição concorrente no contrato técnico.
+
+Não realizar comparação posterior de setor automaticamente por consequência da associação manual. Preservar a regra aprovada de comparação somente na abertura; qualquer ampliação precisa de decisão própria. A apresentação da identificação pendente após a definição manual e a dispensa do aviso ainda precisam ser definidas, sem apagar o histórico da falha.
+
+Definir também o prazo da consulta e a prevenção de chamados duplicados em novas tentativas do mesmo envio. Não confundir falha de consulta com falha ao gravar o chamado: se o registro não for concluído, não apresentar abertura bem-sucedida.
+
+## Continuidade após esta sessão — 2026-11-13
+
+O autor aprovou as subseções discutidas nesta sessão e solicitou enviar a documentação ao GitHub e encerrar. O plano técnico completo ainda não foi aprovado; não há autorização de implementação. Retomar com `egm-draft`, preservando as decisões abaixo e as aprovações anteriores.
+
+### Decisões aprovadas nesta sessão
+
+- Perguntas seguintes dependem de opções fixas ou de registros selecionados em listas baseadas em cadastros, nunca de texto livre ou valores digitados. Permitir operadores positivos e negativos; uma pergunta sem resposta não satisfaz comparação alguma. Condições só podem referenciar perguntas anteriores. Preservar as combinações por “todas” ou “qualquer uma”.
+- Permitir desativar registros usados em condições, avisando o administrador sobre as condições afetadas e sem alterar regras ou desativar formulários automaticamente.
+- “Prefiro descrever o problema” é exclusiva em seleção múltipla e exige uma descrição associada, sem novas perguntas derivadas dela. O máximo de caracteres é configurável por pergunta, opcional e inicialmente em branco. Quando preenchido, aceitar de 1 a 10.000. Contar caracteres percebidos pelo usuário, por grafemas Unicode.
+- Regras de categoria sugerida têm prioridade explícita definida pelo administrador, sem empates. A regra aplicável de maior prioridade prevalece; todos os caminhos de conclusão continuam precisando de categoria. O técnico confirma ou altera a categoria efetiva.
+- Novas listas de cadastros com seleção múltipla começam com máximo de itens em branco. Quando preenchido, aceitar inteiros de 1 a 100. Ausência de máximo não aplica esses tetos automaticamente nem representa capacidade ilimitada.
+- Na abertura do solicitante, substituir a lista de computadores pelo patrimônio digitado, ainda opcional. Buscar durante o envio. Associar somente a correspondência única de computador ativo. Se não encontrado ou se desativado, abrir sem associação e apresentar o aviso específico ao técnico. As listas internas permanecem disponíveis conforme configuração e permissões.
+- Patrimônio preenchido aceita até 20 dígitos de 0 a 9 e precisa conter ao menos um dígito diferente de zero. Desconsiderar espaços nas extremidades e zeros à esquerda para comparação; espaços internos são inválidos. Contar todos os dígitos, inclusive zeros à esquerda, para o limite de comprimento. Exigir unicidade entre computadores ativos e desativados, preservando o valor informado na abertura.
+- Se a consulta falhar, registrar o chamado com identificação pendente, distinguindo a falha de patrimônio não localizado. O técnico pode associar manualmente um computador cadastrado. Preservar a tentativa inicial, o patrimônio informado, a autoria e o instante da definição manual. Não aprovar recuperação automática nem comparação posterior de setor implicitamente.
+
+### Próximo ponto de retomada
+
+Detalhar as permissões da associação manual do computador após falha da busca: quem pode fazê-la, necessidade de participação no chamado, registros elegíveis e tratamento do aviso depois da associação. Também definir correção de patrimônio e vínculo nos casos de computador não localizado ou desativado, sem reabrir decisões já aprovadas.
+
+Permanecem os contratos técnicos explicitamente registrados, incluindo prazo de consulta, concorrência, prevenção de duplicidade, comunicação entre serviços, limites de requisições, regras compatíveis de contagem e configuração concreta dos campos dos cadastros. Algumas subseções anteriores registram pendências históricas respondidas nas subseções posteriores; prevalecem as decisões posteriores aprovadas.
+
+O desenho de transferências e os demais blocos técnicos anteriores mantêm suas próprias pendências. Alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. As decisões posteriores ao brief deverão ser reconciliadas na finalização, sem tratar sua ausência no brief como descarte. O documento continua sendo um rascunho em construção, não um desenho finalizado.
+
 ## Referências
 
 - [Brief funcional e decisões atualizadas](./concepts_brief.md).
