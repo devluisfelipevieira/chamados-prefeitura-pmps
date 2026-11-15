@@ -1663,6 +1663,304 @@ Permanecem os contratos técnicos explicitamente registrados, incluindo prazo de
 
 O desenho de transferências e os demais blocos técnicos anteriores mantêm suas próprias pendências. Alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. As decisões posteriores ao brief deverão ser reconciliadas na finalização, sem tratar sua ausência no brief como descarte. O documento continua sendo um rascunho em construção, não um desenho finalizado.
 
+## Continuidade do detalhamento — 2026-11-14
+
+### Permissão para associação manual após falha da consulta
+
+O autor escolheu a opção A: qualquer técnico com acesso ao chamado pode associar manualmente um computador após falha da consulta por patrimônio. Não exigir participação no atendimento nem permissão específica por grupo para essa ação. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Validar no servidor que o técnico está autenticado, com conta ativa e acesso ao chamado e ao computador escolhido. A dispensa de participação e de permissão específica não amplia o acesso a chamados ou registros internos que ele não possa consultar. A associação usa um computador já cadastrado, sem criar um registro automaticamente.
+
+Preservar o patrimônio originalmente informado e o resultado da consulta inicial. Registrar a autoria e o instante da associação manual, conforme a regra já aprovada. Um resultado tardio da consulta inicial não pode sobrescrever essa escolha.
+
+Essa permissão permite que um técnico que não participa do atendimento altere o vínculo; o registro de autoria permite identificar quem realizou a ação, mas não impede uma seleção equivocada. O tratamento de alterações concorrentes e de correções posteriores do vínculo continua pendente.
+
+A elegibilidade de computadores desativados, eventual justificativa para patrimônio divergente e o tratamento do aviso após a associação ainda precisam de decisão. Esta escolha se limita à recuperação após falha da consulta; não estende automaticamente a mesma regra aos casos de patrimônio não localizado ou computador desativado.
+
+A elegibilidade dos computadores é detalhada na subseção seguinte. Permanecem pendentes a justificativa para patrimônio divergente e o tratamento do aviso após a associação.
+
+### Associação manual após falha da consulta: somente computadores ativos
+
+O autor escolheu a opção A: permitir somente computadores ativos na associação manual após falha da consulta por patrimônio. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Apresentar para seleção apenas computadores ativos aos quais o técnico tenha acesso. Validar novamente no servidor a situação do computador ao efetivar a associação. Se ele tiver sido desativado durante a seleção, recusar a associação e informar ao técnico que deve escolher outro registro ativo, preservando o vínculo e os demais dados existentes do chamado.
+
+Se o equipamento pretendido estiver desativado, sua associação depende de reativação prévia no cadastro pelo fluxo e pelas permissões próprios desse cadastro. A permissão de associar computadores ao chamado não concede permissão de reativação, e a tentativa de associação não reativa o computador automaticamente.
+
+Preservar o patrimônio informado na abertura, o resultado da falha inicial e o registro de autoria e instante da associação. A restrição a ativos vale para novas associações nesse fluxo; não autoriza remover vínculos históricos quando um computador for desativado posteriormente.
+
+Essa regra pode exigir regularizar o cadastro antes de identificar o computador no chamado. Enquanto não houver associação válida, manter a identificação pendente. A apresentação do aviso depois de uma associação bem-sucedida e eventual justificativa para patrimônio divergente continuam por definir. A decisão não define o fluxo de correção dos casos de patrimônio não localizado ou computador desativado na consulta inicial.
+
+### Associação manual com patrimônio divergente: sem justificativa obrigatória
+
+O autor escolheu a opção A: não exigir justificativa quando o técnico associar manualmente, após falha da consulta, um computador cujo patrimônio seja diferente daquele informado na abertura. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Permitir a associação sem preenchimento de motivo, mantendo as regras aprovadas de acesso ao chamado e ao computador e de seleção somente de computadores ativos. A divergência de patrimônio não impede, por si só, essa associação.
+
+Preservar o patrimônio originalmente informado na abertura, o computador escolhido, a autoria e o instante da associação, além do resultado da consulta inicial. Não substituir o valor informado pelo solicitante pelo patrimônio do computador selecionado. A comparação de patrimônios segue a normalização já aprovada: desconsiderar espaços nas extremidades e zeros à esquerda, de modo que “00123” e “123” sejam equivalentes.
+
+O histórico permite identificar quem definiu o vínculo e quando, mas não exige registrar por que o patrimônio era diferente. A escolha reduz o preenchimento necessário para corrigir a identificação e mantém essa limitação de explicação. Não altera o cadastro do computador nem define o tratamento do aviso após a associação, que continua pendente.
+
+### Associação manual concluída: encerramento automático do aviso de identificação pendente
+
+O autor escolheu a opção A: encerrar automaticamente o aviso de identificação pendente quando a associação manual do computador, após falha da consulta por patrimônio, for concluída com sucesso. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Após efetivar o vínculo com um computador ativo e validar os acessos conforme as regras aprovadas, deixar de apresentar a identificação como pendente e encerrar seu aviso, sem exigir a ação “Já verificado”. A seleção de um computador na tela, antes de salvar, não encerra o aviso. Se a associação for recusada ou não for gravada, manter a identificação pendente e o aviso.
+
+Preservar no histórico o resultado da falha inicial, o patrimônio originalmente informado, o computador associado, a autoria e o instante da associação. Encerrar o aviso não apaga essa evidência nem transforma a tentativa inicial em consulta bem-sucedida. A associação manual passa a explicar como a identificação foi resolvida.
+
+O encerramento é consequência da associação efetiva e não exige reconhecimento separado do aviso pelo técnico. A regra se limita ao aviso de identificação pendente decorrente de falha da consulta; não dispensa avisos de divergência de setor nem decide o tratamento dos casos de patrimônio não localizado ou computador desativado na consulta inicial. Não realizar nova comparação de setor por consequência da associação manual.
+
+### Patrimônio não localizado: associação manual de computador ativo
+
+O autor escolheu a opção A: quando a consulta inicial for concluída sem encontrar o patrimônio informado, permitir ao técnico selecionar manualmente um computador ativo, seguindo as mesmas regras aprovadas para associação após falha da consulta. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Qualquer técnico autenticado, com conta ativa e acesso ao chamado e ao computador escolhido, pode realizar a associação, sem exigir participação no atendimento ou permissão específica por grupo. Apresentar somente computadores ativos e validar novamente no servidor os acessos e a situação do registro ao efetivar o vínculo. Se a associação não for gravada, preservar o estado anterior e o aviso de patrimônio não localizado.
+
+Permitir escolher um computador cujo patrimônio seja diferente do informado pelo solicitante, sem justificativa obrigatória. Não exigir um patrimônio corrigido ou uma nova consulta pelo identificador como condição para a seleção manual. Preservar o patrimônio originalmente informado e o resultado inicial de patrimônio não localizado; registrar o computador escolhido, a autoria e o instante da associação. Não criar um computador nem alterar seu cadastro automaticamente.
+
+Após gravar a associação com sucesso, encerrar automaticamente o aviso de patrimônio não localizado, sem exigir “Já verificado”. Preservar a evidência da consulta inicial no histórico, sem apresentá-la como uma correspondência encontrada posteriormente. Não realizar nova comparação de setor por consequência da associação manual.
+
+Esse caminho permite resolver um erro de digitação por seleção do cadastro correto, mas o histórico não exige explicar a diferença entre os patrimônios. Se o computador ainda não estiver cadastrado ou estiver desativado, será necessário regularizar o cadastro pelo fluxo e pelas permissões próprios antes de selecioná-lo. Esta decisão não define o tratamento do caso em que a consulta inicial encontra um computador desativado, nem as regras de substituição de um vínculo já existente.
+
+### Computador desativado encontrado: associação manual de computador ativo
+
+O autor escolheu a opção A: quando o patrimônio informado corresponder a um computador desativado na consulta inicial, permitir selecionar manualmente qualquer computador ativo ao qual o técnico tenha acesso, seguindo as mesmas regras aprovadas para falha da consulta e patrimônio não localizado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Qualquer técnico autenticado, com conta ativa e acesso ao chamado e ao computador escolhido, pode realizar a associação, sem exigir participação no atendimento ou permissão específica por grupo. Apresentar somente computadores ativos e validar novamente no servidor os acessos e a situação do registro ao efetivar o vínculo. A correspondência inicial com um registro desativado não restringe a escolha a esse registro.
+
+Permitir selecionar um computador com patrimônio diferente do informado na abertura, sem justificativa obrigatória. Preservar o patrimônio originalmente informado e o resultado inicial de correspondência com computador desativado; registrar o computador associado, a autoria e o instante da associação. A escolha não altera o cadastro nem reativa o computador encontrado. Se o técnico pretender associar esse mesmo computador, ele deverá estar ativo antes da associação, após reativação pelo fluxo e pelas permissões próprios do cadastro.
+
+Encerrar automaticamente o aviso de computador desativado encontrado somente após gravar a associação com sucesso, sem exigir “Já verificado”. Se a associação for recusada ou não for gravada, preservar o estado anterior e o aviso. Manter a evidência da consulta inicial no histórico; encerrar o aviso não altera o resultado daquela consulta nem comprova que o cadastro desativado foi regularizado.
+
+Não realizar nova comparação de setor por consequência da associação manual. A seleção de outro registro pode corrigir um patrimônio informado por engano, mas o histórico não exige explicar a diferença. Esta decisão trata da identificação inicial sem vínculo; as regras de correção ou substituição de um vínculo já existente permanecem pendentes.
+
+### Permissão para substituir o computador associado ao chamado
+
+O autor escolheu a opção A: qualquer técnico com acesso ao chamado pode substituir o computador já associado quando o vínculo estiver errado, sem exigir participação no atendimento ou permissão específica por grupo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Validar no servidor que o técnico está autenticado, com conta ativa e acesso ao chamado e ao novo computador escolhido. A permissão para corrigir o vínculo não amplia o acesso a registros internos nem concede permissão para alterar o cadastro do computador.
+
+Registrar no histórico o vínculo anterior, o novo vínculo, a autoria e o instante da troca. Preservar também o patrimônio originalmente informado na abertura e o resultado da consulta inicial. A correção não pode apagar a evidência de associações anteriores.
+
+Essa permissão permite correções por técnicos que não participam do atendimento, mas também permite que eles alterem uma identificação definida por outro técnico. O histórico identifica a troca; não impede uma escolha equivocada. O tratamento de alterações concorrentes continua pendente.
+
+Esta decisão define quem pode substituir o vínculo. A elegibilidade do computador substituto, eventual justificativa, a possibilidade de remover o vínculo sem substituição e o tratamento de registros técnicos já ligados ao computador anterior ainda precisam ser definidos. Não transferir automaticamente intervenções, materiais ou histórico técnico entre computadores por consequência desta decisão.
+
+### Substituição do vínculo: somente computadores ativos
+
+O autor escolheu a opção A: na substituição de um vínculo incorreto, permitir selecionar somente computadores ativos. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Apresentar para seleção somente computadores ativos aos quais o técnico tenha acesso. Validar novamente no servidor o acesso ao chamado, o acesso ao computador escolhido e sua situação ativa ao efetivar a troca. Se o novo computador tiver sido desativado durante a seleção, recusar a substituição e preservar o vínculo atual e os demais dados do chamado.
+
+Se o computador correto estiver desativado, exigir sua reativação prévia pelo fluxo e pelas permissões próprios do cadastro antes de permitir selecioná-lo como substituto. A permissão de substituir o vínculo não concede permissão de reativação, e a troca não reativa registros automaticamente.
+
+A restrição se aplica ao novo computador escolhido. Ela não remove um vínculo existente por desativação posterior do computador nem exige reativar o computador atualmente associado para substituí-lo por um registro ativo. Preservar o vínculo anterior, o novo, a autoria e o instante da troca no histórico, conforme a regra aprovada.
+
+Essa regra pode impedir a correção imediata de um atendimento antigo cujo computador correto esteja desativado, até regularização do cadastro. Eventual justificativa para a troca, remoção do vínculo sem substituição, concorrência e tratamento dos registros técnicos ligados ao computador anterior continuam pendentes.
+
+### Substituição do vínculo: sem justificativa obrigatória
+
+O autor escolheu a opção A: não exigir justificativa para substituir um computador já associado ao chamado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Permitir a troca sem preenchimento de motivo, respeitando as permissões já aprovadas: qualquer técnico autenticado, com conta ativa e acesso ao chamado e ao computador substituto, pode realizar a alteração, sem exigir participação no atendimento ou permissão específica por grupo. O novo computador deve estar ativo, com validação no servidor ao efetivar a troca.
+
+Registrar no histórico os vínculos anterior e novo, a autoria e o instante da substituição. Preservar o patrimônio originalmente informado na abertura, o resultado da consulta inicial e as associações anteriores. A ausência de justificativa obrigatória não autoriza apagar ou reescrever esses registros.
+
+A troca pode ser realizada sem explicar seu motivo, inclusive quando o patrimônio do novo computador for diferente do informado na abertura. Isso reduz o preenchimento necessário para corrigir um vínculo, mas o histórico de autoria e data, por si só, não explica por que a identificação foi alterada.
+
+Esta decisão não resolve a remoção do vínculo sem substituição, as alterações concorrentes nem o tratamento de intervenções, materiais e demais registros técnicos ligados ao computador anterior. Não transferir esses registros automaticamente por consequência desta escolha.
+
+### Remoção de vínculo incorreto sem substituição
+
+O autor escolheu a opção A: permitir remover um vínculo incorreto sem selecionar outro computador. Após a remoção efetiva, o chamado fica sem computador associado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não exigir que o computador correto seja conhecido ou esteja disponível para seleção como condição para retirar uma associação indevida. Preservar o vínculo anterior no histórico; a remoção não apaga o computador do cadastro nem elimina a evidência de que ele esteve associado ao chamado. Preservar também o patrimônio originalmente informado na abertura e o resultado da consulta inicial.
+
+Essa possibilidade permite retirar uma identificação sabidamente incorreta, mas pode deixar o chamado sem identificação do equipamento. A permissão concreta para remover o vínculo, eventual justificativa e a apresentação desse estado ainda precisam ser definidas; não presumir que a ausência de vínculo seja uma nova falha de consulta nem reabrir automaticamente avisos anteriores por esta decisão.
+
+O tratamento de alterações concorrentes e de intervenções, materiais e demais registros técnicos ligados ao computador anterior permanece pendente. Esta escolha não autoriza excluir, desvincular ou transferir esses registros automaticamente.
+
+### Permissão para remover o vínculo sem substituição
+
+O autor escolheu a opção A: qualquer técnico com acesso ao chamado pode remover o vínculo com o computador sem selecionar um substituto. Não exigir participação no atendimento nem permissão específica por grupo para essa ação. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Validar no servidor que o técnico está autenticado, com conta ativa e acesso ao chamado ao efetivar a remoção. Essa permissão não concede acesso adicional ao cadastro do computador nem permite alterá-lo ou excluí-lo.
+
+Após gravar a remoção, deixar o chamado sem computador associado e registrar no histórico o vínculo anterior, a autoria e o instante da remoção. Preservar o patrimônio originalmente informado, o resultado da consulta inicial e o histórico das associações anteriores. Se a remoção não for gravada, manter o vínculo existente.
+
+A regra permite retirar uma identificação incorreta mesmo por um técnico que não participa do atendimento, mas também permite que ele deixe o chamado sem computador definido. A exigência ou dispensa de justificativa, a apresentação desse estado e o tratamento de alterações concorrentes permanecem pendentes, assim como o destino dos registros técnicos ligados ao computador anterior. Não excluir ou transferir esses registros automaticamente por consequência desta permissão.
+
+### Remoção do vínculo: sem justificativa obrigatória
+
+O autor escolheu a opção A: não exigir justificativa para remover o vínculo com o computador sem selecionar um substituto. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Permitir a remoção sem preenchimento de motivo por qualquer técnico autenticado, com conta ativa e acesso ao chamado, sem exigir participação no atendimento ou permissão específica por grupo. Validar essas condições no servidor ao efetivar a ação, conforme a permissão já aprovada.
+
+Após gravar a remoção, manter o chamado sem computador associado e registrar o vínculo removido, a autoria e o instante da ação no histórico. Preservar o patrimônio originalmente informado na abertura, o resultado da consulta inicial e as associações anteriores. Se a remoção não for gravada, manter o vínculo existente.
+
+A dispensa de justificativa reduz o preenchimento necessário para retirar uma identificação incorreta, mas o histórico não exige explicar por que o chamado ficou sem computador. Essa decisão não define a apresentação desse estado nem reabre automaticamente avisos anteriores. O tratamento de concorrência e dos registros técnicos ligados ao computador anterior continua pendente, sem autorizar sua exclusão ou transferência automática.
+
+### Apresentação após remoção do vínculo: sem computador associado
+
+O autor escolheu a opção A: após remover o vínculo sem selecionar um substituto, mostrar apenas “Sem computador associado”, sem criar um novo aviso de identificação pendente. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Apresentar esse estado somente após gravar a remoção com sucesso. Se a operação não for gravada, preservar o vínculo existente. A ausência de computador associado não constitui, por si só, uma nova pendência, pois o chamado pode não envolver um computador.
+
+Não reabrir os avisos antigos de falha da consulta, patrimônio não localizado ou computador desativado como consequência da remoção. Preservar os resultados originais no histórico, junto ao patrimônio informado na abertura, ao vínculo removido, à autoria e ao instante da ação. A indicação do estado atual não substitui nem apaga esses registros.
+
+Essa apresentação informa que o chamado está sem computador associado, mas não destaca como pendente uma identificação que ainda possa estar incompleta. Não altera outros avisos do chamado por consequência desta decisão. O tratamento de alterações concorrentes e dos registros técnicos ligados ao computador anterior continua pendente.
+
+### Uso de materiais registrado no chamado, sem distribuição por computador
+
+O autor definiu que o uso de um material deve estar ligado ao chamado, para registrar quando o item foi utilizado. O sistema não precisa controlar diretamente em qual computador cada peça foi usada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Quando um atendimento envolver mais de um computador, o técnico pode descrever em texto quais peças foram utilizadas em quais equipamentos. Essa descrição não constitui uma distribuição estruturada de materiais por computador e não exige que o sistema interprete o texto para criar vínculos individuais.
+
+Corrigir ou remover o vínculo do chamado com um computador não transfere o uso de materiais entre equipamentos: o registro de uso permanece ligado ao chamado. Não exigir regularização de associações entre material e computador para permitir essa correção, pois esse controle individual não faz parte da regra definida pelo autor. Preservar os registros de uso e as regras já aprovadas de estoque, movimentação e integração com SupriTI.
+
+O sistema não poderá deduzir automaticamente dessa descrição quais peças foram aplicadas em cada computador. A definição se limita aos materiais; não decide se intervenções terão vínculo próprio com equipamento. A menção a atendimentos com mais de um computador também não define, por si só, a quantidade de vínculos estruturados de computadores por chamado, que deverá ser esclarecida separadamente.
+
+### Vários computadores vinculados ao mesmo chamado
+
+O autor escolheu a opção A: permitir vincular vários computadores ao mesmo chamado. A equipe técnica pode adicionar os equipamentos envolvidos, permitindo localizar o atendimento pelo histórico de cada computador vinculado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Manter um único chamado para o atendimento, com seus computadores relacionados. A presença de vários vínculos não cria chamados separados nem distribui automaticamente intervenções ou materiais entre equipamentos. O uso de materiais continua registrado no chamado; o técnico pode descrever quais peças foram utilizadas em quais computadores, sem controle estruturado dessa distribuição.
+
+A abertura pública permanece com o campo opcional de patrimônio já aprovado. Quando houver correspondência válida, a associação inicial integra os computadores do chamado. Esta escolha não acrescenta seleção pública de vários computadores nem altera as regras da consulta inicial. A equipe pode acrescentar os demais computadores pelo painel técnico.
+
+Aplicar às inclusões pela equipe as regras já aprovadas de associação manual: técnico autenticado e ativo, com acesso ao chamado e ao computador, sem exigir participação ou permissão específica por grupo; selecionar somente computadores ativos e validar no servidor ao efetivar o vínculo. Não exigir justificativa por patrimônio diferente do informado na abertura. Preservar o valor original e o resultado da consulta inicial.
+
+Interpretar a substituição e a remoção já aprovadas como operações sobre um vínculo individual, preservando os demais computadores associados. Registrar inclusões, substituições e remoções com autoria e instante; nas substituições e remoções, preservar também o vínculo anterior no histórico. Mostrar “Sem computador associado” quando não restar nenhum vínculo, sem criar pendência por essa ausência nem reabrir avisos antigos. Manter as regras de encerramento dos avisos de identificação após associação manual bem-sucedida.
+
+A consulta ao histórico de cada computador deve permitir localizar o chamado enquanto ele estiver vinculado, respeitando os acessos. O tratamento da apresentação histórica depois da remoção ou substituição de um vínculo, a relação das intervenções com os equipamentos, os limites de quantidade e as alterações concorrentes ainda precisam ser detalhados. A preservação da auditoria das alterações permanece obrigatória.
+
+### Intervenções registradas no chamado, sem distribuição por computador
+
+O autor escolheu a opção A: as intervenções, que registram o trabalho realizado, ficam ligadas apenas ao chamado. Os detalhes do trabalho em cada computador podem ser descritos em texto, sem seleção de equipamentos em cada intervenção. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Em atendimentos com vários computadores vinculados, não exigir nem manter distribuição estruturada das intervenções entre equipamentos. O sistema não interpreta a descrição para deduzir quais atividades foram realizadas em cada computador. O histórico de um computador permite localizar os chamados a ele vinculados, mas não comprova que todas as intervenções do atendimento foram realizadas naquele equipamento.
+
+Adicionar, substituir ou remover computadores do chamado não move nem exclui intervenções: elas permanecem no chamado, com sua autoria e seus registros históricos conforme as regras de atendimento. Não bloquear a correção de vínculos para exigir regularização de associações entre intervenção e computador, pois essas associações individuais não fazem parte do modelo escolhido.
+
+Essa regra segue o registro de materiais já aprovado e reduz o preenchimento por equipamento. Como consequência, uma consulta estruturada não distingue o trabalho executado em cada computador; essa informação depende do texto registrado pela equipe. Permanecem pendentes a apresentação do histórico dos computadores após remoção ou substituição de vínculos, os limites de quantidade de computadores e o tratamento de alterações concorrentes.
+
+### Histórico do computador após remoção ou substituição do vínculo
+
+O autor escolheu a opção A: depois de remover ou substituir o vínculo de um computador, retirar o chamado da lista de atendimentos desse equipamento e preservar a alteração somente na auditoria do chamado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+A lista de atendimentos de cada computador considera os vínculos atuais dos chamados. Após gravar a remoção ou substituição, não apresentar o chamado nessa lista do computador anterior com marcação de vínculo removido. Preservar os demais computadores vinculados ao chamado; em uma substituição, o chamado passa a ser localizável pela lista do novo computador.
+
+Manter no histórico do chamado o computador anteriormente vinculado, o novo quando houver substituição, a autoria e o instante da alteração. Não excluir essa auditoria, o patrimônio originalmente informado ou o resultado da consulta inicial. Intervenções e uso de materiais permanecem no chamado, conforme as regras aprovadas.
+
+Essa apresentação evita tratar uma associação corrigida como evidência de atendimento do computador anterior. Como consequência, quem consultar apenas a lista de atendimentos desse equipamento não encontrará o chamado pelo vínculo removido; a consulta à alteração exige acessar o histórico do chamado, respeitando as permissões existentes. Se a alteração não for gravada, preservar o vínculo e sua apresentação anteriores.
+
+### Alterações concorrentes: exigir lista atualizada de computadores
+
+O autor escolheu a opção A: se a lista de computadores vinculados mudar depois de ser carregada pelo técnico, recusar uma nova alteração baseada naquela lista antiga e exigir atualização antes de tentar novamente. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Controlar no servidor uma revisão da lista de vínculos de cada chamado. A solicitação de inclusão, substituição ou remoção informa a revisão que o técnico consultou. Ao gravar, verificar essa revisão e efetivar a alteração e o avanço da revisão de forma atômica. Não permitir que duas alterações baseadas na mesma revisão sejam ambas aceitas.
+
+Se dois técnicos enviarem alterações sobre a mesma revisão, a primeira alteração válida efetivada prevalece. Recusar a segunda sem alterar vínculos, encerrar avisos ou registrar a operação como realizada. Informar que a lista mudou e apresentar sua versão atual para revisão antes de um novo envio. Não reaplicar automaticamente a intenção anterior, mesmo que ela envolva outro computador.
+
+Depois da atualização, revalidar os acessos e a situação ativa dos computadores selecionados conforme as regras aprovadas. A verificação de revisão não substitui essas validações. Alterações em materiais ou intervenções, por si só, não modificam a revisão da lista de computadores; seus controles de concorrência seguem os contratos próprios.
+
+Essa regra evita combinar silenciosamente decisões baseadas em listas diferentes, mas exige nova revisão mesmo quando as alterações poderiam coexistir. O contrato técnico ainda deve detalhar a representação da revisão e as respostas da API, distinguindo conflito de revisão de falha ao gravar e de repetição do mesmo envio.
+
+### Quantidade de computadores por chamado: limite definido pelo administrador
+
+O autor escolheu a opção B: o administrador define a quantidade máxima de computadores vinculados por chamado, e o sistema bloqueia inclusões que excedam esse máximo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Validar o limite no servidor ao efetivar inclusões, considerando a quantidade resultante de vínculos do chamado. Respeitar também o controle de revisão da lista já aprovado, para que alterações concorrentes não ultrapassem o máximo. Quando uma inclusão exceder o limite, informar o motivo e preservar os vínculos existentes, sem gravar parcialmente a operação.
+
+Uma substituição que mantenha a quantidade de computadores não aumenta o total, e uma remoção o reduz. A configuração limita a quantidade de computadores vinculados, sem criar uma distribuição de materiais ou intervenções por equipamento. Os limites de seleção de campos dos formulários continuam sendo configurações distintas.
+
+O teto permite controlar o tamanho dos chamados, mas pode exigir ajuste administrativo para atendimentos maiores. Permanecem por definir o alcance da configuração, seu valor inicial, o intervalo permitido, a possibilidade de deixá-la em branco e o tratamento de chamados existentes quando o máximo for reduzido. Não presumir valores nem remover vínculos existentes automaticamente.
+
+### Limite de computadores: configuração única para todo o sistema
+
+O autor escolheu a opção A: manter um único limite máximo de computadores por chamado, configurado pelo administrador e aplicável a todo o sistema. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não definir máximos diferentes por formulário de abertura ou categoria efetiva. A mudança de categoria do chamado não altera o limite aplicável. Os limites de seleção de campos dos formulários permanecem configurações distintas e não substituem esse máximo de vínculos.
+
+Aplicar a configuração comum na validação de inclusões de computadores, conforme a regra já aprovada. O administrador pode ajustar o máximo para atender à operação, mas o mesmo valor será usado em chamados de tamanhos e categorias diferentes.
+
+Permanecem pendentes o valor inicial, o intervalo permitido, a possibilidade de deixar a configuração em branco e o tratamento dos chamados existentes quando o máximo for reduzido. Esta decisão não remove vínculos existentes nem define implicitamente esses comportamentos.
+
+### Limite de computadores inicialmente em branco
+
+O autor escolheu a opção A: a configuração global do máximo de computadores por chamado começa em branco. Enquanto não houver valor preenchido, não aplicar teto funcional à quantidade de computadores vinculados. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Permitir o uso das associações sem exigir que o administrador preencha previamente essa configuração. Não interpretar a ausência de valor como zero, não adotar um máximo implícito e não bloquear vínculos apenas porque a configuração está em branco. Quando o administrador definir um máximo válido, aplicar a validação de quantidade já aprovada.
+
+A ausência de teto funcional não representa capacidade ilimitada: permanecem os limites técnicos de requisição, armazenamento e processamento, ainda por detalhar. Essa condição inicial facilita começar a operação, mas permite listas extensas até que um máximo seja configurado.
+
+Permanecem pendentes o intervalo de valores explícitos aceitos, a possibilidade de voltar a deixar a configuração em branco depois de preenchida e o tratamento de chamados existentes acima de um máximo posteriormente definido ou reduzido. Não remover vínculos existentes automaticamente.
+
+### Permitir retirar o limite de computadores configurado
+
+O autor escolheu a opção A: o administrador pode apagar um máximo anteriormente preenchido e voltar a deixar a configuração global em branco. Nesse estado, não aplicar teto funcional de computadores por chamado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Após salvar a configuração em branco, deixar de bloquear inclusões por esse teto, preservando os vínculos existentes. Não interpretar a ausência de valor como zero nem substituir o valor apagado por um máximo implícito. Manter as demais validações aprovadas de acesso, situação ativa dos computadores e revisão da lista de vínculos.
+
+Retirar o teto não elimina os limites técnicos de requisição, armazenamento e processamento. Essa possibilidade permite ajustar a operação sem manter um máximo obrigatório, mas também permite novamente listas extensas. Permanecem pendentes o intervalo aceito para máximos explícitos e o tratamento de chamados acima de um máximo posteriormente definido ou reduzido.
+
+### Novo limite inferior à quantidade já vinculada
+
+O autor escolheu a opção A: permitir salvar um máximo global menor que a quantidade de computadores já vinculados em alguns chamados, preservando todos os vínculos existentes. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Nos chamados acima do máximo, bloquear novas inclusões, mas permitir remover computadores e substituir um vínculo sem aumentar a quantidade, respeitando as permissões e validações já aprovadas. Não exigir regularizar esses chamados para salvar a configuração nem remover vínculos automaticamente.
+
+Aplicar a mesma regra quando um máximo for preenchido após um período com a configuração em branco ou quando um máximo existente for reduzido. Para inclusões, a quantidade resultante deve respeitar o máximo vigente. Se o chamado atingir exatamente o teto, não permitir acrescentar outro computador; se ficar abaixo dele, permitir inclusões até o máximo.
+
+Preservar o controle de revisão da lista para alterações concorrentes. Uma substituição que mantenha o total não deve ser tratada como aumento por causa de etapas internas de execução. O contrato técnico deve garantir a validação da quantidade resultante e detalhar a coordenação com mudanças simultâneas da configuração global.
+
+Essa regra aplica o teto às novas inclusões sem apagar associações existentes, mas permite que chamados permaneçam acima do máximo por tempo indeterminado. A condição não impede, por si só, o atendimento ou outras alterações do chamado. O intervalo permitido para máximos explícitos continua pendente.
+
+### Valores permitidos para o máximo de computadores
+
+O autor escolheu a opção A: quando preenchida, a configuração global do máximo de computadores por chamado aceita somente números inteiros de 1 a 100, inclusive. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Validar o intervalo no navegador e no servidor. Recusar zero, valores negativos, fracionários, não numéricos e inteiros acima de 100, informando o erro e preservando a configuração vigente. Não arredondar, limitar silenciosamente ou converter um valor inválido em ausência de teto.
+
+Manter a configuração inicialmente em branco e permitir ao administrador apagá-la posteriormente, conforme as decisões aprovadas. Em branco significa ausência de teto funcional, sem aplicar implicitamente o máximo de 100. Esse número limita os valores explícitos configuráveis; não representa um teto automático para a operação sem configuração.
+
+Ao salvar um máximo válido, preservar vínculos existentes mesmo que ultrapassem o valor escolhido e bloquear novas inclusões que excedam esse máximo. Permitir remoções e substituições sem aumento da quantidade, conforme a regra aprovada. O intervalo escolhido não representa medição de capacidade nem elimina os limites técnicos de processamento, ainda por detalhar.
+
+### Consulta por patrimônio: prazo máximo de cinco segundos
+
+O autor escolheu a opção B: a consulta por patrimônio durante o envio da abertura tem prazo máximo de cinco segundos. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Após validar o patrimônio, limitar a espera do processamento da abertura pela consulta ao cadastro a cinco segundos. Esse prazo se refere à consulta, não ao tempo total de envio do formulário ou de gravação do chamado. Patrimônio vazio não gera consulta, conforme a regra aprovada.
+
+Se a consulta exceder o prazo, seguir o fluxo aprovado de falha: permitir gravar o chamado sem computador associado, com identificação pendente, preservando o patrimônio informado e o resultado de prazo excedido. Não tratar a expiração como patrimônio não localizado. Confirmar a abertura somente depois da gravação efetiva do chamado.
+
+Um resultado recebido após o prazo não deve associar automaticamente o computador nem sobrescrever uma associação manual. A recuperação permanece pela seleção manual já aprovada, sem tentativas automáticas posteriores. Uma falha definitiva conhecida antes dos cinco segundos pode seguir imediatamente o fluxo de falha; não exigir aguardar o restante do prazo.
+
+O prazo foi escolhido pelo autor sem medições de desempenho nesta etapa. Ele limita a espera pela consulta, mas pode produzir identificações pendentes quando o cadastro responder mais lentamente. O contrato técnico deverá especificar a aplicação desse prazo na comunicação entre serviços, respeitando o máximo escolhido e distinguindo falha da consulta de falha na gravação do chamado.
+
+### Repetição da abertura: identificador único por envio
+
+O autor escolheu a opção A: identificar cada envio de abertura por um identificador único, reutilizado pelo navegador nas tentativas de concluir o mesmo envio. O autor aprovou esta subseção e solicitou enviar a documentação ao GitHub; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O servidor deve impedir que requisições concorrentes ou repetidas com o mesmo identificador criem mais de um chamado. Coordenar a gravação do chamado e o registro do resultado do envio de modo que uma perda de resposta não permita duplicar a abertura. Se o chamado já tiver sido criado, reconhecer a repetição e devolver a confirmação correspondente, sem criar outro chamado nem repetir os efeitos da abertura.
+
+Uma repetição deve conservar os dados do envio original. Não aceitar silenciosamente o mesmo identificador como uma nova abertura com conteúdo diferente. O contrato técnico deve definir a resposta para essa divergência e como o navegador distingue uma nova abertura ou correção de uma tentativa de recuperar a confirmação do envio anterior.
+
+O identificador não concede acesso ao histórico, aos anexos ou aos dados internos do chamado. A confirmação pública e sua recuperação devem respeitar as restrições de acesso já aprovadas. Detalhar no contrato técnico o formato e a geração do identificador, o conteúdo permitido da confirmação, a retenção dos registros de envio e o tratamento de operações ainda em processamento ou interrompidas.
+
+Não deduplicar chamados pela semelhança de seus dados como consequência desta escolha. Aberturas intencionais distintas podem conter relatos iguais e usar identificadores diferentes. Uma página reaberta com novo identificador não é reconhecida automaticamente como repetição; a regra protege as novas tentativas que reutilizem o identificador do mesmo envio. Essa definição não cria rascunho persistente do formulário.
+
+## Ponto de retomada após envio ao GitHub — 2026-11-14
+
+O autor aprovou as subseções de 2026-11-14 e solicitou enviar a documentação ao GitHub. Retomar com `egm-draft` a partir das decisões registradas nesta seção de continuidade. As decisões posteriores prevalecem sobre pendências históricas do mesmo assunto. O plano técnico completo permanece em construção, sem autorização de implementação.
+
+As associações de computadores agora permitem vários equipamentos por chamado; intervenções e materiais pertencem apenas ao chamado, com detalhes por equipamento descritos em texto. As permissões, correções de vínculos, avisos, histórico, concorrência e configuração global de quantidade foram detalhados e aprovados nas subseções anteriores. O prazo de consulta por patrimônio é de cinco segundos. Repetições de abertura usam o mesmo identificador único de envio.
+
+Próximo ponto: detalhar o contrato de repetição da abertura, começando pelo prazo de retenção do identificador e do resultado, seguido pelo tratamento de envio ainda em processamento, conteúdo divergente e recuperação da confirmação pública sem expor dados internos. Permanecem por detalhar a coordenação da consulta e da gravação com mudanças concorrentes no cadastro, mudanças simultâneas do limite global e os demais contratos técnicos em aberto.
+
+Os blocos anteriores de formulários, transferências e demais componentes mantêm suas pendências próprias. Alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. Este documento ainda não é um desenho finalizado.
+
 ## Referências
 
 - [Brief funcional e decisões atualizadas](./concepts_brief.md).
