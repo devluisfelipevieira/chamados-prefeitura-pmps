@@ -1961,6 +1961,370 @@ Próximo ponto: detalhar o contrato de repetição da abertura, começando pelo 
 
 Os blocos anteriores de formulários, transferências e demais componentes mantêm suas pendências próprias. Alternativas, plano detalhado de implementação e reconciliação final com o brief continuam pendentes. Este documento ainda não é um desenho finalizado.
 
+## Continuidade do detalhamento — 2026-11-15
+
+### Repetição da abertura: retenção de 24 horas
+
+O autor escolheu a opção A: permitir recuperar a confirmação de abertura pelo mesmo identificador de envio durante 24 horas. Depois do prazo, recusar o identificador expirado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Durante a janela de recuperação, preservar o vínculo entre o identificador e o resultado da abertura. Se o chamado já tiver sido criado, uma repetição deve devolver a confirmação correspondente sem criar outro chamado nem repetir os efeitos da abertura, conforme a regra aprovada. Essa confirmação não concede acesso ao histórico, aos anexos ou aos dados internos.
+
+Após a expiração, não recuperar a confirmação por esse identificador nem aceitar sua reutilização como uma nova abertura. Preservar um registro mínimo do identificador expirado para impedir que sua reapresentação crie outro chamado. O encerramento da janela de recuperação não apaga o chamado nem seu histórico e não autoriza guardar indefinidamente uma cópia dos dados completos do formulário no registro de envio.
+
+O prazo curto reduz a retenção do resultado para recuperação, mas impede essa recuperação após um dia. Se o solicitante não souber se a abertura ocorreu, encaminhar a verificação pelo canal de atendimento existente; não orientar automaticamente um novo envio, pois outro identificador pode criar um chamado distinto para o mesmo relato.
+
+Ainda definir o instante que inicia a contagem das 24 horas, a representação e a retenção do registro mínimo de identificadores expirados e o tratamento dos envios ainda em processamento ou interrompidos. A escolha do prazo não resolve esses contratos nem permite descartar a proteção contra duplicação. Após a aprovação desta subseção, continuar pelo início da contagem do prazo.
+
+### Retenção do envio: contagem a partir do primeiro recebimento
+
+O autor escolheu a opção A: contar as 24 horas a partir do primeiro recebimento do envio pelo servidor. Repetições com o mesmo identificador não reiniciam nem prolongam esse prazo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Registrar no servidor o instante do primeiro recebimento e preservar esse marco nas novas tentativas do mesmo envio. Usar esse instante, e não o relógio do navegador, para determinar a expiração. Requisições concorrentes com o mesmo identificador devem compartilhar um único marco de recebimento; não permitir que uma repetição o substitua.
+
+A gravação posterior do chamado não inicia outra janela de 24 horas. O tempo de processamento consome parte da janela disponível para recuperar a confirmação; se a abertura demorar, o solicitante terá menos tempo após a conclusão para recuperá-la. Ao completar 24 horas desde o primeiro recebimento, aplicar a recusa do identificador expirado já aprovada, preservando a proteção contra duplicação.
+
+A expiração da janela de recuperação não comprova que o envio falhou nem cancela, por si só, uma operação em andamento. Não criar outro chamado com o mesmo identificador nem apagar evidências necessárias para determinar o resultado. Ainda definir o tratamento de processamento interrompido, a coordenação com a expiração e a resposta pública enquanto o resultado não estiver disponível.
+
+Esta decisão resolve a pendência anterior sobre o início da contagem. Permanecem abertas a representação e a retenção do registro mínimo de identificadores expirados e as demais partes do contrato de repetição. Após a aprovação desta subseção, continuar pelo tratamento de uma repetição recebida enquanto o envio original ainda está em processamento.
+
+### Repetição durante o processamento: resposta imediata
+
+O autor escolheu a opção A: quando uma repetição do mesmo envio chegar enquanto a abertura original ainda estiver em processamento, responder imediatamente com a indicação de “em processamento”, sem aguardar sua conclusão para responder à repetição. O navegador consulta novamente usando o mesmo identificador. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+A repetição não inicia outra abertura, não executa novamente os efeitos do envio e não renova as 24 horas contadas do primeiro recebimento pelo servidor. Aplicar esta resposta a repetições reconhecidas como o mesmo envio; o tratamento de conteúdo divergente permanece por definir e não deve ser confundido com uma repetição válida.
+
+Enquanto não houver resultado confirmado, a interface deve informar que a abertura está em processamento, sem apresentar o chamado como criado ou o envio como fracassado. Nas consultas seguintes, devolver a confirmação se a criação já tiver sido concluída, respeitando a janela de recuperação e as restrições de acesso aprovadas. Se o identificador tiver expirado, aplicar a recusa já definida; não interpretar a expiração como falha da abertura.
+
+A resposta imediata evita manter a requisição repetida aguardando o processamento original, mas exige novas consultas para obter o resultado. Consultas frequentes podem sobrecarregar o serviço; ainda definir intervalo, limites e condições de parada das consultas pelo navegador, inclusive diante de falhas de comunicação. Nenhuma dessas falhas autoriza trocar automaticamente o identificador e enviar uma nova abertura.
+
+Esta decisão trata da resposta enquanto há processamento reconhecido, sem definir como detectar ou recuperar uma execução interrompida. Permanecem abertos esse tratamento, o contrato das consultas e as respostas para conteúdo divergente. Após a aprovação desta subseção, continuar pela frequência das consultas automáticas do navegador.
+
+### Consultas durante o processamento: intervalos crescentes
+
+O autor escolheu a opção B: consultar o resultado da abertura após 2 segundos, depois de mais 5 segundos e, nas consultas seguintes, a cada 10 segundos enquanto o envio permanecer em processamento. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Depois da primeira resposta de “em processamento”, o navegador aguarda 2 segundos para consultar novamente. Se a resposta continuar indicando processamento, aguarda 5 segundos para a próxima consulta. Persistindo esse estado, usa intervalos de 10 segundos nas consultas seguintes. Contar cada intervalo após o recebimento da resposta anterior, sem sobrepor consultas do mesmo envio.
+
+Usar o mesmo identificador em todas as consultas, sem iniciar outra abertura, repetir seus efeitos ou renovar a janela de recuperação de 24 horas. Ao receber a confirmação de criação, apresentar o resultado e encerrar as consultas automáticas. Se o servidor informar expiração, aplicar a recusa já aprovada, sem concluir que a abertura falhou nem gerar automaticamente outro identificador.
+
+Os intervalos crescentes reduzem a frequência das consultas durante esperas prolongadas, mas podem acrescentar até 10 segundos, além do tempo de comunicação, à apresentação de uma conclusão ocorrida entre consultas. A frequência escolhida não representa medição de capacidade nem define limites de requisições no servidor.
+
+Permanecem por definir o tempo ou a quantidade máxima de consultas automáticas, a apresentação e as ações disponíveis depois dessa parada e o comportamento diante de falhas de comunicação. Esta escolha não define como detectar ou recuperar processamento interrompido. Após a aprovação desta subseção, continuar pelo limite das consultas automáticas do navegador.
+
+### Consultas automáticas: limite de cinco minutos
+
+O autor escolheu a opção B: parar as consultas automáticas após cinco minutos de acompanhamento. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Durante esse acompanhamento, manter os intervalos crescentes de 2, 5 e depois 10 segundos já aprovados, sempre com o mesmo identificador e sem sobrepor consultas. Encerrar antes do limite se houver confirmação de criação ou resposta de expiração, conforme as regras existentes. Ao atingir o limite, deixar de iniciar novas consultas automáticas.
+
+Parar as consultas não cancela o processamento no servidor, não comprova falha e não autoriza criar outro identificador ou enviar outra abertura automaticamente. Preservar a distinção entre confirmação ainda não obtida e abertura recusada. O limite de cinco minutos não altera a janela de recuperação de 24 horas contada do primeiro recebimento pelo servidor.
+
+O limite permite acompanhar processamentos mais demorados que a opção de dois minutos, mas mantém requisições por mais tempo e ainda pode terminar antes da conclusão. Não representa um prazo máximo de processamento do chamado nem uma garantia de resposta nesse período.
+
+Permanecem por definir o marco inicial dos cinco minutos, o tratamento de uma consulta em andamento no instante da parada, a apresentação e as ações disponíveis depois dela e o comportamento diante de falhas de comunicação. Não presumir reinício automático do acompanhamento ao recarregar a página. Após a aprovação desta subseção, continuar pelo marco inicial da contagem dos cinco minutos.
+
+### Contagem das consultas: primeira resposta de processamento
+
+O autor escolheu a opção B: contar os cinco minutos de acompanhamento automático a partir do recebimento, pelo navegador, da primeira resposta de “em processamento” para aquele envio. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O tempo entre o envio inicial e essa primeira resposta não consome os cinco minutos. Ao receber a indicação, iniciar a contagem e a sequência de consultas após 2 segundos, depois 5 segundos e, nas seguintes, a cada 10 segundos, conforme a regra aprovada. Respostas posteriores de “em processamento” não reiniciam nem prolongam a contagem.
+
+Ao completar cinco minutos desde esse marco, deixar de iniciar novas consultas automáticas, mesmo que ainda não exista confirmação. Se a criação for confirmada ou o identificador expirar antes, encerrar as consultas conforme as regras existentes. A parada não cancela a abertura nem comprova falha.
+
+Esse marco oferece cinco minutos de acompanhamento depois da primeira resposta de processamento, mas não limita a espera pela resposta inicial. O prazo de recuperação de 24 horas continua contado pelo servidor desde o primeiro recebimento do envio; a contagem no navegador não renova esse prazo nem substitui a verificação de expiração no servidor.
+
+Permanecem por definir o tratamento de uma consulta em andamento ao terminar os cinco minutos, as ações disponíveis após a parada, as falhas de comunicação e o comportamento ao recarregar ou reabrir a página. Esta escolha não autoriza reiniciar automaticamente o acompanhamento nessas situações. Após a aprovação desta subseção, continuar pelo tratamento da consulta em andamento no instante da parada.
+
+### Fim dos cinco minutos: cancelar a consulta no navegador
+
+O autor escolheu a opção B: se houver consulta em andamento ao completar os cinco minutos de acompanhamento, cancelar essa consulta no navegador e encerrar a espera automática. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Ao atingir o limite contado da primeira resposta de “em processamento”, cancelar a requisição de consulta em andamento, se houver, e impedir novas consultas automáticas desse acompanhamento. Não aguardar a resposta para encerrar a espera na tela. Se a confirmação já tiver sido recebida e apresentada antes da parada, preservar esse resultado confirmado.
+
+O cancelamento se limita à consulta pelo navegador. Não cancelar a abertura no servidor, desfazer a criação do chamado ou interpretar a interrupção como recusa ou falha do envio. Uma resposta tardia da consulta cancelada não deve reativar o acompanhamento encerrado. A coordenação entre o cancelamento e uma resposta recebida no mesmo instante deverá respeitar a distinção entre resultado já confirmado e consulta ainda pendente.
+
+Uma confirmação em trânsito pode deixar de ser exibida nessa rodada de acompanhamento. Preservar o mesmo identificador e a janela de recuperação de 24 horas já aprovados, sem gerar nova abertura automaticamente. A escolha permite encerrar a espera ao atingir o limite, mas pode exigir uma consulta posterior para conhecer um resultado já disponível no servidor.
+
+Permanecem por definir a mensagem e as ações disponíveis após a parada, inclusive a forma de consultar novamente, além das falhas de comunicação e do comportamento ao recarregar ou reabrir a página. Não presumir nova rodada automática de cinco minutos. Após a aprovação desta subseção, continuar pelas ações disponíveis depois da parada.
+
+### Após a parada: orientar contato pelo canal existente
+
+O autor escolheu a opção C: após encerrar os cinco minutos sem obter confirmação, orientar o solicitante a verificar a abertura com a equipe pelo canal de atendimento existente. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Informar na tela que a confirmação ainda não foi obtida e que o encerramento da espera não significa falha nem cancelamento da abertura. Encerrar as consultas nessa tela, sem oferecer botão de consulta manual ou de nova rodada automática de acompanhamento. Orientar a verificação com a equipe pelo canal já utilizado, sem recomendar outro envio do mesmo relato como solução para a incerteza.
+
+Essa orientação não envia mensagem automaticamente, não cria integração com WhatsApp ou Chatwoot e não concede acesso público ao chamado, ao histórico ou aos anexos. Preservar a abertura em processamento ou já gravada e o identificador original, sem reiniciar os prazos existentes. O contrato de recuperação da confirmação durante 24 horas permanece válido; a escolha restringe as ações oferecidas nessa tela após a parada, sem revogar esse contrato.
+
+O encaminhamento encerra as requisições dessa tela, mas transfere à equipe a verificação de aberturas que podem já estar concluídas. Não apresentar o identificador de envio como número de chamado confirmado. A forma de localizar o envio pela equipe, as informações que o solicitante deve fornecer e a apresentação concreta do contato ainda precisam ser detalhadas.
+
+Permanecem também por definir o comportamento diante de falhas de comunicação e ao recarregar ou reabrir a página. Não usar essas situações para reiniciar implicitamente o acompanhamento encerrado. Após a aprovação desta subseção, continuar pelas informações necessárias à verificação da abertura pela equipe.
+
+### Verificação pela equipe: código de referência e busca pelos dados
+
+O autor escolheu a opção C: permitir que a equipe localize a abertura por um código de referência do envio ou, na ausência dele, por nome, telefone e horário aproximado informados pelo solicitante. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Na orientação exibida após a parada do acompanhamento, apresentar um código de referência próprio do envio para o solicitante informar à equipe pelo canal existente. Distinguir esse código do número do chamado: sua apresentação não confirma que um chamado foi criado. O código não concede acesso público ao chamado, às respostas, ao histórico ou aos anexos e não deve ser tratado como prova de identidade.
+
+Disponibilizar consulta interna pelo código para verificar o resultado conhecido do envio e sua associação ao chamado, quando houver. Caso o solicitante não tenha o código, permitir à equipe buscar pelos dados já informados — nome, telefone e horário aproximado — sem exigir nova abertura. Não gerar outro envio nem repetir efeitos como consequência dessas consultas.
+
+A busca pelos dados pode retornar mais de um resultado e não comprova, por si só, que um registro corresponde ao relato procurado. Não interpretar ausência de resultado como prova de que a abertura falhou, especialmente quando o processamento ainda não tiver terminado. Respeitar as permissões de consulta interna; os papéis e o alcance concreto dessa busca ainda precisam ser definidos.
+
+As duas formas de consulta permitem verificar o envio mesmo se o código for perdido, mas exigem consulta interna adicional e tratamento de resultados ambíguos. Permanecem por definir a geração e o formato do código, sua relação com o identificador de repetição, o momento em que fica disponível, sua retenção e as informações consultáveis após a janela pública de 24 horas. A escolha não autoriza retenção indefinida de cópias dos dados completos do formulário.
+
+Após a aprovação desta subseção, continuar pelas permissões da consulta interna de verificação. O comportamento diante de falhas de comunicação e ao recarregar ou reabrir a página permanece pendente, assim como a apresentação concreta do contato.
+
+### Consulta interna de envios: permissão por grupo
+
+O autor escolheu a opção B: permitir a consulta interna de verificação somente a técnicos com permissão concedida por grupo pelo administrador. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Exigir autenticação, conta ativa e a permissão de consulta interna de envios para pesquisar tanto pelo código de referência quanto por nome, telefone e horário aproximado. Validar essa autorização no servidor a cada consulta. Ser técnico, participar de um atendimento ou conhecer o código de referência não concede essa permissão por si só.
+
+A permissão permite verificar o resultado conhecido do envio pelos meios já aprovados, sem criar outra abertura ou repetir seus efeitos. Não concede acesso adicional ao chamado associado: sua abertura, respostas, histórico e anexos continuam sujeitos às permissões próprias do chamado. O código de referência permanece sem valor de prova de identidade e não cria acesso público.
+
+A configuração por grupo permite ao administrador definir quem realiza a verificação, mas a ausência de alguém autorizado disponível pode atrasar o atendimento ao solicitante. Não ampliar automaticamente o acesso de outros técnicos para contornar essa ausência.
+
+Esta escolha define quem pode utilizar a consulta, sem decidir quais informações do envio ou do vínculo ao chamado podem aparecer em cada resultado. Permanecem por detalhar o conteúdo mínimo dos resultados, o tratamento de chamados inacessíveis ao técnico e as consultas de envios ainda sem chamado. Após a aprovação desta subseção, continuar pelo conteúdo exibido na consulta interna.
+
+### Resultado da consulta interna: dados de identificação
+
+O autor escolheu a opção B: apresentar código de referência, horário e estado do envio, nome, telefone e setor nos resultados da consulta interna. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar esse conteúdo às consultas pelo código e às buscas por nome, telefone e horário aproximado. Exigir a permissão por grupo já definida e validar o acesso no servidor. Os dados de identificação auxiliam a equipe a distinguir resultados, mas são informações declaradas na abertura e não comprovam a identidade de quem solicita a verificação.
+
+Não incluir assunto, descrição, demais respostas do formulário, histórico ou anexos nesse resultado de verificação. O acesso a esses conteúdos depende das permissões próprias do chamado. Não oferecer atalho para um chamado ao qual o técnico não tenha acesso. A permissão de verificar envios não amplia esse acesso.
+
+A apresentação do estado deve refletir o resultado conhecido, sem transformar ausência de confirmação em falha ou cancelamento. Resultados semelhantes podem permanecer ambíguos mesmo com nome, telefone e setor; não escolher automaticamente um deles como correspondente ao relato. A consulta não cria nova abertura, não repete efeitos nem reinicia os prazos de recuperação.
+
+Esta opção expõe contato e setor aos técnicos autorizados a verificar envios, inclusive quando ainda não houver chamado associado. Não autoriza retenção indefinida desses dados nem disponibilização pública. A disponibilidade de cada informação durante o processamento e após a janela pública de 24 horas ainda depende do contrato de persistência e retenção.
+
+Após a aprovação desta subseção, continuar pela geração do código de referência e sua relação com o identificador de repetição. Permanecem pendentes o formato e o momento de disponibilização do código, a retenção, a apresentação concreta do contato e os comportamentos diante de falhas de comunicação e ao recarregar ou reabrir a página.
+
+### Código de referência: o próprio identificador de envio
+
+O autor escolheu a opção A: usar o próprio identificador de envio como código de referência informado à equipe. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Gerar o identificador no navegador antes de enviar a abertura e reutilizá-lo nas tentativas do mesmo envio, conforme a proteção contra duplicação já aprovada. A referência apresentada ao solicitante deve corresponder a esse identificador, sem criar outro código ou uma tabela de correspondência entre códigos distintos.
+
+O navegador dispõe da referência mesmo se a resposta do servidor não chegar. Isso não comprova que o servidor tenha recebido o envio nem que um chamado tenha sido criado. A consulta interna pelo identificador deve refletir somente o resultado conhecido; a ausência de registro não comprova falha da abertura. Não apresentar a referência como número de chamado confirmado ou prova de identidade.
+
+Conhecer o identificador não concede acesso público ao chamado, às respostas, ao histórico ou aos anexos. A consulta interna permanece sujeita à autenticação, à conta ativa e à permissão por grupo. O uso como referência não amplia o conteúdo permitido na recuperação pública da confirmação, cujo contrato ainda precisa ser detalhado.
+
+Essa escolha elimina a dependência de receber um código novo do servidor, mas pode exigir copiar ou ditar uma referência longa. Não encurtar o identificador de modo a perder sua unicidade nem substituir seu valor nas novas tentativas. O formato, a geração com baixa probabilidade de colisão e o tratamento de conflitos ainda precisam ser especificados.
+
+Após a aprovação desta subseção, continuar pelo formato do identificador. Permanecem pendentes o momento e a forma de exibição da referência, sua preservação ao recarregar ou reabrir a página, a retenção e os demais contratos de recuperação e falha de comunicação.
+
+### Formato do identificador: letras e números em grupos
+
+O autor escolheu a opção B: usar um identificador com 26 caracteres aleatórios de letras e números, apresentado em grupos e com alfabeto que evite caracteres visualmente ambíguos. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Gerar os 26 caracteres no navegador com aleatoriedade criptográfica antes do envio. Os separadores de apresentação não contam entre os 26 caracteres aleatórios. Usar o mesmo identificador como referência para a equipe e como identificação das tentativas do mesmo envio, sem substituí-lo a cada consulta ou repetição.
+
+A apresentação em grupos auxilia a leitura e a comunicação pelo canal existente, mas a referência continua longa e sujeita a erros de transcrição. Não tratar um código parecido como equivalente nem selecionar automaticamente outro envio por aproximação. A busca alternativa por nome, telefone e horário aproximado permanece disponível aos técnicos autorizados, conforme as regras aprovadas.
+
+Verificar a unicidade no servidor, inclusive diante de recebimentos concorrentes. Uma colisão não pode sobrescrever outro envio, associar relatos diferentes ou devolver a confirmação de um envio alheio. A aleatoriedade reduz a probabilidade de colisão, mas não substitui essa proteção. O tratamento concreto de conflitos e de conteúdo divergente ainda precisa ser definido.
+
+O formato não concede acesso ao chamado nem comprova identidade ou recebimento pelo servidor. Preservar os controles de consulta, a janela de recuperação e a proteção contra reutilização de identificadores expirados já aprovados.
+
+Após a aprovação desta subseção, continuar pela definição do alfabeto e do agrupamento, incluindo as regras de normalização da entrada. Permanecem pendentes o tratamento de conflitos, a exibição e preservação da referência, a retenção e os demais contratos de recuperação e falha de comunicação.
+
+### Alfabeto, agrupamento e normalização da referência
+
+O autor escolheu a opção A: converter letras minúsculas em maiúsculas e ignorar espaços e hífens ao consultar a referência. O formato apresentado usa letras maiúsculas e números, excluindo I, L, O, 0 e 1, com os 26 caracteres distribuídos em grupos de 5–5–5–5–6. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Usar como alfabeto os caracteres ASCII ABCDEFGHJKMNPQRSTUVWXYZ23456789. Gerar somente caracteres desse conjunto, com aleatoriedade criptográfica conforme a decisão anterior. Exibir a referência com hífens entre os cinco grupos; os hífens são apresentação e não fazem parte dos 26 caracteres que identificam o envio.
+
+Na entrada da consulta interna, converter letras ASCII minúsculas em maiúsculas e remover espaços comuns e hífens. Depois dessa normalização, exigir exatamente 26 caracteres pertencentes ao alfabeto permitido. Recusar caracteres diferentes, inclusive outros separadores ou letras visualmente semelhantes de outros alfabetos, sem corrigi-los por aproximação. Informar erro de formato sem iniciar uma busca por um identificador diferente.
+
+Tratar representações que diferem somente por essas regras de apresentação como a mesma referência. Aplicar uma representação canônica sem separadores na comparação e na verificação de unicidade no servidor. A normalização não cria outro envio, não altera a associação existente nem reinicia qualquer prazo. As repetições e consultas devem identificar o mesmo valor canônico.
+
+Aceitar diferenças de apresentação facilita a digitação e a cópia, mas não resolve troca, falta ou excesso de letras e números. Não converter caracteres excluídos em outros permitidos nem procurar automaticamente códigos parecidos. Preservar a busca alternativa pelos dados e as permissões já aprovadas.
+
+Após a aprovação desta subseção, continuar pelo tratamento de um identificador já registrado quando o conteúdo recebido divergir do envio original. Permanecem pendentes os detalhes de geração, o contrato de recuperação pública, a retenção, a exibição e preservação da referência e o comportamento diante de falhas de comunicação.
+
+### Conteúdo divergente: preservar alterações e orientar contato
+
+O autor escolheu a opção A: quando o servidor recusar uma tentativa com conteúdo diferente usando um identificador já registrado, preservar as alterações na página e orientar a verificação com a equipe pelo canal existente, usando a referência original. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não substituir os dados do envio original, criar outro chamado ou repetir efeitos da abertura. Informar que a tentativa com dados diferentes foi recusada e que as alterações não foram aplicadas ao envio original. Essa recusa não comprova falha, cancelamento ou conclusão do processamento original.
+
+Preservar os dados alterados na página aberta para consulta pelo solicitante. Essa preservação não cria rascunho persistente nem garante recuperação depois de recarregar ou fechar a página. Não gerar outro identificador ou reenviar automaticamente as alterações. A orientação de contato não deve recomendar outra abertura do mesmo relato como solução para a incerteza.
+
+Interromper o acompanhamento automático desse envio nessa tela e impedir que respostas tardias reativem esse acompanhamento. Essa parada não cancela a abertura no servidor nem reinicia os prazos já definidos. Preservar um resultado de criação que já tenha sido confirmado e apresentado, sem atribuir a ele as alterações recusadas.
+
+Apresentar a referência original para a equipe verificar o resultado conhecido. O código não representa número de chamado confirmado nem prova de identidade. A consulta interna continua sujeita à permissão por grupo e ao conteúdo de resultado já aprovados. Não enviar mensagens automaticamente nem criar integração com o canal externo.
+
+Essa escolha mantém o texto alterado disponível na página, mas transfere à equipe a verificação e o esclarecimento sobre informações que não foram aplicadas. O contrato de recuperação pública durante 24 horas permanece válido; a parada restringe as ações dessa tela, sem revogar esse contrato.
+
+Após a aprovação desta subseção, continuar pela definição de quais dados são comparados para reconhecer conteúdo divergente, incluindo respostas do formulário e anexos. Permanecem pendentes o tratamento de falhas de validação antes da criação, a geração e preservação da referência, a retenção e os demais contratos de recuperação e falha de comunicação.
+
+### Comparação do envio: valores exatos
+
+O autor escolheu a opção A: comparar os valores exatos do formulário e de sua versão, de todos os campos e respostas e dos anexos para reconhecer uma repetição do mesmo envio. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Usar o conteúdo original registrado para o identificador como referência da comparação. Uma tentativa com o mesmo identificador e conteúdo divergente deve seguir a recusa e a orientação de contato já aprovadas, sem substituir o envio original, criar outro chamado ou repetir efeitos.
+
+Não normalizar os valores das respostas para considerá-los equivalentes. Alterações em espaços dos textos, na formatação do telefone ou na ordem dos itens de uma seleção múltipla contam como divergência. Alterações no formulário, na versão informada ou nos valores de qualquer campo também contam como divergência. A normalização de apresentação do identificador continua válida e não se estende às respostas.
+
+A comparação abrange os valores do envio, não a representação bruta da requisição de transporte. Mudanças na ordem das propriedades de um objeto de transporte ou em delimitadores técnicos de upload não constituem, por si só, alteração de uma resposta. Não acrescentar dados consultados posteriormente no cadastro ou resultados do processamento como se tivessem sido informados pelo solicitante; esses dados podem mudar sem que o conteúdo reenviado tenha mudado.
+
+Incluir os anexos na verificação, sem considerar dois arquivos equivalentes apenas por nome ou aparência. O contrato técnico ainda deve definir os atributos comparados e como reconhecer o mesmo anexo em uma nova tentativa, respeitando a comparação exata escolhida e sem repetir seus efeitos. Não declarar identidade dos arquivos com base somente em nome e tamanho.
+
+Essa regra evita equivalências implícitas entre respostas diferentes, mas pode recusar uma tentativa em que o solicitante apenas ajustou a apresentação de um valor. O navegador deve preservar o conteúdo original ao repetir o mesmo envio; se houver alterações, aplicar a recusa já definida. Esta escolha não resolve quando uma tentativa rejeitada por validação passa a vincular conteúdo ao identificador.
+
+Após a aprovação desta subseção, continuar pela comparação dos anexos, incluindo conteúdo e metadados. Permanecem pendentes a vinculação do identificador antes ou depois da validação, o tratamento de processamento interrompido, a recuperação pública, a retenção e os demais contratos em aberto.
+
+### Comparação dos anexos: conteúdo e ordem
+
+O autor escolheu a opção B: exigir os mesmos bytes e a mesma ordem dos anexos, ignorando diferenças no nome do arquivo e preservando no chamado o nome recebido originalmente. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Para reconhecer uma repetição do mesmo envio, comparar a quantidade e a sequência dos anexos e o conteúdo de cada arquivo na posição correspondente. Adicionar, remover, reordenar ou alterar os bytes de um anexo caracteriza conteúdo divergente e segue a recusa já aprovada. Arquivos visualmente iguais, mas com bytes diferentes, não são equivalentes para essa comparação.
+
+Renomear um arquivo sem alterar seus bytes ou sua posição não caracteriza divergência. A repetição não atualiza o nome original, substitui o anexo armazenado nem cria outra cópia vinculada ao chamado como efeito da repetição. Essa é uma exceção explícita à comparação exata dos valores: o nome reenviado do anexo não participa da identidade do conteúdo.
+
+Não reconhecer identidade apenas por nome, tamanho ou tipo declarado pelo navegador. A comparação deve corresponder ao conteúdo original recebido, antes de eventuais transformações de armazenamento ou apresentação. Esta decisão não autoriza aceitar arquivos inválidos nem altera as regras de validação de anexos; detalhes de verificação e de recuperação após uploads interrompidos continuam por especificar.
+
+A regra permite reenviar o mesmo arquivo com outro nome, mas recusa versões regravadas ou reprocessadas quando os bytes mudarem, mesmo que a imagem pareça igual. Não substituir arquivos por aproximação visual nem aplicar automaticamente as alterações recusadas ao envio original.
+
+Após a aprovação desta subseção, continuar pelo momento em que o conteúdo passa a ficar vinculado ao identificador diante de erros de validação. Permanecem pendentes o tratamento de uploads e processamento interrompidos, a recuperação pública, a retenção e os demais contratos em aberto.
+
+### Vínculo do conteúdo: após passar pela validação
+
+O autor escolheu a opção A: vincular o conteúdo ao identificador somente depois que o envio passar pela validação. Erros de validação permitem corrigir os dados e reenviar com o mesmo identificador. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Distinguir o registro do primeiro recebimento da aceitação do conteúdo. Registrar o marco inicial das 24 horas conforme a decisão anterior, sem exigir que um conteúdo recusado por validação se torne o conteúdo imutável do envio. Corrigir e reenviar não reinicia nem prolonga esse prazo e não permite reutilizar um identificador expirado.
+
+Quando houver recusa definitiva por validação e ainda não existir conteúdo aceito para aquele identificador, informar os campos afetados e preservar os demais dados na página. Permitir a correção com o mesmo identificador, sem criar chamado ou executar efeitos de uma abertura aceita. A existência dessa tentativa não deve ser apresentada como confirmação de criação.
+
+Depois que um conteúdo válido for aceito para processamento, preservá-lo como referência das repetições. Tentativas seguintes devem respeitar a comparação exata dos campos e a regra específica dos anexos já aprovadas. Conteúdo divergente segue a recusa e a orientação de contato, sem alterar o envio aceito, mesmo que ainda não exista confirmação de criação do chamado.
+
+Coordenar no servidor a aceitação do conteúdo e o início do processamento para impedir que duas correções concorrentes aceitem conteúdos diferentes sob o mesmo identificador. Não permitir que uma resposta de validação de uma tentativa anterior desfaça uma aceitação já efetivada ou autorize sobrescrever o conteúdo aceito. A regra concreta de disputa entre tentativas válidas concorrentes ainda precisa ser definida.
+
+Ausência de resposta, interrupção da comunicação e falha técnica não equivalem a uma recusa definitiva de validação. Não liberar alterações do conteúdo aceito nem gerar outro identificador automaticamente nessas situações. Continuam aplicáveis as regras de acompanhamento e recuperação do mesmo envio.
+
+Essa escolha facilita corrigir o formulário sem trocar a referência, mas exige distinguir tentativas inválidas de conteúdo aceito e coordenar seu processamento. Após a aprovação desta subseção, continuar pela disputa entre tentativas válidas concorrentes com conteúdos diferentes. Permanecem pendentes uploads e processamento interrompidos, recuperação pública, retenção e demais contratos em aberto.
+
+### Tentativas concorrentes: primeira aceitação gravada no banco
+
+O autor escolheu a opção A: quando tentativas válidas concorrerem pelo mesmo identificador, prevalece a primeira cuja aceitação seja gravada atomicamente no banco. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Depois da validação, coordenar no banco a verificação do identificador e a gravação do conteúdo aceito. Permitir que somente uma tentativa fixe esse conteúdo. Não usar a ordem de chegada das requisições nem o horário informado pelo navegador como critério de preferência. Uma tentativa recebida depois pode prevalecer se concluir a aceitação antes das demais.
+
+Se outra tentativa encontrar conteúdo já aceito, compará-la com esse conteúdo pelas regras aprovadas. Se for equivalente, tratá-la como repetição do mesmo envio e devolver o estado ou a confirmação aplicável. Se for divergente, recusá-la e aplicar a preservação das alterações e a orientação de contato já definidas. Não sobrescrever a primeira aceitação ou executar novamente seus efeitos.
+
+Uma tentativa que falhe na validação não fixa conteúdo nem impede, por si só, a aceitação de outra tentativa válida. Uma aceitação que não tenha sido efetivamente gravada não deve ser apresentada como vencedora. A coordenação deve preservar a proteção contra duplicação também diante de falha técnica, perda de resposta ou reinício; os mecanismos de recuperação do processamento continuam por detalhar.
+
+A disputa não altera o marco do primeiro recebimento nem renova as 24 horas. Antes de aceitar conteúdo, aplicar a regra de expiração já aprovada; não aceitar como novo um identificador expirado. Conteúdo anteriormente aceito permanece protegido contra substituição, independentemente da ordem em que as respostas cheguem ao navegador.
+
+Essa escolha evita aguardar a validação de todas as tentativas na ordem de chegada, mas permite que um conteúdo enviado depois prevaleça. O resultado depende da aceitação efetivamente persistida, e não de uma preferência presumida pelo primeiro clique do solicitante.
+
+Após a aprovação desta subseção, continuar pelo tratamento de uma execução interrompida depois de o conteúdo ter sido aceito. Permanecem pendentes o contrato de recuperação desse processamento, uploads interrompidos, recuperação pública, retenção e demais contratos em aberto.
+
+### Processamento interrompido: recuperação automática com encaminhamento à equipe
+
+O autor escolheu a opção C: tentar recuperar automaticamente um envio aceito cujo processamento tenha sido interrompido, até um limite; depois, manter uma pendência visível para intervenção autorizada da equipe. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Retomar o mesmo envio com seu identificador e conteúdo aceito, sem criar outra abertura. Antes de repetir qualquer etapa, verificar o resultado persistido e se o chamado já foi criado. Se a criação já tiver ocorrido, recuperar sua associação e o resultado correspondente, sem criar outro chamado ou repetir efeitos já concluídos.
+
+Coordenar as retomadas com a execução anterior e com outras tentativas de recuperação. Não permitir que uma execução considerada interrompida e outra retomada produzam efeitos duplicados caso a primeira volte a responder. O critério de interrupção, o controle de execução e os mecanismos concretos dessa coordenação ainda precisam ser especificados.
+
+Limitar as tentativas automáticas. Ao atingir o limite sem conclusão confirmada, encerrar novas tentativas automáticas e apresentar a pendência à equipe autorizada. Não marcar o envio como concluído ou definitivamente fracassado apenas porque esse limite foi atingido. A pendência deve preservar o resultado conhecido e permitir verificar se o chamado já existe antes de qualquer ação manual.
+
+A escolha não define quais técnicos podem intervir nem quais ações manuais podem executar. A permissão por grupo já aprovada para consultar envios não concede, por si só, permissão para retomar ou alterar seu processamento. Detalhar separadamente essas permissões, as ações disponíveis e seu registro de autoria.
+
+A recuperação no servidor não reinicia o acompanhamento encerrado no navegador nem renova as 24 horas de recuperação pública. A expiração dessa janela não cancela, por si só, uma operação em andamento. Preservar as evidências necessárias para determinar o resultado e a proteção contra duplicação, conforme as decisões anteriores.
+
+Essa estratégia reduz a dependência de intervenção em falhas transitórias, mas exige controlar tentativas e garantir que as pendências recebam atendimento quando a recuperação automática não resolver. Ainda definir quantidade, intervalos e condições de parada das tentativas, localização da pendência, permissões e ações manuais.
+
+Após a aprovação desta subseção, continuar pelo limite de tentativas automáticas de recuperação. Permanecem pendentes a detecção de interrupção, a coordenação de execuções, uploads interrompidos, recuperação pública, retenção e demais contratos em aberto.
+
+### Recuperação automática: três tentativas além da execução inicial
+
+O autor escolheu permitir três tentativas automáticas de recuperação, além da execução inicial do envio. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar esse limite à recuperação de um processamento aceito e interrompido. A execução inicial não consome uma das três tentativas de recuperação. Consultas do navegador, buscas internas pelo envio e repetições que apenas devolvam o estado conhecido também não consomem tentativas de recuperação.
+
+Manter o controle das tentativas no servidor, associado ao mesmo envio, sem reiniciar a contagem após reinício do serviço ou repetição de uma requisição. Coordenar esse controle com o início efetivo das retomadas para impedir que execuções concorrentes ultrapassem o limite. O marco concreto de consumo de uma tentativa e o tratamento de falha durante sua inicialização ainda precisam ser especificados.
+
+Encerrar a recuperação automática antes de esgotar o limite se o resultado da criação tiver sido confirmado. Se as três tentativas forem esgotadas sem conclusão confirmada, não iniciar uma quarta tentativa automática; manter a pendência visível para intervenção autorizada. O esgotamento não comprova que o chamado deixou de ser criado nem autoriza outra abertura.
+
+Preservar o identificador, o conteúdo aceito e a verificação dos efeitos já concluídos em todas as retomadas. O limite não renova os prazos de recuperação pública nem reinicia o acompanhamento encerrado no navegador. Não interpretar essa escolha como autorização para reiniciar a contagem por ação manual; as ações manuais continuam por definir.
+
+Três tentativas limitam o trabalho automático antes do encaminhamento à equipe, mas podem se esgotar durante uma indisponibilidade temporária. Sem os intervalos e o critério de interrupção, essa quantidade não determina o tempo total até a intervenção.
+
+Após a aprovação desta subseção, continuar pelos intervalos entre as tentativas automáticas. Permanecem pendentes a detecção de interrupção, o marco de consumo de uma tentativa, a coordenação de execuções, as permissões e ações manuais, a retenção e os demais contratos em aberto.
+
+### Intervalos de recuperação: 10 segundos, 30 segundos e 1 minuto
+
+O autor escolheu a opção A: aguardar 10 segundos antes da primeira tentativa automática de recuperação, 30 segundos antes da segunda e 1 minuto antes da terceira. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar a primeira espera a partir do reconhecimento da interrupção da execução inicial pelo servidor. Contar cada espera seguinte a partir do término da tentativa anterior sem conclusão confirmada ou do reconhecimento de sua interrupção. Não contar todos os intervalos desde o envio inicial nem iniciar uma retomada somente porque passou determinado tempo enquanto outra execução ainda estiver reconhecida como ativa.
+
+Antes de cada retomada, verificar o resultado persistido e a necessidade de recuperação. Se a criação já estiver confirmada, encerrar a recuperação sem repetir efeitos. Aplicar o limite de três tentativas além da execução inicial e preservar o identificador e o conteúdo aceito.
+
+Esses intervalos determinam a espera entre oportunidades de recuperação, não o tempo máximo de execução de cada tentativa. O tempo até esgotar as três tentativas inclui também o processamento e o reconhecimento de interrupções; não prometer conclusão ou encaminhamento à equipe em 100 segundos.
+
+Preservar no servidor a etapa de recuperação e o instante previsto para a próxima tentativa, sem reiniciar a contagem ou as esperas a cada reinício do serviço. O comportamento concreto ao encontrar um agendamento vencido depois de uma indisponibilidade ainda precisa ser especificado. Não executar tentativas concorrentes ou acumular retomadas simultâneas para compensar o tempo em que o serviço esteve indisponível.
+
+A sequência permite novas tentativas em intervalos curtos e crescentes, mas pode esgotar o limite antes de terminar uma indisponibilidade temporária. Após a terceira tentativa sem conclusão confirmada, manter a pendência para intervenção autorizada, conforme a decisão anterior. As esperas não alteram a janela pública de recuperação nem reiniciam o acompanhamento do navegador.
+
+Após a aprovação desta subseção, continuar pelo critério de reconhecimento de uma execução interrompida. Permanecem pendentes o controle de execução, o marco de consumo das tentativas, o tratamento de agendamentos vencidos, as permissões e ações manuais, a retenção e os demais contratos em aberto.
+
+### Reconhecimento de interrupção: prazo renovável por atividade
+
+O autor escolheu a opção B: cada execução mantém uma autorização com prazo renovável por sinais periódicos de atividade. Sem renovação dentro do prazo, a execução pode ser reconhecida como interrompida e encaminhada ao fluxo de recuperação. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Manter no servidor, de forma persistente, a identificação da execução autorizada e a validade de sua autorização para processar o envio. A renovação deve comprovar que essa execução ainda possui a autorização vigente. Não permitir que uma execução antiga renove ou recupere sua autorização depois de perdê-la, nem que uma renovação tardia substitua uma execução sucessora.
+
+Coordenar atomicamente a renovação e o reconhecimento da expiração para que somente uma decisão prevaleça em uma disputa. Usar o controle de tempo do servidor; o relógio do navegador e suas consultas não renovam a autorização de processamento. Ao reconhecer a interrupção, aplicar a espera correspondente antes da retomada, respeitando o limite de tentativas já aprovado.
+
+Condicionar as gravações de resultado e os efeitos à autorização da execução vigente. Uma execução que perder a autorização deve ser impedida de gravar resultados, criar outro chamado ou repetir efeitos, mesmo se voltar a responder. A expiração não comprova que nenhum efeito anterior ocorreu; verificar o estado persistido antes de retomar e preservar a proteção contra duplicação.
+
+A autorização renovável não altera o identificador público do envio, o conteúdo aceito ou a contagem das 24 horas. Renovar sinais de atividade não consome uma tentativa de recuperação e não reinicia o acompanhamento do navegador. Uma retomada constitui outra execução do mesmo envio, sujeita aos controles de tentativas que ainda serão detalhados.
+
+O sinal de atividade permite distinguir uma execução que mantém sua autorização de outra que deixou de renová-la, mas não comprova avanço útil nem conclusão do trabalho. Uma execução travada que continue renovando pode permanecer ativa; a política para ausência de progresso ou duração excessiva ainda precisa ser definida. A frequência dos sinais e o prazo de validade também permanecem abertos.
+
+Após a aprovação desta subseção, continuar pela frequência de renovação e pelo prazo de validade da autorização. Permanecem pendentes a política de duração sem progresso, o mecanismo concreto de proteção contra execuções antigas, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Autorização de processamento: renovação a cada 5 segundos e validade de 20 segundos
+
+O autor escolheu a opção A: renovar a autorização de processamento a cada 5 segundos, com validade de 20 segundos contados da última renovação aceita pelo servidor. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Ao conceder a autorização inicial a uma execução, estabelecer sua validade de 20 segundos no servidor. Enquanto estiver autorizada, a execução deve solicitar renovação a cada 5 segundos. Cada renovação aceita estabelece uma nova validade de 20 segundos, sem mudar o identificador do envio, o conteúdo aceito ou a contagem das tentativas de recuperação.
+
+Somente uma renovação aceita e persistida pelo servidor estende a validade. O envio do sinal, uma resposta perdida ou o relógio local da execução não comprovam a extensão. Aplicar a coordenação atômica já definida entre renovação e expiração, sem permitir que uma execução recupere autorização vencida por renovação tardia.
+
+Ao vencer a autorização sem renovação válida, a execução deixa de ter direito a gravar resultados ou executar efeitos protegidos. O servidor pode reconhecer a interrupção e agendar a recuperação conforme as esperas de 10 segundos, 30 segundos e 1 minuto e o limite de três tentativas já aprovados. A verificação concreta de expiração pode ocorrer depois do vencimento; não apresentar 20 segundos como garantia do tempo total de detecção ou recuperação.
+
+A frequência de 5 segundos permite reconhecer a ausência de renovação em uma janela curta, mas gera gravações frequentes e pode provocar perda de autorização durante pausas transitórias. A validade de 20 segundos não garante que a execução tenha avançado nem determina duração máxima do processamento. Os valores foram escolhidos sem medições de carga nesta etapa.
+
+Preservar os controles contra gravações tardias e verificar resultados persistidos antes de retomar. A expiração não comprova que o chamado não existe, não cancela efeitos já confirmados e não reinicia o acompanhamento do navegador nem a janela pública de recuperação.
+
+Após a aprovação desta subseção, continuar pela política para execuções que continuam renovando a autorização sem concluir o processamento. Permanecem pendentes o mecanismo concreto de proteção contra execuções antigas, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Execução sem conclusão: duração máxima por execução
+
+O autor escolheu a opção A: impor uma duração máxima por execução, retirar sua autorização ao atingir esse limite e seguir o fluxo de recuperação automática limitado já aprovado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o limite mesmo quando a execução continuar enviando sinais de atividade. A renovação a cada 5 segundos e a validade de 20 segundos continuam detectando ausência de atividade, mas não podem prolongar a execução além de sua duração máxima. Não exigir comprovação de falta de progresso para aplicar esse limite.
+
+Ao atingir a duração máxima, retirar a autorização da execução e impedir novas gravações ou efeitos por ela. Coordenar essa retirada com a conclusão e as renovações concorrentes: preservar resultados efetivamente gravados sob autorização válida e não permitir que uma resposta tardia recupere a autorização ou sobrescreva uma execução sucessora. Verificar o resultado persistido antes de decidir pela retomada.
+
+Se o envio continuar sem conclusão confirmada, aplicar a espera correspondente e o limite de três tentativas automáticas além da execução inicial. A duração máxima vale para cada execução; as esperas entre recuperações não constituem execução de processamento. Não reiniciar a duração máxima por renovação de atividade, consulta do navegador ou repetição do envio.
+
+Ao esgotar as tentativas sem confirmação, manter a pendência para intervenção autorizada. A interrupção por duração máxima não comprova que o chamado deixou de ser criado, não autoriza nova abertura e não desfaz efeitos já confirmados. Preservar o identificador e o conteúdo aceito em todas as retomadas.
+
+O limite impede que sinais de atividade mantenham uma execução indefinidamente, mas pode interromper um processamento lento que ainda esteja avançando. Repetir o mesmo trabalho pode atingir o limite novamente, motivo pelo qual a recuperação permanece limitada e sujeita à verificação de efeitos anteriores.
+
+Após a aprovação desta subseção, continuar pelo valor da duração máxima e seu marco inicial. Permanecem pendentes o mecanismo concreto de proteção contra execuções antigas, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+## Ponto de retomada após solicitação de sincronização — 2026-11-15
+
+O autor solicitou atualizar o GitHub e deixar pendente a escolha da duração máxima de cada execução. Retomar com `egm-draft` neste ponto, sem presumir escolha ou aprovação do prazo. As subseções anteriores desta continuidade foram aprovadas; o plano técnico completo permanece em construção e não há autorização de implementação.
+
+A última questão apresentada foi a duração máxima por execução: 30 segundos, 1 minuto ou 2 minutos, com contagem proposta a partir da concessão da autorização pelo servidor. Nenhuma opção foi escolhida. O valor e seu marco inicial permanecem pendentes. O prazo deve valer separadamente para a execução inicial e cada retomada, sem incluir as esperas entre tentativas ou alterar o acompanhamento do navegador.
+
+As decisões aprovadas incluem três recuperações automáticas além da execução inicial, com esperas de 10 segundos, 30 segundos e 1 minuto; autorização renovada a cada 5 segundos, com validade de 20 segundos; e duração máxima por execução mesmo com renovação de atividade, seguida pelo fluxo limitado de recuperação. Preservar as demais decisões e pendências registradas nas subseções anteriores.
+
 ## Referências
 
 - [Brief funcional e decisões atualizadas](./concepts_brief.md).
