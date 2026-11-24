@@ -2321,9 +2321,1185 @@ Após a aprovação desta subseção, continuar pelo valor da duração máxima 
 
 O autor solicitou atualizar o GitHub e deixar pendente a escolha da duração máxima de cada execução. Retomar com `egm-draft` neste ponto, sem presumir escolha ou aprovação do prazo. As subseções anteriores desta continuidade foram aprovadas; o plano técnico completo permanece em construção e não há autorização de implementação.
 
-A última questão apresentada foi a duração máxima por execução: 30 segundos, 1 minuto ou 2 minutos, com contagem proposta a partir da concessão da autorização pelo servidor. Nenhuma opção foi escolhida. O valor e seu marco inicial permanecem pendentes. O prazo deve valer separadamente para a execução inicial e cada retomada, sem incluir as esperas entre tentativas ou alterar o acompanhamento do navegador.
+A questão deixada pendente foi retomada em 2026-11-16: o autor escolheu a opção A, duração máxima de 30 segundos por execução, contada da concessão da autorização pelo servidor, e aprovou a redação da subseção abaixo. Retomar pelo mecanismo de proteção contra gravações e efeitos de execuções antigas. O plano técnico completo permanece em construção.
 
 As decisões aprovadas incluem três recuperações automáticas além da execução inicial, com esperas de 10 segundos, 30 segundos e 1 minuto; autorização renovada a cada 5 segundos, com validade de 20 segundos; e duração máxima por execução mesmo com renovação de atividade, seguida pelo fluxo limitado de recuperação. Preservar as demais decisões e pendências registradas nas subseções anteriores.
+
+### Duração máxima: 30 segundos desde a concessão da autorização
+
+O autor escolheu a opção A em 2026-11-16: limitar cada execução a 30 segundos contados da concessão de sua autorização pelo servidor. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Registrar no servidor o instante da concessão e o limite correspondente. Aplicar o prazo separadamente à execução inicial e a cada retomada autorizada do mesmo envio. As esperas de 10 segundos, 30 segundos e 1 minuto entre recuperações ficam fora dessa contagem. O tempo anterior à concessão da autorização também não consome os 30 segundos da execução.
+
+As renovações a cada 5 segundos mantêm a regra de validade de 20 segundos, mas nenhuma renovação pode estender a autorização além do limite de 30 segundos da execução. A autorização termina pelo primeiro limite atingido: expiração por falta de renovação ou duração máxima. Consultas do navegador, repetição do envio e sinais de atividade não reiniciam a contagem.
+
+Ao atingir o limite, impedir novas gravações e efeitos pela execução, mesmo que a detecção ou o encerramento do processo ocorram depois. Coordenar a conclusão com a perda da autorização para preservar resultados confirmados sob autorização válida. Antes de agendar uma retomada, consultar o estado persistido: o prazo vencido não comprova ausência de chamado, não desfaz efeitos confirmados e não permite duplicá-los. O mecanismo concreto dessa proteção permanece por detalhar.
+
+Se ainda não houver conclusão confirmada, seguir o fluxo aprovado de até três recuperações além da execução inicial, com suas esperas. Cada recuperação recebe seu próprio prazo de 30 segundos. Preservar o identificador, o conteúdo aceito, a janela pública de 24 horas e as regras de acompanhamento do navegador.
+
+O prazo pode interromper trabalho lento que ainda esteja avançando; executar novamente o mesmo trabalho pode atingir o limite outra vez. O valor foi escolhido sem medições de carga e não representa garantia de conclusão do envio em 30 segundos nem de recuperação imediata ao vencer o prazo.
+
+Após a aprovação desta subseção, continuar pelo mecanismo de proteção contra gravações e efeitos de execuções antigas. Permanecem pendentes o marco de consumo das tentativas, o tratamento de agendamentos vencidos, as permissões e ações manuais, a retenção e os demais contratos em aberto.
+
+### Proteção contra execuções antigas: número crescente por execução
+
+O autor escolheu a opção A em 2026-11-16: atribuir um número crescente a cada execução do mesmo envio e exigir o número vigente nas gravações protegidas. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Persistir no servidor o número da execução vigente. Ao conceder autorização para uma retomada, avançar esse número de forma atômica com o registro da nova autorização. Não reutilizar números de execuções anteriores, inclusive após reinício do serviço. O número identifica a execução interna; não substitui o identificador público do envio nem altera o conteúdo aceito.
+
+Cada execução deve apresentar seu número ao renovar a autorização ou gravar resultados. O banco somente aceita a operação se esse número ainda for o vigente e a autorização continuar válida, respeitando tanto a validade de 20 segundos quanto o limite de 30 segundos desde a concessão. Mesmo sem sucessora, uma execução com prazo vencido não pode continuar gravando. Uma renovação tardia não recupera a autorização antiga.
+
+A conferência e a alteração protegida devem compor uma operação atômica ou uma transação coordenada no PostgreSQL, sem intervalo desprotegido entre consultar a autorização e gravar. Aplicar essa proteção à criação do chamado e aos registros de resultado, conclusão, falha e recuperação do envio. Uma atualização de execução antiga não pode sobrescrever o estado da sucessora, consumir suas tentativas ou substituir seu agendamento. Detalhar consultas e limites transacionais no plano de implementação.
+
+Se uma execução antiga voltar a responder depois de uma retomada autorizada, rejeitar suas novas gravações mesmo que ela ainda mantenha dados locais que indiquem autorização. Preservar resultados já confirmados sob autorização válida e consultar o estado persistido antes de repetir trabalho. O número crescente complementa a proteção contra criação duplicada pelo identificador do envio; não a substitui.
+
+Essa escolha depende de todas as operações protegidas aplicarem a conferência. Uma gravação que a omita deixa uma brecha. O número no banco também não impede, sozinho, escrita de arquivos ou chamadas externas por um processo antigo. Os mecanismos para esses efeitos permanecem pendentes: não declarar que a conferência no banco os cancela, desfaz ou impede automaticamente.
+
+Após a aprovação desta subseção, continuar pela proteção dos efeitos fora do banco durante a abertura, incluindo arquivos de anexos. Permanecem pendentes o marco de consumo das tentativas, o tratamento de agendamentos vencidos, as permissões e ações manuais, a retenção e os demais contratos em aberto.
+
+### Anexos da abertura: arquivos separados por execução
+
+O autor escolheu a opção A em 2026-11-16: cada execução grava os anexos em caminhos exclusivos, sem sobrescrever arquivos de outras execuções. Somente a execução autorizada pode vincular seus arquivos ao chamado no banco. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Separar os caminhos pelo envio e pela execução, com identificação de armazenamento controlada pelo servidor. Não usar o nome fornecido pelo navegador para permitir acesso a caminhos arbitrários. Cada execução deve escrever somente em seu próprio espaço, sem alterar ou remover arquivos pertencentes a outra execução ou anexos já vinculados a um chamado. Essa separação não altera os limites, os formatos ou a comparação do conteúdo dos anexos já aprovados.
+
+Confirmar a persistência dos arquivos antes de registrá-los como disponíveis. Para vincular os arquivos ao chamado, exigir no banco o número vigente da execução e sua autorização ainda válida, incluindo o limite de 30 segundos. Coordenar essa conferência com a gravação do vínculo conforme a proteção atômica já escolhida. Não apresentar um arquivo como anexo disponível apenas porque existe no disco.
+
+Se uma execução perder a autorização e posteriormente terminar uma escrita, seus arquivos permanecem sem vínculo; ela não pode publicá-los, substituir anexos confirmados ou sobrescrever arquivos de uma retomada. A proteção impede que o resultado tardio se torne um anexo válido por ação dessa execução, mas não garante a interrupção física imediata da escrita nem evita seu consumo de disco.
+
+Uma retomada deve consultar os resultados persistidos antes de repetir trabalho. Preservar os anexos já confirmados e a proteção contra criação duplicada do chamado. A separação por execução não decide se uma retomada poderá aproveitar arquivos completos deixados por uma execução anterior nem como os arquivos aceitos ficarão disponíveis para recuperação após reinício; esses mecanismos permanecem por detalhar.
+
+Prever limpeza coordenada dos arquivos sem vínculo, distinguindo arquivos ainda em escrita, conteúdo necessário à recuperação e anexos confirmados. Não remover arquivos somente porque a autorização venceu nem confundir essa limpeza com a retenção de anexos de chamados encerrados. O prazo, a elegibilidade, a coordenação com retomadas e o tratamento de escritas tardias permanecem pendentes. As cópias por execução podem ampliar o consumo temporário de disco.
+
+Após a aprovação desta subseção, continuar pela possibilidade de reaproveitar arquivos completos de uma execução anterior durante a recuperação. Permanecem pendentes a disponibilidade durável do conteúdo aceito, a limpeza de arquivos sem vínculo, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Recuperação de anexos: reaproveitamento de arquivos completos
+
+O autor escolheu a opção A em 2026-11-16: permitir que uma retomada reaproveite arquivos completos deixados por uma execução anterior, após verificar sua integridade e correspondência com o envio aceito e garantir que não possam mais ser alterados. Copiar esses arquivos para o espaço exclusivo da nova execução antes de vinculá-los ao chamado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não considerar um arquivo completo apenas porque existe no disco, possui o tamanho esperado ou pertence a uma execução cujo prazo venceu. Exigir evidência de conclusão da escrita e conferir o conteúdo contra o anexo correspondente do envio aceito, preservando sua posição na comparação já definida. Nome, extensão e tipo declarado não comprovam identidade ou integridade. Preservar as validações de formato e tamanho já aprovadas.
+
+Antes da cópia, garantir que a origem não possa mais ser modificada por uma escrita tardia da execução anterior. O vencimento da autorização no banco, sozinho, não oferece essa garantia. O mecanismo concreto para concluir e proteger a origem permanece por definir; não permitir reaproveitamento enquanto essa proteção não puder ser assegurada.
+
+Coordenar o reaproveitamento com a limpeza para impedir remoção da origem durante a conferência e a cópia. A nova execução escreve somente em seu próprio espaço, sem modificar o arquivo anterior. Confirmar a conclusão e a integridade da cópia antes de disponibilizá-la como anexo. Um arquivo parcialmente copiado não pode ser vinculado como disponível.
+
+O vínculo da cópia ao chamado continua condicionado ao número vigente e ao prazo válido da nova execução, com conferência atômica no banco. Se ela perder a autorização durante a cópia, não pode publicar o resultado tardio. Consultar os resultados persistidos antes de repetir trabalho, preservando anexos confirmados e a proteção contra criação duplicada do chamado.
+
+O reaproveitamento é permitido, não presumido. Arquivos incompletos, divergentes ou cuja proteção contra alteração não esteja comprovada não são elegíveis. A disponibilidade durável do conteúdo original e o tratamento de sua ausência continuam pendentes; esta escolha não autoriza solicitar nova abertura, descartar o envio aceito ou declarar falha definitiva apenas porque não foi encontrado um arquivo reaproveitável.
+
+Essa opção pode evitar repetir etapas de preparação, mas ainda exige leitura, conferência e cópia e pode ampliar o uso temporário de disco. Não representa garantia de conclusão dentro dos 30 segundos nem elimina a necessidade de recuperar uploads ou processamento interrompidos.
+
+Após a aprovação desta subseção, continuar pelo mecanismo que impede alterações em um arquivo completo antes de seu reaproveitamento. Permanecem pendentes a disponibilidade durável do conteúdo aceito, a coordenação da limpeza, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Origem estável para reaproveitamento: componente interno de arquivos protegidos
+
+O autor escolheu a opção A em 2026-11-16: um componente interno recebe o arquivo completo e guarda uma versão que as execuções não têm permissão para alterar. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O componente integra a responsabilidade de Atendimento; esta escolha não cria um quarto serviço de negócio nem altera as fronteiras já definidas entre Atendimento, Materiais e Inventário. Manter os espaços de escrita separados por execução. A proteção da versão concluída complementa essa separação, sem conceder às execuções acesso de escrita à área protegida.
+
+Receber o conteúdo por um meio que não permita à execução conservar acesso de escrita à versão protegida. Não presumir que renomear o arquivo de origem ou mudar sua permissão revogue um acesso de escrita já aberto. O isolamento de permissões, o meio de entrega e a organização concreta do componente ainda precisam ser especificados. Uma função chamada no mesmo processo, com as mesmas permissões de escrita, não basta para oferecer a separação escolhida.
+
+O componente deve concluir o recebimento, conferir o arquivo contra o conteúdo aceito e confirmar sua persistência antes de registrá-lo como protegido e completo. Durante o recebimento, o conteúdo não é elegível para reaproveitamento. A versão protegida não pode ser modificada pelas execuções, inclusive pela que a forneceu. Divergências ou interrupções não podem produzir um registro falso de conclusão.
+
+A nova execução pode obter uma cópia dessa versão para seu próprio espaço, respeitando as conferências de integridade e a coordenação com a limpeza já exigidas. Guardar uma versão protegida não publica o anexo nem concede acesso anônimo: a disponibilidade no chamado continua dependendo do vínculo confirmado no banco pela execução vigente, dentro do prazo. Uma entrega tardia da execução anterior não pode, por si só, criar esse vínculo ou alterar resultados confirmados.
+
+Coordenar exclusões com recebimentos e cópias em andamento e preservar versões ainda necessárias à recuperação. A versão protegida não implica retenção permanente; prazos, elegibilidade de limpeza, referências e recuperação após falha do componente permanecem por definir. Não confundir a limpeza de arquivos sem vínculo com a retenção de anexos históricos.
+
+A proteção depende de isolamento efetivo: se as execuções mantiverem acesso de escrita à versão protegida, a garantia deixa de existir. O componente também pode interromper a preparação ou o reaproveitamento de anexos enquanto estiver indisponível. Esta decisão não define fila adicional, protocolo, credenciais ou estratégia de reinício, nem garante recuperação de conteúdo que nunca terminou de ser recebido.
+
+Após a aprovação desta subseção, continuar pela forma de isolamento e comunicação do componente interno. Permanecem pendentes a disponibilidade durável do conteúdo aceito, a recuperação do componente e de recebimentos interrompidos, a limpeza, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Isolamento do componente de arquivos: processo com usuário próprio e socket local
+
+O autor escolheu a opção B em 2026-11-16: executar o componente de arquivos protegidos como processo separado, com usuário próprio e permissões de sistema operacional que reservem a ele a escrita na área protegida. Atendimento se comunica com esse processo por um socket local restrito. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Manter o componente sob responsabilidade de Atendimento, sem criar um quarto serviço de negócio. Esta escolha substitui a alternativa de um container exclusivo com API de rede para esse componente; não retira o Docker Compose já escolhido para a implantação do projeto. A localização concreta do processo em relação aos containers e sua supervisão permanecem por definir.
+
+Separar a identidade do processo de arquivos da identidade usada pelas execuções de processamento. Somente o componente pode escrever na área das versões protegidas. As execuções mantêm seus espaços exclusivos e não podem obter acesso de escrita à área protegida por permissões de grupo, volumes, diretórios ancestrais ou privilégios que contornem a separação. Não executar o processamento com privilégios que permitam assumir a identidade do componente ou alterar suas proteções.
+
+Restringir o socket local aos processos autorizados a solicitar operações de arquivos. A permissão para conectar não autoriza caminhos arbitrários, alteração de versões concluídas ou consulta pública de anexos. O componente deve controlar os caminhos de armazenamento e aplicar os contratos de recebimento, conferência, cópia e limpeza que ainda serão detalhados. Não expor uma porta de rede pública por consequência desta decisão.
+
+Preservar a separação entre guardar uma versão protegida e publicar um anexo no chamado. O processo de arquivos não concede autorização de execução nem substitui a conferência atômica do número e dos prazos no banco. Uma resposta pelo socket, isoladamente, não confirma a criação do chamado ou o vínculo de um anexo.
+
+Prever indisponibilidade, interrupção da comunicação e reinício do componente sem declarar concluído um recebimento incompleto. Não interpretar perda de resposta como ausência de arquivo persistido nem repetir efeitos sem conferir resultados. O protocolo local, a identificação das operações, a recuperação e a coordenação com a limpeza permanecem pendentes.
+
+A escolha exige configurar e verificar usuários, permissões de diretórios e socket e supervisão do processo. Se Atendimento e o componente usarem privilégios capazes de contornar essas permissões, a proteção escolhida deixa de existir. O processo separado também acrescenta uma dependência operacional para preparar e reaproveitar anexos.
+
+Após a aprovação desta subseção, continuar pela localização e supervisão do processo em relação à implantação com Docker Compose. Permanecem pendentes o protocolo do socket, a disponibilidade durável do conteúdo aceito, a recuperação de recebimentos interrompidos, a limpeza, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Localização e supervisão: dois processos no container de Atendimento
+
+O autor escolheu a opção A em 2026-11-16: executar Atendimento e o componente de arquivos protegidos dentro do mesmo container, iniciados por um supervisor com usuários distintos e comunicação pelo socket local restrito. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Manter a implantação desse conjunto no Docker Compose já escolhido, sem instalar o componente diretamente na VM por meio do systemd nem criar um container exclusivo para ele. O componente continua sendo um processo interno sob responsabilidade de Atendimento, sem alterar as fronteiras dos três serviços de negócio.
+
+O supervisor deve iniciar cada processo com a identidade e as permissões correspondentes. Atendimento e suas execuções não podem obter os privilégios necessários para assumir a identidade do componente, alterar as permissões da área protegida ou controlar o supervisor de modo a contornar o isolamento. A configuração concreta de usuários, grupos, capacidades e eventual privilégio de inicialização permanece por especificar; não presumir que usuários distintos, sozinhos, garantam a separação.
+
+Disponibilizar o socket somente aos processos autorizados e reservar ao componente a escrita na área protegida. Preservar os espaços exclusivos por execução e as regras de conferência e cópia. Compartilhar o container não autoriza Atendimento a escrever diretamente nos arquivos protegidos nem substitui o controle de autorização das gravações no banco.
+
+O supervisor deve acompanhar ambos os processos e tratar sua saída, sem manter indefinidamente uma aparência de funcionamento normal quando uma dependência necessária estiver indisponível. A política concreta diante da falha de um processo — reinício individual ou encerramento do conjunto para recuperação pelo Docker Compose — permanece por decidir. Também detalhar inicialização, prontidão, sinais de encerramento e limites de espera.
+
+Prever que falha ou reinício do container pode interromper os dois processos. Preservar arquivos e estados necessários à recuperação em armazenamento persistente, sem considerar memória do supervisor ou o socket como registro durável de uma operação. A perda de comunicação não comprova ausência de arquivo gravado nem autoriza criar outro chamado. Os contratos de recuperação e identificação de operações continuam pendentes.
+
+A escolha mantém a implantação no Compose, mas exige supervisionar dois processos e validar o isolamento dentro do mesmo container. Um supervisor ou configuração que conceda a Atendimento meios de alterar a área protegida elimina a garantia escolhida. Não pressupor isolamento equivalente ao de containers separados.
+
+Após a aprovação desta subseção, continuar pela política de falha e reinício dos processos supervisionados. Permanecem pendentes a configuração do supervisor e das permissões, o protocolo do socket, a disponibilidade durável do conteúdo aceito, a recuperação de recebimentos interrompidos, a limpeza, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Falha de processo supervisionado: reinício individual
+
+O autor escolheu a opção B em 2026-11-16: quando Atendimento ou o componente de arquivos encerrar inesperadamente, o supervisor tenta reiniciar somente o processo que falhou, mantendo o outro ativo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não encerrar automaticamente o processo sobrevivente apenas porque seu par terminou. O reinício individual deve preservar as identidades, permissões e restrições do socket já escolhidas. A escolha não garante disponibilidade do container se o supervisor ou o próprio container falhar; a recuperação desse conjunto continua dependente da configuração de implantação que será detalhada.
+
+Enquanto o componente de arquivos estiver indisponível, Atendimento somente pode continuar operações cujas dependências estejam disponíveis. Não aceitar como concluídos recebimentos, proteção, cópias ou vínculos que dependam de confirmação ainda ausente. Consultas sem essa dependência podem continuar; consultas ou downloads que precisem do componente não devem ser apresentados como funcionais por mera disponibilidade do processo de Atendimento. A relação concreta de operações permitidas, recusadas ou aguardando recuperação permanece por especificar.
+
+Se Atendimento estiver indisponível e o componente de arquivos continuar ativo, este não assume funções de criação do chamado ou de autorização de execuções. Preservar o isolamento e os resultados duráveis de operações já recebidas. O comportamento dos recebimentos em andamento e da reconexão após a volta de Atendimento ainda precisa ser definido.
+
+Uma desconexão ou saída de processo não comprova que a última operação deixou de produzir efeito. Após o reinício, conferir resultados persistidos e coordenar a recuperação, sem duplicar arquivos publicados, vínculos ou chamados. O protocolo deve permitir tratar respostas perdidas; sua identificação de operações e seu contrato de consulta permanecem pendentes.
+
+O supervisor deve reconhecer a saída e acompanhar a recuperação do processo afetado. Processo iniciado não equivale a processo pronto: a retomada das operações dependentes exige disponibilidade efetiva. Intervalos, limites de reinício, critérios de prontidão e comportamento após falhas repetidas permanecem por decidir. Não presumir tentativas ilimitadas nem reinício imediato contínuo.
+
+O reinício de um processo não concede nova autorização às execuções antigas, não renova os prazos de 20 ou 30 segundos e não reinicia a contagem das recuperações do envio. Distinguir as tentativas do supervisor de reiniciar um processo das três tentativas automáticas de recuperar um envio já aprovadas.
+
+A escolha pode preservar operações independentes durante uma falha, mas exige controlar a disponibilidade por dependência e restabelecer a comunicação. Se o processo sobrevivente continuar aceitando trabalho dependente sem esse controle, poderá deixar operações incompletas ou apresentar disponibilidade que não existe.
+
+Após a aprovação desta subseção, continuar pela política de intervalos e limite de reinícios individuais do supervisor. Permanecem pendentes os critérios de prontidão, as operações durante indisponibilidade, a configuração de permissões, o protocolo do socket, a disponibilidade durável do conteúdo aceito, a recuperação de recebimentos interrompidos, a limpeza, eventuais efeitos externos na abertura, o marco de consumo das tentativas, os agendamentos vencidos, as permissões e ações manuais e os demais contratos em aberto.
+
+### Reinícios individuais: três tentativas com esperas de 5, 15 e 30 segundos
+
+O autor escolheu a opção A em 2026-11-16: limitar a recuperação individual pelo supervisor a três tentativas de reinício, com esperas de 5, 15 e 30 segundos. Após três reinícios sem recuperação estável, manter o processo parado para intervenção da equipe. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o controle separadamente a Atendimento e ao componente de arquivos protegidos. Após reconhecer a saída inesperada de um processo, aguardar 5 segundos antes da primeira tentativa. Se essa tentativa falhar ou o processo voltar a encerrar antes de alcançar o critério de estabilidade, aguardar 15 segundos antes da segunda e, nas mesmas condições, 30 segundos antes da terceira. Contar cada espera a partir do reconhecimento da falha anterior; não executar reinícios concorrentes do mesmo processo.
+
+Após falha da terceira tentativa sem recuperação estável, não iniciar automaticamente uma quarta tentativa individual. Manter o processo afetado parado, com a falha identificável para intervenção da equipe, preservando o processo sobrevivente e as restrições das operações dependentes já escolhidas. Não reiniciar o container inteiro como substituição automática desse limite.
+
+Iniciar um processo não comprova prontidão nem estabilidade. O critério e o período de funcionamento estável que encerram a sequência de falhas e permitem reiniciar a contagem permanecem por definir. Também especificar falha de inicialização, processo que permanece vivo sem ficar pronto e momento exato de consumo de uma tentativa. Não reiniciar a contagem apenas porque o processo chegou a iniciar.
+
+Os limites são do supervisor e não alteram as três recuperações automáticas de um envio, suas esperas de 10 segundos, 30 segundos e 1 minuto ou os prazos de autorização. Reiniciar Atendimento ou o componente não concede autorização a uma execução antiga nem confirma ausência de efeitos anteriores.
+
+O estado e as ações de intervenção, a sinalização operacional e o comportamento após reinício do supervisor ou do container permanecem pendentes. Não presumir que esses reinícios zerem o bloqueio por esgotamento, nem que exista nesta decisão um novo painel, canal de notificação ou permissão administrativa.
+
+A escolha limita ciclos automáticos de falha, mas pode deixar um processo parado mesmo que a causa desapareça depois. O retorno nesse caso depende da intervenção ainda por detalhar. As esperas escolhidas não constituem garantia do tempo total de recuperação, pois inicialização, prontidão e detecção também consomem tempo.
+
+Após a aprovação desta subseção, continuar pelo critério e período de recuperação estável para reiniciar a contagem. Permanecem pendentes prontidão e inicializações travadas, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza, eventuais efeitos externos na abertura e demais contratos em aberto.
+
+### Recuperação estável: cinco minutos contínuos de prontidão
+
+O autor escolheu a opção B em 2026-11-16: exigir cinco minutos contínuos em que o processo permaneça pronto e sem interrupções antes de zerar sua contagem de reinícios individuais. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o período separadamente a Atendimento e ao componente de arquivos protegidos. Iniciar a contagem quando a prontidão do processo for confirmada, não no simples início do processo. Durante os cinco minutos, manter a contagem de tentativas já consumidas; não conceder uma nova sequência de três reinícios apenas porque o processo voltou a executar ou respondeu uma vez.
+
+Ao completar cinco minutos contínuos de prontidão, encerrar a sequência de falhas e zerar a contagem de reinícios desse processo. Uma saída inesperada posterior inicia nova sequência com espera de 5 segundos, seguida, quando necessário, das esperas de 15 e 30 segundos. O período foi escolhido sem medições operacionais nesta etapa e não comprova ausência de falhas futuras.
+
+Se o processo encerrar ou perder a prontidão antes de completar os cinco minutos, interromper o período estável. Uma nova contagem de cinco minutos começa somente quando a prontidão for novamente confirmada, sem somar períodos anteriores. Perder prontidão, por si só, não define nesta decisão encerramento forçado ou consumo de nova tentativa; o tratamento de um processo vivo que não esteja pronto continua pendente.
+
+Definir os critérios e a frequência de verificação de prontidão e o controle de tempo pelo supervisor. Não usar ausência de tráfego como prova de estabilidade nem exigir abertura de chamados reais para demonstrá-la. Distinguir a prontidão do processo da disponibilidade de operações dependentes do outro processo, cuja relação ainda precisa ser especificada.
+
+Após falha da terceira tentativa sem alcançar estabilidade, manter o processo parado para intervenção conforme aprovado. O período de cinco minutos não autoriza nova tentativa automática depois do esgotamento nem reinicia contadores de recuperação de envios, prazos de execução ou acompanhamento do navegador.
+
+Cinco minutos de observação permitem recuperar a margem de tentativas depois de funcionamento contínuo, mas falhas recorrentes separadas por períodos maiores ainda podem iniciar novas sequências indefinidamente. Durante uma recuperação instável, falhas transitórias antes desse marco continuam consumindo o limite existente.
+
+Após a aprovação desta subseção, continuar pelos critérios de prontidão de cada processo e sua relação com a disponibilidade das dependências. Permanecem pendentes frequência de verificação, inicializações travadas e processos vivos sem prontidão, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Prontidão e estabilidade: contagem independente por processo
+
+O autor escolheu a opção A em 2026-11-16: avaliar separadamente a prontidão de Atendimento e a do componente de arquivos para contar os cinco minutos de estabilidade de cada processo. Atendimento pode completar seu período estável quando suas funções próprias estiverem prontas, mesmo que o componente de arquivos esteja indisponível. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não atribuir automaticamente a indisponibilidade de um processo ao outro. A perda de prontidão do componente de arquivos interrompe o período estável desse componente, mas não interrompe, por si só, o período de Atendimento. Aplicar a mesma separação quando Atendimento estiver indisponível: isso não comprova falha do processo de arquivos. Os critérios concretos para verificar as funções próprias de cada processo permanecem por definir.
+
+A contagem independente não significa disponibilidade integral do sistema. Avaliar separadamente se uma operação depende do componente de arquivos e se essa dependência está disponível. Atendimento não pode aceitar como concluída uma operação de arquivo sem a confirmação exigida, mesmo quando seu próprio processo já tiver completado cinco minutos de estabilidade. Preservar consultas independentes e as restrições já aprovadas para operações dependentes.
+
+Distinguir nos sinais operacionais a prontidão individual, a disponibilidade da comunicação pelo socket e a disponibilidade das operações que exigem os dois processos. Uma falha de comunicação pode impedir essas operações mesmo que ambos os processos estejam executando. A escolha não define interface de monitoramento, canal de aviso ou novo painel; sua apresentação operacional continua pendente.
+
+O supervisor usa a prontidão individual para a contagem de estabilidade e não reinicia um processo saudável somente porque o outro está indisponível. O tratamento de um processo vivo que perca sua própria prontidão ainda será definido. Não usar o sucesso de uma consulta independente para comprovar que recebimento, proteção, cópia ou entrega de arquivos estejam funcionando.
+
+A separação evita consumir a margem de recuperação de um processo por falha exclusiva de outro, mas exige representar a disponibilidade das operações dependentes sem reduzi-la a um único indicador de processo pronto. Sem essa distinção, a contagem pode sugerir recuperação completa enquanto parte das funções continua indisponível.
+
+Após a aprovação desta subseção, continuar pelos critérios concretos de prontidão das funções próprias de cada processo. Permanecem pendentes frequência e limites das verificações, tratamento de processos vivos sem prontidão, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Verificação de prontidão: pequenas operações em áreas reservadas
+
+O autor escolheu a opção B em 2026-11-16: verificar a prontidão com pequenas operações de teste, além da resposta do processo. Atendimento grava e remove um registro reservado em seu banco; o componente de arquivos grava, lê e remove um arquivo de teste em área reservada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Executar as verificações separadamente por processo, preservando a contagem independente dos cinco minutos de estabilidade. A verificação de Atendimento exige resposta do processo e confirmação das operações reservadas em seu próprio schema PostgreSQL. Não acessar diretamente schemas de Materiais ou Inventário nem depender do componente de arquivos para declarar a prontidão própria de Atendimento.
+
+O componente de arquivos deve responder e confirmar escrita, leitura do conteúdo esperado e remoção de um pequeno arquivo reservado de verificação. Usar o armazenamento cuja disponibilidade se pretende verificar, com as permissões da identidade efetiva do componente; uma verificação bem-sucedida em diretório temporário alheio não comprova acesso à área necessária. Não conceder às execuções de Atendimento acesso direto de escrita à área protegida para realizar essa verificação.
+
+Separar os dados de verificação dos registros de negócio e dos arquivos de chamados. Não criar chamados, consumir cotas de abertura pública, alterar contadores de recuperação de envios ou produzir anexos visíveis como consequência dessas operações. Identificar cada teste para que verificações concorrentes ou limpeza de resíduos não confundam seus resultados. O formato, a estrutura de armazenamento e a coordenação concreta serão especificados posteriormente.
+
+Somente considerar a verificação bem-sucedida quando todas as etapas exigidas confirmarem seu resultado. Falha, resposta incerta ou ausência de confirmação da remoção não comprovam sucesso completo. Prever resíduos após interrupções e sua limpeza restrita à área de verificação, sem atingir dados de negócio. Detalhar transações e confirmações no banco, persistência dos arquivos e recuperação dos testes interrompidos.
+
+Essas pequenas operações exercitam capacidades de escrita que uma consulta isolada não comprova. Ainda assim, seu sucesso não garante espaço para anexos grandes, capacidade sob carga, funcionamento de todo o fluxo de abertura ou disponibilidade da comunicação entre os dois processos. Preservar a distinção entre prontidão individual e disponibilidade das operações dependentes.
+
+Frequência, tempo máximo de resposta, tratamento de falhas consecutivas e relação com a pausa de alterações durante backup permanecem pendentes. Não permitir que a verificação contorne a pausa já aprovada nem interpretar automaticamente uma pausa planejada como motivo de reinício; o tratamento concreto dessa situação ainda será definido.
+
+Após a aprovação desta subseção, continuar pela frequência e pelo tempo máximo de resposta das verificações. Permanecem pendentes critérios de perda de prontidão, tratamento durante backup, processos vivos sem prontidão, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Frequência da prontidão: intervalo de 5 segundos e prazo de 2 segundos
+
+O autor escolheu a opção A em 2026-11-16: executar as verificações de prontidão de cada processo com intervalo de 5 segundos após o término da verificação anterior e prazo total de 2 segundos por verificação. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o agendamento separadamente a Atendimento e ao componente de arquivos. Não iniciar uma segunda verificação do mesmo processo enquanto a anterior estiver em andamento. Contar os 5 segundos a partir da conclusão da verificação anterior ou do reconhecimento de seu prazo esgotado, sem acumular verificações para compensar atrasos. O momento da primeira verificação após inicialização permanece por especificar.
+
+Os 2 segundos abrangem a verificação inteira, incluindo resposta do processo e todas as operações reservadas exigidas, não 2 segundos para cada etapa. Uma verificação somente tem sucesso se todas as etapas, inclusive a remoção, tiverem confirmação dentro desse prazo. Falha ou resultado incerto não equivalem a sucesso. Uma resposta tardia não deve reclassificar como bem-sucedida a verificação cujo prazo já terminou.
+
+O esgotamento do prazo encerra a espera e a avaliação daquela verificação, mas não comprova que operações já enviadas tenham sido canceladas no banco ou no armazenamento. Impedir sobreposição de trabalho de teste ainda ativo e coordenar sua finalização e limpeza antes de iniciar trabalho incompatível. Detalhar cancelamento, identificação de testes e tratamento de operações que continuem em andamento; não presumir que o prazo interrompa fisicamente uma escrita.
+
+Manter a contagem independente de estabilidade por processo. O número de falhas necessário para declarar perda de prontidão e o número de sucessos para restabelecê-la ainda serão definidos; esta escolha não determina reinício após uma única verificação malsucedida. Preservar a distinção entre falha de verificação, perda de prontidão e saída do processo.
+
+O intervalo curto permite observar mudanças com maior frequência, mas aumenta o número de operações de teste. O prazo de 2 segundos pode produzir falhas durante lentidão transitória. Os valores foram escolhidos sem medições de carga e não garantem detecção em exatamente 5 segundos, pois duração da verificação, agendamento e tratamento de operações pendentes também influenciam esse tempo.
+
+O tratamento da pausa de alterações durante backup continua pendente. Não executar gravações de teste de modo a contornar essa pausa nem reiniciar processos automaticamente por consequência de uma manutenção planejada sem a política correspondente.
+
+Após a aprovação desta subseção, continuar pelos limiares de falhas e sucessos para perda e recuperação de prontidão. Permanecem pendentes primeira verificação, operações de teste ainda em andamento após o prazo, tratamento durante backup, processos vivos sem prontidão, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Mudança de prontidão: três falhas para perder e dois sucessos para recuperar
+
+O autor escolheu a opção B em 2026-11-16: declarar perda de prontidão após três verificações consecutivas malsucedidas e recuperação após duas verificações consecutivas bem-sucedidas. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar os contadores separadamente a Atendimento e ao componente de arquivos, respeitando o intervalo de 5 segundos após cada verificação e o prazo total de 2 segundos. Considerar malsucedida a verificação que apresentar falha, resultado incerto ou ausência de confirmação de todas as etapas dentro do prazo. Resposta tardia não altera retroativamente o resultado encerrado.
+
+Enquanto um processo estiver pronto, a primeira e a segunda falhas consecutivas ainda não mudam seu estado declarado de prontidão. Um sucesso interrompe essa sequência de falhas. Ao ocorrer a terceira falha consecutiva, declarar o processo não pronto e interromper seu período de cinco minutos de estabilidade. Não somar falhas separadas por verificações bem-sucedidas.
+
+Enquanto estiver não pronto, exigir dois sucessos consecutivos para recuperar a prontidão. Uma falha interrompe a sequência de sucessos; um único sucesso não restabelece o estado. Iniciar uma nova contagem dos cinco minutos de estabilidade somente ao confirmar o segundo sucesso consecutivo, sem aproveitar períodos anteriores à perda de prontidão. A aplicação desses critérios na primeira inicialização ainda precisa ser explicitada.
+
+A tolerância às duas primeiras falhas evita oscilações do indicador, mas não transforma uma operação efetivamente malsucedida em sucesso. Preservar as confirmações exigidas para banco e arquivos e as restrições de disponibilidade das operações dependentes. Não concluir um recebimento, vínculo ou chamado apenas porque o processo ainda mantém o estado declarado de pronto durante a sequência de falhas.
+
+Esses limiares determinam o estado de prontidão, não o encerramento ou reinício de um processo ainda vivo. O tratamento desse caso permanece pendente. Uma saída inesperada continua sujeita à política de reinício individual já aprovada, sem exigir aguardar três verificações falhas de um processo que já terminou.
+
+A regra reduz mudanças de estado causadas por falhas isoladas, mas atrasa a declaração de indisponibilidade e o restabelecimento após recuperação. Durante as duas primeiras falhas, o período estável continua contando enquanto o estado declarado permanecer pronto; esta é a consequência da tolerância escolhida, não comprovação de que todas as operações funcionaram nesse intervalo. O comportamento durante backup permanece por detalhar.
+
+Após a aprovação desta subseção, continuar pelo estado inicial e pela primeira verificação de prontidão após iniciar ou reiniciar um processo. Permanecem pendentes operações de teste ainda em andamento após o prazo, tratamento durante backup, processos vivos sem prontidão, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Inicialização: primeira verificação imediata e estado não pronto
+
+O autor escolheu a opção A em 2026-11-16: iniciar as verificações de prontidão imediatamente após iniciar ou reiniciar cada processo, sem espera inicial fixa nem dependência de um sinal prévio de inicialização concluída. O estado inicial é não pronto, exigindo dois sucessos consecutivos para declarar prontidão, conforme o limiar já definido. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O supervisor deve solicitar a primeira verificação assim que reconhecer que o processo foi iniciado. Imediatamente significa sem atraso intencional configurado; não constitui garantia de execução no mesmo instante, pois o agendamento e a disponibilidade dos recursos também influenciam. Aplicar o prazo total de 2 segundos à primeira verificação, assim como às demais.
+
+Após cada verificação, aguardar os 5 segundos já escolhidos antes da seguinte, sem sobrepor trabalho de teste ainda ativo. Se o processo ainda estiver inicializando e não confirmar todas as etapas dentro do prazo, registrar a verificação como malsucedida, sem presumir prontidão apenas porque ele permanece em execução. Uma falha interrompe a sequência de sucessos; não há prontidão provisória após o primeiro sucesso.
+
+Declarar o processo pronto somente após o segundo sucesso consecutivo. Nesse momento, iniciar sua contagem independente de cinco minutos de estabilidade. Um reinício não herda a prontidão ou o período estável do processo anterior e não zera, por si só, as tentativas de reinício já consumidas. Preservar a separação entre prontidão individual e disponibilidade das operações dependentes.
+
+As primeiras falhas podem decorrer de inicialização ainda em andamento. Elas não autorizam automaticamente encerrar um processo vivo ou consumir outra tentativa de reinício; o prazo de inicialização e o tratamento de ausência persistente de prontidão continuam por decidir. Se o processo encerrar inesperadamente, aplicar a política de reinício individual já aprovada.
+
+A verificação imediata permite reconhecer prontidão sem aguardar um atraso fixo, mas pode gerar verificações malsucedidas esperadas durante o início. Não apresentar essas falhas isoladas como prova de esgotamento das tentativas de reinício nem confundi-las com falhas de recuperação de um envio.
+
+Após a aprovação desta subseção, continuar pelo tratamento de um processo que permanece vivo sem alcançar prontidão. Permanecem pendentes operações de teste ainda em andamento após o prazo, tratamento durante backup, persistência do controle do supervisor, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Processo vivo sem prontidão: encerramento após prazo e reinício limitado
+
+O autor escolheu a opção A em 2026-11-16: quando um processo permanecer vivo sem alcançar prontidão ou perder a prontidão, aplicar um prazo contínuo sem prontidão e, se ele se esgotar, encerrar o processo e seguir a política limitada de reinício individual. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Na inicialização, contar o prazo a partir do início do processo, que começa não pronto. Para um processo anteriormente pronto, contar a partir da declaração de perda de prontidão após três verificações consecutivas malsucedidas. Não contar desde a primeira falha isolada, pois as duas primeiras falhas ainda preservam o estado declarado de pronto conforme a tolerância escolhida. O valor do prazo permanece por definir.
+
+Manter as verificações durante esse período. Dois sucessos consecutivos restabelecem a prontidão e encerram a contagem do prazo sem prontidão. Um único sucesso não a encerra nem a reinicia. Se ocorrer nova perda de prontidão após recuperação, iniciar outro período contínuo sem prontidão; isso não zera a contagem de reinícios, cujo reinício continua exigindo cinco minutos de estabilidade.
+
+Ao vencer o prazo sem prontidão, o supervisor deve solicitar o encerramento do processo afetado, preservando o outro processo e as restrições das operações dependentes. Confirmar o encerramento antes de iniciar um substituto; não sobrepor instâncias por presumir que um pedido de parada teve sucesso. Sinais, tempo de tolerância, encerramento forçado e tratamento de impossibilidade de confirmar a parada ainda precisam ser definidos.
+
+Depois de confirmar a parada, aplicar a próxima tentativa disponível da sequência de reinício individual: esperas de 5, 15 e 30 segundos, sem conceder tentativas adicionais por se tratar de um processo encerrado pelo supervisor. Se a terceira tentativa não alcançar recuperação estável e permanecer sem prontidão até vencer seu prazo, encerrar o processo e mantê-lo parado para intervenção, sem quarta tentativa automática. O marco exato de consumo das tentativas continua pendente.
+
+A expiração desse prazo e o reinício do processo não concedem autorização a execuções antigas, não renovam os prazos de processamento e não comprovam ausência de efeitos anteriores. Preservar os resultados duráveis e os mecanismos de recuperação de envios e de operações de arquivos. Distinguir os limites do supervisor dos limites de recuperação de cada envio.
+
+Essa política pode recuperar um processo travado sem intervenção, mas também encerra um processo funcional cuja prontidão falhou por indisponibilidade do banco ou do armazenamento. Reiniciar não corrige necessariamente a dependência e pode esgotar a margem de tentativas. A escolha não exige distinguir essas causas antes do encerramento. O tratamento da pausa planejada de alterações durante backup permanece pendente e não deve ser presumido como falha comum.
+
+Após a aprovação desta subseção, continuar pelo valor do prazo contínuo sem prontidão. Permanecem pendentes encerramento e confirmação de parada, consumo e persistência das tentativas do supervisor, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Prazo sem prontidão: um minuto contínuo por processo
+
+O autor escolheu a opção B em 2026-11-16: aplicar um prazo de um minuto contínuo sem prontidão antes de encerrar o processo afetado e seguir a política limitada de reinício individual. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o prazo separadamente a Atendimento e ao componente de arquivos protegidos. Na inicialização ou reinicialização, contar o minuto desde o início do processo, que começa não pronto. Para um processo anteriormente pronto, contar desde a declaração de perda de prontidão após três verificações consecutivas malsucedidas, não desde a primeira falha isolada.
+
+Manter as verificações com intervalo de 5 segundos após cada término e prazo total de 2 segundos. Dois sucessos consecutivos confirmam prontidão e encerram a contagem do minuto sem prontidão. Um único sucesso não encerra nem reinicia esse prazo. Uma nova perda de prontidão depois de recuperação inicia outro período contínuo, sem zerar as tentativas de reinício antes dos cinco minutos de estabilidade já exigidos.
+
+Ao completar um minuto ainda sem prontidão, iniciar o encerramento do processo e confirmar sua parada antes de executar uma tentativa de reinício disponível. Preservar o processo sobrevivente, as restrições das operações dependentes e as esperas de 5, 15 e 30 segundos da sequência limitada. Não conceder uma quarta tentativa depois do esgotamento.
+
+O minuto determina quando solicitar o encerramento, não garante que a parada e o reinício terminem nesse intervalo. Coordenar o vencimento com uma confirmação de prontidão concorrente para que uma resposta tardia não desfaça um encerramento já decidido. Os mecanismos concretos dessa coordenação, a tolerância para parada e o encerramento forçado permanecem por especificar.
+
+O prazo permite recuperação transitória antes de encerrar um processo, mas pode interromper inicializações que precisem de mais de um minuto ou esgotar tentativas durante uma falha prolongada de banco ou armazenamento. O valor foi escolhido sem medições de inicialização ou carga nesta etapa. Não o confundir com os 30 segundos de autorização de uma execução de envio nem com os cinco minutos de estabilidade do processo.
+
+O tratamento de manutenção planejada e da pausa de alterações durante backup continua pendente. Esta escolha não autoriza interpretar automaticamente essas pausas como falhas comuns, contorná-las com gravações de teste ou reiniciar processos durante o backup sem a política correspondente.
+
+Após a aprovação desta subseção, continuar pela tolerância e pelo procedimento de encerramento antes do reinício individual. Permanecem pendentes confirmação de parada, consumo e persistência das tentativas do supervisor, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Encerramento antes do reinício: tolerância de 15 segundos
+
+O autor escolheu a opção B em 2026-11-16: após vencer o minuto contínuo sem prontidão, solicitar o encerramento normal do processo e conceder até 15 segundos para sua saída. Se necessário, forçar a parada e confirmar o encerramento antes de iniciar um substituto. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar os 15 segundos desde a solicitação de encerramento normal pelo supervisor. A decisão de encerrar não é revogada por uma resposta tardia de prontidão. O processo em encerramento deve deixar de aceitar novo trabalho e tentar finalizar ou interromper com segurança as operações em andamento, respeitando suas autorizações e os resultados persistidos. O procedimento concreto por tipo de operação permanece por especificar.
+
+Se o processo e os auxiliares sob sua responsabilidade encerrarem antes do limite, não esperar o restante dos 15 segundos. Se ainda estiverem ativos ao atingir o limite, o supervisor deve solicitar a parada forçada do conjunto afetado, sem atingir o outro processo supervisionado ou seus auxiliares. Definir os sinais e o mecanismo de identificação e controle desses conjuntos no plano técnico, preservando as restrições de privilégios já escolhidas.
+
+Confirmar a saída do processo e dos auxiliares sob sua responsabilidade antes de considerar a parada concluída. Enviar um sinal, inclusive de parada forçada, não comprova que a saída ocorreu. Enquanto não houver confirmação, não iniciar um substituto concorrente. O tratamento de uma parada que não possa ser confirmada permanece pendente; os 15 segundos não constituem garantia do tempo total até o reinício.
+
+Depois da confirmação de parada, aplicar a espera da próxima tentativa disponível de reinício individual: 5, 15 ou 30 segundos conforme a posição na sequência. Não contar essa espera em paralelo com a tolerância de encerramento. Preservar o limite de três tentativas sem recuperação estável e manter o processo parado para intervenção após esgotamento.
+
+Encerramento normal ou forçado não comprova ausência de efeitos já produzidos no banco ou no armazenamento, nem cancela necessariamente operações já entregues a uma dependência. Recuperar pelo estado durável, conferir resultados incertos e preservar a proteção contra duplicação e as restrições de execuções antigas. Não vincular anexos incompletos nem declarar um recebimento confirmado apenas porque o processo terminou.
+
+A tolerância de 15 segundos permite alguma finalização de trabalho antes da parada forçada, mas pode interromper operações mais longas e prolonga a indisponibilidade quando o processo está travado. O valor foi escolhido sem medições de tempo de encerramento. A política não define ainda o encerramento planejado do container nem o comportamento durante backup.
+
+Após a aprovação desta subseção, continuar pelo tratamento de impossibilidade de confirmar a parada do processo ou de seus auxiliares. Permanecem pendentes sinais e supervisão concreta, consumo e persistência das tentativas, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Exceção ao reinício individual: parada sem confirmação exige encerrar o container
+
+O autor escolheu a opção B em 2026-11-16: se a parada forçada de um processo ou de seus auxiliares não tiver saída confirmada, escalar para encerramento do container de Atendimento e solicitar recuperação do conjunto pelo Docker. O autor escolheu explicitamente esta exceção à política de reinício individual; ela não autoriza reiniciar o container como substituição automática do limite de três tentativas esgotado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar a exceção depois da solicitação de encerramento normal, da tolerância de 15 segundos e da solicitação de parada forçada, quando não houver confirmação de saída do conjunto afetado. Não iniciar um substituto individual enquanto a parada continuar incerta. O prazo e o critério concreto para concluir que a confirmação não foi obtida permanecem por definir; não presumir confirmação imediata após enviar um sinal.
+
+A escalada interrompe também o outro processo supervisionado, mesmo que ele esteja saudável. Deixar de admitir novo trabalho no conjunto e coordenar o encerramento do container com a implantação Docker Compose. O mecanismo de solicitação e a autoridade responsável permanecem por especificar. Esta escolha não concede a Atendimento acesso ao socket de controle do Docker, privilégios sobre a VM ou permissão para contornar o isolamento dos arquivos protegidos.
+
+Confirmar a parada do container e dos processos pertencentes a ele antes de iniciar um substituto. Um pedido de encerramento, uma resposta perdida ou a saída isolada do supervisor não comprovam essa parada. Se o sistema operacional continuar mantendo processos sem saída confirmada, não iniciar outra instância concorrente; o tratamento operacional desse bloqueio permanece por detalhar. Reiniciar o conjunto não garante resolver bloqueios do sistema operacional ou do armazenamento.
+
+Preservar estados duráveis, arquivos e resultados já confirmados. Após recuperação, cada processo começa não pronto, passa pelas verificações imediatas e exige dois sucessos consecutivos para declarar prontidão. Não herdar períodos de estabilidade anteriores nem conceder autorização a execuções antigas. Conferir operações de resultado incerto antes de repetir trabalho.
+
+A recuperação do container não deve ser presumida como reinicialização dos limites do supervisor ou dos envios. A persistência das contagens, os limites de escaladas e a política concreta de reinício do container permanecem pendentes. Não introduzir ciclos ilimitados de recuperação por consequência desta exceção.
+
+A escalada permite tentar recuperar o conjunto quando a parada individual não é confirmada, mas amplia a indisponibilidade para consultas e operações do processo saudável. Durante esse período, não prometer continuidade das operações independentes que o reinício individual normalmente preservaria.
+
+Após a aprovação desta subseção, continuar pelo prazo de espera por confirmação após solicitar a parada forçada individual. Permanecem pendentes mecanismo e limites de escalada, confirmação de parada do container, persistência e consumo das tentativas, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Confirmação de parada forçada individual: espera de 2 segundos
+
+O autor escolheu a opção A em 2026-11-16: após solicitar a parada forçada individual, aguardar até 2 segundos pela confirmação de saída do processo e dos auxiliares sob sua responsabilidade. Se a saída não for confirmada nesse intervalo, escalar para o encerramento do container conforme a exceção já aprovada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar os 2 segundos desde a solicitação de parada forçada pelo supervisor, depois da tolerância de até 15 segundos para encerramento normal. Se a saída de todo o conjunto afetado for confirmada antes, encerrar a espera imediatamente e seguir a próxima tentativa disponível de reinício individual, com sua espera de 5, 15 ou 30 segundos. Não aguardar o restante dos 2 segundos nem somar esse período à autorização de processamento de um envio.
+
+O prazo abrange a confirmação de saída do processo e de seus auxiliares, não apenas a confirmação de que um sinal foi enviado. A saída do processo principal com auxiliares ainda ativos não basta. Não iniciar um substituto individual enquanto essa confirmação estiver ausente.
+
+Ao esgotar os 2 segundos sem confirmação completa, decidir pela escalada e iniciar o procedimento de encerramento do container, que também interrompe o processo saudável. Coordenar uma confirmação de saída concorrente com essa decisão para evitar recuperação individual e recuperação do container simultâneas. Uma confirmação tardia não deve iniciar automaticamente uma instância individual depois de a escalada ter sido decidida. O mecanismo concreto de coordenação permanece por especificar.
+
+Os 2 segundos limitam a espera antes da escalada, não garantem que o processo, o container ou uma operação entregue ao armazenamento tenham terminado nesse prazo. Preservar a exigência de confirmar a parada do container antes de substituí-lo e conferir efeitos anteriores na recuperação. A impossibilidade de confirmar essa parada continua exigindo tratamento próprio.
+
+O prazo curto reduz a demora para tentar recuperação do conjunto, mas pode ampliar a indisponibilidade por uma demora breve de confirmação individual. O valor foi escolhido sem medições operacionais e não altera os limites de reinício nem autoriza ciclos ilimitados de escalada.
+
+Após a aprovação desta subseção, continuar pelo mecanismo responsável por solicitar o encerramento e a recuperação do container sem conceder a Atendimento controle do Docker. Permanecem pendentes limites de escalada, confirmação de parada do container, persistência e consumo das tentativas, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Mecanismo de escalada: saída com falha do supervisor principal
+
+O autor escolheu a opção A em 2026-11-16: o supervisor executa como processo principal do container de Atendimento e, ao decidir pela escalada, encerra com código de falha para que o Docker conduza o encerramento do container e aplique a política de reinício configurada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não acrescentar um monitor na VM para controlar o Docker nesta etapa. Atendimento e suas execuções continuam sem acesso ao socket de controle do Docker ou a credenciais equivalentes. O supervisor atua sobre os processos sob sua responsabilidade e sinaliza a falha do conjunto por sua própria saída; não precisa obter controle administrativo do Docker para solicitar a escalada escolhida.
+
+Antes de sair, registrar de forma durável a decisão de escalada e as informações necessárias à recuperação e à preservação dos limites. Não usar somente memória ou logs como substitutos desse estado. O armazenamento, a coordenação com o próximo início e o tratamento de falha ao persistir essa decisão permanecem por especificar. Não presumir que a saída do supervisor zere tentativas individuais ou contadores de escalada.
+
+Depois de decidir pela escalada, não iniciar novos substitutos individuais nem admitir novo trabalho pelo conjunto. Preservar o procedimento de encerramento e a exigência de confirmar a parada do container antes de sua substituição. A saída do supervisor, isoladamente, não é evidência suficiente de que todos os processos já terminaram; a recuperação deve respeitar o estado de parada confirmado pelo mecanismo de execução. Os critérios e o tratamento de parada não confirmada continuam pendentes.
+
+A política concreta de reinício pelo Docker Compose, seus limites e a relação com o estado persistido do supervisor serão decididos posteriormente. Não configurar reinício ilimitado por consequência desta escolha nem usar a escalada para contornar o bloqueio após três tentativas individuais sem estabilidade. Distinguir também a saída intencional para escalada de uma falha inesperada do próprio supervisor.
+
+Na recuperação do conjunto, iniciar ambos os processos como não prontos, verificar resultados duráveis e preservar as autorizações e os limites já aprovados. Uma nova instância não pode repetir efeitos apenas porque a anterior terminou sem resposta. As operações de arquivos e envios continuam sujeitas aos seus contratos de recuperação.
+
+O mecanismo evita um controlador externo na VM, mas depende de o supervisor conseguir executar sua saída. Se ele travar, esta escolha não oferece um monitor independente que force a recuperação. Também não garante resolver processos ou armazenamento bloqueados no sistema operacional.
+
+Após a aprovação desta subseção, continuar pela política e pelo limite de reinícios do container. Permanecem pendentes persistência e limites de escalada, falha inesperada do supervisor, confirmação de parada do container, consumo das tentativas individuais, operações de teste ainda ativas após o prazo, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Recuperação do container: limite de três tentativas automáticas
+
+O autor escolheu a opção B em 2026-11-16: permitir até três tentativas automáticas de recuperar o container de Atendimento em uma sequência de falhas e exigir intervenção após seu esgotamento sem recuperação estável. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O limite se aplica à recuperação do conjunto e é separado das três tentativas de reinício individual de cada processo e das três recuperações automáticas de cada envio. Não somar esses controles como se fossem uma única cota nem zerar um deles apenas porque outro mecanismo iniciou uma tentativa.
+
+Preservar a contagem e o bloqueio por esgotamento entre reinícios do container. A configuração do Docker Compose e o estado durável do supervisor devem impedir uma quarta tentativa automática na mesma sequência. O mecanismo concreto, o armazenamento do controle e o marco de consumo de uma tentativa permanecem por especificar. Não presumir que um contador nativo do Docker, isoladamente, satisfaça toda essa regra.
+
+Após a terceira tentativa sem recuperação estável, bloquear novas recuperações automáticas do conjunto e exigir intervenção da equipe. Não contornar esse limite por nova saída do supervisor, reinício de processo ou recriação automática do container. O comportamento concreto para manter o conjunto bloqueado e as ações de intervenção ainda precisam ser definidos.
+
+Uma tentativa somente pode iniciar depois da confirmação de parada da instância anterior, conforme a escalada já aprovada. Iniciar o container não comprova recuperação estável: os dois processos começam não prontos e seguem suas verificações e limites. Os critérios e o período de estabilidade do conjunto que permitem encerrar a sequência e zerar sua contagem permanecem pendentes; não herdar automaticamente os cinco minutos de estabilidade individual como decisão para o container.
+
+Preservar o estado dos limites individuais e as proteções contra efeitos duplicados após cada recuperação do conjunto. O bloqueio por esgotamento das tentativas individuais não deve provocar escaladas sucessivas para obter novas tentativas. A relação entre escalada, falha inesperada do supervisor e outras saídas do container ainda precisa ser detalhada.
+
+Três tentativas oferecem margem para recuperar falhas transitórias, mas também podem interromper repetidamente ambos os processos durante uma falha persistente. O limite não define tempo total de indisponibilidade: intervalos, duração de inicialização, confirmação de parada e critérios de estabilidade continuam influenciando esse tempo. Os intervalos e o tratamento de reinício do Docker ou da VM permanecem pendentes.
+
+Após a aprovação desta subseção, continuar pelo critério e período de estabilidade do conjunto que encerram a sequência de recuperação do container. Permanecem pendentes intervalos e consumo das tentativas, persistência e bloqueio, falha inesperada do supervisor, confirmação de parada do container, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Estabilidade do container: ambos os processos prontos por cinco minutos
+
+O autor escolheu a opção A em 2026-11-16: encerrar a sequência de recuperação do container e zerar sua contagem de tentativas após Atendimento e o componente de arquivos permanecerem simultaneamente prontos por cinco minutos contínuos. Não exigir comprovação da comunicação pelo socket como condição adicional desse critério. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Iniciar a contagem conjunta quando ambos estiverem declarados prontos segundo suas verificações individuais. Se um deles ficar pronto antes, não contar esse período anterior como estabilidade conjunta. O supervisor deve observar os dois estados ao longo do mesmo intervalo; não basta cada processo ter acumulado cinco minutos de prontidão em momentos diferentes.
+
+Se qualquer processo perder a prontidão ou encerrar antes de completar o período, interromper a contagem conjunta. Recomeçar os cinco minutos somente quando ambos voltarem a estar prontos, sem somar intervalos anteriores. Aplicar os limiares já aprovados: três falhas consecutivas para declarar perda de prontidão e dois sucessos consecutivos para recuperá-la. As duas primeiras falhas isoladas de uma sequência não interrompem a contagem enquanto o estado declarado continuar pronto.
+
+Ao completar cinco minutos contínuos de prontidão conjunta, encerrar a sequência de falhas do container e zerar sua contagem de recuperações automáticas. Persistir essa transição para que um reinício posterior não recupere uma contagem desatualizada. O armazenamento e a coordenação concreta dessa atualização permanecem por especificar. Não confundir essa transição com o início de uma tentativa nem usá-la para confirmar operações de negócio.
+
+Preservar os controles individuais: cada processo continua contando seus próprios cinco minutos de estabilidade e suas tentativas de reinício conforme as regras anteriores. A estabilidade conjunta não concede tentativas extras de recuperação de envios nem renova autorizações antigas. Depois de esgotamento e bloqueio, esta regra não autoriza iniciar automaticamente outra instância apenas para tentar alcançar estabilidade.
+
+Os dois processos podem satisfazer suas verificações individuais mesmo com falha de comunicação pelo socket. Portanto, zerar a contagem do container não comprova disponibilidade das operações que dependem dessa comunicação. Manter a avaliação e as restrições dessas operações separadas, sem apresentar recuperação integral dos arquivos apenas pelo cumprimento do critério conjunto.
+
+O período de cinco minutos permite recuperar a margem de tentativas após prontidão conjunta contínua, mas falhas recorrentes separadas por períodos maiores podem iniciar novas sequências. O tratamento da pausa de alterações durante backup e de seus efeitos sobre os indicadores permanece pendente.
+
+Após a aprovação desta subseção, continuar pelos intervalos entre as tentativas de recuperação do container. Permanecem pendentes consumo das tentativas, persistência e bloqueio, falha inesperada do supervisor, confirmação de parada do container, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Esperas de recuperação do container: 5, 15 e 30 segundos
+
+O autor escolheu a opção A em 2026-11-16: aguardar 5 segundos antes da primeira tentativa automática de recuperação do container, 15 segundos antes da segunda e 30 segundos antes da terceira. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar cada espera a partir da confirmação de parada da instância anterior, não da primeira falha de prontidão, da solicitação de encerramento individual ou da saída isolada do supervisor. Não executar tentativas concorrentes nem contar a espera em paralelo com uma parada ainda não confirmada. Se a parada não puder ser confirmada, não iniciar substituição apenas porque o intervalo já teria transcorrido.
+
+Aplicar os intervalos conforme a posição da tentativa na sequência persistida de recuperação do conjunto. Não reiniciar a sequência de esperas a cada início do supervisor, reinício do Docker ou repetição de uma solicitação de recuperação. A coordenação concreta entre a confirmação de parada pelo Docker, o estado durável e o agendamento permanece por especificar.
+
+A configuração de implantação deve preservar as esperas escolhidas mesmo que o Docker aplique esperas próprias. Não apresentar uma política nativa de reinício como equivalente sem verificar sua compatibilidade com esses intervalos, o limite de três tentativas e a persistência do bloqueio. A estratégia concreta para conciliar o início do container com a liberação dos processos de negócio continua pendente.
+
+Os intervalos determinam a espera mínima antes de cada tentativa elegível, não garantem início ou recuperação no instante exato. Agendamento, recursos disponíveis e controles do Docker podem atrasar a execução. Não acumular tentativas simultâneas para compensar indisponibilidade do mecanismo de execução. O tratamento de agendamentos vencidos permanece por definir.
+
+Preservar o limite de três tentativas automáticas e o critério de ambos os processos prontos por cinco minutos contínuos para encerrar a sequência. Depois de esgotamento sem recuperação estável, exigir intervenção. As esperas de 5, 15 e 30 segundos do container são controles próprios, ainda que coincidam numericamente com os intervalos de reinício individual; não compartilhar contadores nem conceder tentativas extras entre eles.
+
+A sequência permite novas tentativas em intervalos curtos, mas concentra reinícios durante falhas persistentes e pode consumir toda a margem antes de uma dependência se recuperar. Os valores foram escolhidos sem medições operacionais e não representam garantia de tempo total de indisponibilidade.
+
+Após a aprovação desta subseção, continuar pelo marco de consumo das tentativas de recuperação do container e sua coordenação com as esperas. Permanecem pendentes persistência e bloqueio, conciliação com a política do Docker, falha inesperada do supervisor, confirmação de parada do container, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Consumo da recuperação do container: autorização durável antes da liberação dos processos
+
+O autor escolheu a opção A em 2026-11-16: consumir uma tentativa de recuperação do conjunto ao registrar duravelmente a autorização antes de liberar Atendimento e o componente de arquivos. O autor aprovou a subseção e depois escolheu explicitamente permitir a partida técnica do container com apenas o supervisor, ajustando o marco anteriormente descrito como anterior ao início do container. O limite conta liberações autorizadas do conjunto de processos de negócio, não partidas técnicas do container. A redação consolidada desse ajuste consta na subseção seguinte e aguarda aprovação; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Coordenar atomicamente a elegibilidade, a posição da tentativa e o registro da autorização para impedir que decisões concorrentes ultrapassem o limite de três tentativas. Exigir confirmação da parada anterior e cumprimento da espera correspondente de 5, 15 ou 30 segundos antes de autorizar o início. Uma solicitação recebida, espera agendada ou decisão apenas em memória ainda não consome a tentativa; o marco é a autorização confirmada no armazenamento durável.
+
+Não liberar a inicialização enquanto a confirmação desse registro estiver ausente. Se a resposta da persistência for perdida, consultar o estado durável e reconhecer a mesma autorização antes de decidir o próximo passo. Não incrementar novamente a contagem por mera repetição da solicitação ou tratar uma autorização incerta como inexistente. A identificação da tentativa, o armazenamento e a coordenação concreta permanecem por especificar.
+
+Depois de registrada a autorização, a tentativa permanece consumida mesmo que uma falha impeça iniciar os processos. Não exigir prontidão ou estabilidade para contabilizá-la e não devolver automaticamente a tentativa por ausência de confirmação de início. Antes de emitir outra autorização, conferir a anterior e preservar a exigência de não sobrepor instâncias. O tratamento de autorização registrada cujo início ficou incerto ainda precisa ser detalhado.
+
+Preservar esse consumo entre reinícios do supervisor, do container e do mecanismo de execução. O reinício do controle não pode apagar a autorização já concedida ou permitir uma quarta tentativa na sequência. Zerar a contagem somente pelo critério de estabilidade conjunta já aprovado ou por uma ação de intervenção cuja regra ainda será definida.
+
+A conciliação escolhida permite que o Docker inicie somente o supervisor antes da autorização. O supervisor deve respeitar a espera e confirmar o registro durável da tentativa antes de liberar os dois processos de negócio, conforme a subseção seguinte. Não registrar o contador somente depois de esses processos terem iniciado, nem conceder a Atendimento controle do Docker. Esta regra não limita, por si só, as partidas técnicas que falhem antes da autorização; seu tratamento permanece pendente.
+
+Esse marco impede iniciar trabalho autorizado sem contabilização prévia, mas pode consumir a margem de recuperação sem que os processos cheguem a executar. Os limites individuais e os de recuperação dos envios continuam separados; consumir uma tentativa do container não concede novas autorizações a execuções antigas.
+
+Após a aprovação desta subseção, continuar pela conciliação entre a autorização durável e o início conduzido pelo Docker, incluindo o ponto de liberação dos processos de negócio. Permanecem pendentes armazenamento e bloqueio, autorização com início incerto, falha inesperada do supervisor, confirmação de parada do container, tratamento durante backup, intervenção após esgotamento, operações durante indisponibilidade, configuração de permissões, protocolo do socket, disponibilidade durável do conteúdo aceito, recuperação de recebimentos interrompidos, limpeza e demais contratos em aberto.
+
+### Partida técnica do container: supervisor antes da autorização do conjunto
+
+O autor escolheu a opção A em 2026-11-16 para resolver a incompatibilidade entre autorização anterior à partida técnica do container e ausência de controlador externo: permitir a partida do container somente com o supervisor e exigir autorização durável antes de liberar Atendimento e o componente de arquivos. O autor aprovou a redação consolidada e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Esta decisão ajusta o significado do limite de três recuperações automáticas: ele conta liberações autorizadas do conjunto de processos de negócio. Não limita literalmente o número de partidas técnicas do container pelo Docker. Preservar a decisão de não instalar controlador externo na VM e de não conceder a Atendimento acesso ao controle do Docker.
+
+Na partida técnica, não iniciar Atendimento ou o componente de arquivos antes da liberação do supervisor. O supervisor recupera o estado durável da sequência, verifica bloqueios e confirma o cumprimento da espera aplicável de 5, 15 ou 30 segundos. A partida técnica antecipada não encurta a espera nem consome, por si só, uma tentativa. O mecanismo para obter a confirmação e o instante da parada anterior sem acesso ao controle do Docker permanece por especificar; não substituir esse marco silenciosamente pelo início do supervisor.
+
+Quando elegível, registrar atomicamente a autorização e o consumo da tentativa e somente depois liberar os dois processos com suas identidades e permissões próprias. Se a persistência falhar ou o resultado ficar incerto, não liberá-los; consultar e reconciliar o estado antes de prosseguir. O supervisor precisa conseguir acessar esse controle antes de Atendimento iniciar; armazenamento, credenciais e permissões desse acesso continuam por definir.
+
+Uma falha após a autorização pode consumir a tentativa sem que os processos iniciem. A partida seguinte deve reconhecer a autorização anterior e tratar o início incerto sem liberar novamente a mesma tentativa de modo descontrolado. O contrato dessa recuperação permanece pendente. Depois da liberação, cada processo começa não pronto e segue as verificações e os limites individuais já aprovados.
+
+Depois de esgotamento, uma partida técnica do supervisor não autoriza liberar os processos nem zerar contadores. O modo de manter o conjunto bloqueado e a política nativa do Docker precisam ser especificados para evitar ciclos técnicos ilimitados. Falhas do supervisor anteriores à autorização também exigem tratamento separado; não estão limitadas pela contagem das liberações autorizadas.
+
+O ajuste permite manter a decisão dentro do modelo de supervisor e Docker Compose, mas distingue a execução técnica do container da recuperação autorizada de suas funções. Não apresentar esse limite como garantia de no máximo três partidas do container nem declarar o serviço disponível enquanto somente o supervisor estiver executando.
+
+Após a aprovação desta subseção, continuar pelo armazenamento durável do controle de recuperação acessível ao supervisor antes da liberação dos processos. Permanecem pendentes confirmação e instante da parada anterior, autorização com início incerto, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento, protocolo do socket, disponibilidade durável do conteúdo aceito, limpeza e demais contratos em aberto.
+
+### Controle durável do supervisor: área reservada no PostgreSQL
+
+O autor escolheu a opção A em 2026-11-16: persistir contagens, autorizações e bloqueios do supervisor em área reservada do schema de Atendimento no PostgreSQL, usando credencial restrita às tabelas desse controle e transações para coordenar decisões. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O supervisor acessa esse controle diretamente antes de liberar Atendimento e o componente de arquivos. Essa responsabilidade permanece dentro da fronteira de Atendimento: não conceder acesso direto a schemas de Materiais ou Inventário. Separar os privilégios do supervisor dos usados pelos processos de negócio. Atendimento e o componente de arquivos não podem alterar diretamente contagens, autorizações ou bloqueios reservados ao supervisor.
+
+Usar o estado persistido como referência para a sequência de recuperação, incluindo tentativas consumidas, autorizações e bloqueio após esgotamento. Coordenar em transações as verificações de elegibilidade e as alterações que precisem ser indivisíveis, impedindo liberações concorrentes além do limite. A identificação da instância e da tentativa, as tabelas concretas e os mecanismos de exclusão entre supervisores ainda precisam ser especificados.
+
+Somente liberar os processos de negócio depois de confirmar o registro durável da autorização correspondente. Se o banco estiver indisponível ou o resultado da gravação for incerto, não presumir autorização, não usar um contador local zerado e não iniciar os processos como alternativa. Recuperar a comunicação e consultar o resultado persistido antes de prosseguir, sem consumir novamente a mesma autorização por resposta perdida.
+
+Na partida, carregar o estado existente e respeitar contagens e bloqueios anteriores. Ausência inesperada de estado não comprova primeira instalação; distinguir inicialização legítima, migração e perda ou restauração de dados antes de permitir uma nova sequência. A criação inicial do controle, as migrações anteriores à liberação e a recuperação após restauração de backup permanecem pendentes.
+
+Restringir a credencial do supervisor às operações necessárias, sem usar credencial administrativa do banco para o funcionamento normal. Definir separadamente como criar e migrar a estrutura e como armazenar e fornecer o segredo no container. A escolha não concede aos processos de negócio acesso à credencial do supervisor nem altera o isolamento da área protegida de arquivos.
+
+O PostgreSQL já faz parte da implantação e oferece transações para coordenar esse estado, mas sua indisponibilidade impede novas liberações autorizadas do conjunto. A política para perda de acesso ao banco com processos já liberados, a persistência de transições de estabilidade e as exceções durante backup continuam por definir. Não interpretar indisponibilidade do controle como autorização para encerrar ou reiniciar ilimitadamente o container.
+
+Após a aprovação desta subseção, continuar pelo comportamento do supervisor quando o PostgreSQL fica indisponível depois da liberação dos processos. Permanecem pendentes identificação e concorrência de supervisores, confirmação e instante da parada anterior, autorização com início incerto, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Controle no PostgreSQL inacessível: suspender encerramentos por falta de prontidão
+
+O autor escolheu a opção B em 2026-11-16: se o supervisor perder acesso ao controle durável no PostgreSQL depois de liberar os processos, suspender os encerramentos motivados por falta de prontidão enquanto esse controle estiver inacessível. Manter os processos vivos, restringir as operações afetadas e bloquear novas liberações. Esta é uma exceção explícita ao encerramento após um minuto contínuo sem prontidão. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar a exceção à indisponibilidade do acesso do supervisor ao seu controle reservado; não presumir que isso comprove indisponibilidade de todo o banco ou de todas as operações de Atendimento. Continuar observando os processos e suas verificações, sem declarar prontidão ou sucesso de operações que não possam ser confirmados. Preservar a avaliação separada das dependências e as restrições das operações efetivamente afetadas.
+
+Enquanto não puder confirmar o estado durável, não encerrar um processo vivo apenas por vencer seu prazo sem prontidão e não liberar novas instâncias ou substitutos. Não usar uma cópia em memória para conceder tentativas, remover bloqueios ou presumir autorização persistida. A exceção não obriga manter um processo que já terminou nem comprova que ele continua funcionando; se houver saída espontânea, observá-la sem autorizar sua substituição até reconciliar o controle.
+
+Não zerar contagens de recuperação ou períodos pendentes por falta de acesso ao banco. Uma transição que não pôde ser persistida não deve ser apresentada como confirmada. O registro e a reconciliação de observações locais, inclusive prontidão e estabilidade durante a interrupção, permanecem por definir. Não presumir que memória local seja durável após falha do supervisor.
+
+Quando o acesso voltar, recuperar e reconciliar o estado persistido antes de retomar liberações ou decisões de encerramento por falta de prontidão. O tratamento do prazo de um minuto durante a suspensão — preservar tempo anterior, recomeçar ou considerar vencido — ainda precisa ser decidido. Não assumir encerramento imediato nem renovação automática do prazo ao restabelecer a conexão.
+
+A suspensão não revoga uma parada ou escalada já decidida antes da perda de acesso, não recupera autorizações vencidas de execuções de envio e não permite gravações de negócio sem as confirmações exigidas. O tratamento de decisões cujo registro ou execução tenha ficado incerto continua pendente e deve impedir substituições concorrentes e efeitos duplicados.
+
+A escolha evita encerrar processos por uma indisponibilidade do próprio controle, mas pode conservar processos travados enquanto o banco permanece inacessível. Ela não garante continuidade do atendimento nem substitui intervenção operacional durante uma falha prolongada. Frequência de reconexão e sinalização dessa condição permanecem por especificar.
+
+Após a aprovação desta subseção, continuar pelo tratamento do prazo sem prontidão ao restabelecer o acesso ao controle. Permanecem pendentes reconciliação de observações, reconexão, decisões com resultado incerto, identificação e concorrência de supervisores, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Retorno do controle no PostgreSQL: recomeçar o minuto sem prontidão
+
+O autor escolheu a opção A em 2026-11-16: após restabelecer o acesso ao controle no PostgreSQL e reconciliar seu estado, conceder um novo minuto completo a cada processo que continuar sem prontidão. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Não iniciar a nova contagem apenas porque uma conexão abriu ou uma consulta isolada respondeu. Primeiro confirmar o acesso necessário ao controle e reconciliar autorizações, contagens, bloqueios e decisões cujo resultado tenha ficado incerto. O marco da nova contagem é a conclusão dessa reconciliação pelo supervisor. Seus critérios concretos e sua persistência permanecem por especificar.
+
+Para cada processo ainda declarado não pronto nesse marco, iniciar um novo prazo contínuo de um minuto. Não descontar o tempo consumido antes da suspensão nem incluir o período de indisponibilidade do controle. Manter as verificações e exigir dois sucessos consecutivos para recuperar a prontidão; um único sucesso não encerra nem reinicia o novo minuto.
+
+Um processo que já estiver pronto ao concluir a reconciliação não recebe prazo de encerramento por falta de prontidão apenas por ter estado não pronto durante a interrupção. Se perder a prontidão posteriormente, aplicar o marco normal de perda após três falhas consecutivas. O aproveitamento de observações de prontidão feitas durante a indisponibilidade para confirmar esse estado ainda precisa ser definido; não presumir confirmação com base somente em memória local.
+
+Se ocorrer nova perda de acesso ao controle durante o novo minuto, aplicar novamente a suspensão de encerramentos aprovada. Após outra reconciliação concluída, conceder novamente um minuto completo aos processos ainda não prontos. Essa regra pode adiar repetidamente o encerramento durante oscilações do controle, sem autorizar zerar tentativas ou remover bloqueios.
+
+Ao vencer o novo minuto ainda sem prontidão, seguir o encerramento já definido: tolerância de 15 segundos para parada normal, parada forçada se necessária e até 2 segundos para confirmar sua saída antes da escalada aplicável. Preservar decisões de parada ou escalada já tomadas antes da suspensão; o novo minuto não as revoga nem concede autorização a execuções antigas.
+
+A escolha dá tempo para recuperação após a volta do controle e evita encerramento imediato por um prazo antigo, mas prolonga a permanência de processos travados e permite adiamentos sucessivos durante falhas intermitentes. Reiniciar esse prazo não reinicia os cinco minutos de estabilidade por si só e não resolve como contabilizar estabilidade observada durante a interrupção.
+
+Após a aprovação desta subseção, continuar pelo aproveitamento ou descarte das observações de prontidão e estabilidade feitas enquanto o controle esteve inacessível. Permanecem pendentes critérios de reconciliação, reconexão, decisões com resultado incerto, identificação e concorrência de supervisores, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Observações durante falha do controle: aproveitar histórico contínuo do mesmo supervisor
+
+O autor escolheu a opção B em 2026-11-16: após reconciliar o controle no PostgreSQL, aproveitar as observações locais de prontidão e estabilidade feitas durante sua indisponibilidade somente quando o mesmo supervisor permaneceu em execução e não houve lacunas de verificação. Quando essa continuidade não puder ser comprovada, exigir novas confirmações. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O histórico local é evidência para reconciliação, não substituto do controle durável. Enquanto o PostgreSQL estiver inacessível, ele não autoriza novas liberações, remoção de bloqueios ou confirmação de contagens zeradas. Após restabelecer o acesso, reconciliar o estado persistido antes de aplicar qualquer transição derivada desse histórico.
+
+Exigir continuidade do supervisor responsável e das observações do processo correspondente, com identidade da instância observada, sequência dos resultados e referências de tempo suficientes para aplicar os limiares e os períodos já aprovados. Não unir prontidão de instâncias diferentes como se fosse execução contínua. Um reinício de processo interrompe sua estabilidade e a estabilidade conjunta, mesmo que o supervisor permaneça ativo.
+
+Se a continuidade for comprovada, aplicar ao histórico os três resultados malsucedidos consecutivos para perda de prontidão e os dois sucessos consecutivos para recuperação, sem presumir que falha de acesso do supervisor ao controle equivale ao resultado de uma verificação individual. Podem ser aproveitados períodos de estabilidade individual e conjunta efetivamente demonstrados. Não contar lacunas como sucesso nem tratar ausência de tráfego como prova de prontidão.
+
+Uma transição de zerar tentativas baseada em estabilidade durante a interrupção somente se torna confirmada depois de conciliada e persistida no PostgreSQL. Não apagar autorizações, consumos ou bloqueios posteriores por aplicar um histórico desatualizado. O mecanismo de identificação do supervisor vigente, exclusão entre instâncias e ordenação das transições ainda precisa ser especificado.
+
+Quando houver reinício do supervisor, perda do histórico ou lacuna que impeça demonstrar continuidade, não aproveitar o período incerto para prontidão ou estabilidade. Exigir duas novas verificações consecutivas bem-sucedidas para confirmar prontidão e iniciar novos períodos de cinco minutos, preservando as contagens e os bloqueios duráveis anteriores. Isso não concede tentativas adicionais nem apaga resultados de negócio confirmados.
+
+Concluir a reconciliação usando o estado de prontidão assim confirmado. Aos processos ainda não prontos nesse marco, conceder o novo minuto completo já aprovado. O histórico não revoga decisões de parada ou escalada anteriores nem permite executar retroativamente reinícios que ficaram suspensos durante a indisponibilidade.
+
+A opção pode reconhecer mais cedo processos que continuaram funcionando, mas exige demonstrar continuidade e ordenar corretamente a reconciliação. O limite que caracteriza uma lacuna, as informações guardadas em memória e a verificação de sua integridade permanecem por definir. Memória local perdida não pode ser reconstruída por suposição.
+
+Após a aprovação desta subseção, continuar pelo critério que caracteriza uma lacuna nas verificações e impede o aproveitamento do histórico. Permanecem pendentes identidade e exclusão entre supervisores, persistência e ordenação da reconciliação, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Lacuna nas verificações: tolerância de cinco segundos adicionais
+
+O autor escolheu a opção B em 2026-11-16: para comprovar continuidade do histórico, tolerar até 5 segundos adicionais de atraso no início da próxima verificação, além dos 5 segundos previstos após o término da anterior. Atraso maior caracteriza lacuna e impede aproveitar o histórico como contínuo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o critério separadamente à sequência de verificações de cada processo. Após concluir uma verificação ou reconhecer seu prazo esgotado, o próximo início permanece previsto para 5 segundos depois. Para fins de continuidade, aceitar um início ocorrido até 10 segundos após esse marco, inclusive; início posterior excede a tolerância. Essa margem não altera a frequência planejada para 10 segundos nem permite atrasar intencionalmente as verificações.
+
+O prazo total de 2 segundos por verificação continua vigente e separado da tolerância de agendamento. Não conceder mais tempo a uma operação de teste apenas porque o início seguinte admite atraso. Preservar a proibição de sobrepor trabalho de teste ainda ativo; se a finalização ou limpeza impedir o próximo início dentro da tolerância, não iniciar trabalho incompatível para evitar registrar uma lacuna.
+
+Reconhecer a lacuna também quando o prazo tolerado passar sem que a próxima verificação tenha começado, sem esperar indefinidamente por um resultado posterior. Não executar verificações retroativas, inventar resultados ou contar silêncio como sucesso. Registrar referências de tempo adequadas ao cálculo de duração; o mecanismo concreto de relógio e registro permanece por especificar.
+
+Uma verificação malsucedida cujo início e resultado foram acompanhados dentro dos limites é uma observação de falha, não necessariamente uma lacuna. Aplicar a ela os limiares já escolhidos. Distinguir ausência de observação de resultado negativo, inclusive durante indisponibilidade do controle no PostgreSQL.
+
+Para a reconciliação após falha do controle, não usar um período que atravesse a lacuna como prova de prontidão ou estabilidade contínuas. Aplicar a regra já aprovada de novas confirmações quando a continuidade não puder ser demonstrada: dois novos sucessos consecutivos para prontidão e novos períodos de cinco minutos. Preservar contagens e bloqueios duráveis; a lacuna não concede novas tentativas. O comportamento operacional fora dessa reconciliação permanece por detalhar, sem presumir reinício de processo apenas pela lacuna.
+
+O histórico conjunto não pode demonstrar estabilidade contínua atravessando uma lacuna de qualquer um dos processos. O supervisor deve preservar a identidade das instâncias observadas e não unir intervalos separados por reinício. O tratamento de observações contínuas retomadas depois da lacuna na mesma indisponibilidade ainda precisa ser especificado.
+
+A tolerância permite pequenos atrasos de agendamento, mas amplia o intervalo possível sem observação e não comprova funcionamento ininterrupto entre verificações. O valor foi escolhido sem medições operacionais e não garante detectar uma falha no instante em que ela ocorre.
+
+Após a aprovação desta subseção, continuar pelo aproveitamento de uma nova sequência contínua observada depois de uma lacuna, antes da reconexão ao controle. Permanecem pendentes comportamento de lacunas fora da reconciliação, identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Histórico após lacuna: aproveitar somente a nova sequência contínua
+
+O autor escolheu a opção A em 2026-11-16: se as verificações forem retomadas antes da reconexão ao controle no PostgreSQL, permitir o aproveitamento somente da sequência contínua posterior à lacuna. Exigir dois novos sucessos consecutivos para comprovar prontidão e contar estabilidade a partir dessa nova confirmação, sem somar o período anterior. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Separar o histórico em períodos delimitados pelas lacunas, preservando a identidade do supervisor e das instâncias observadas. Para o processo afetado, não transportar para a nova sequência sucessos consecutivos ou tempo estável anteriores à lacuna. Um primeiro sucesso posterior não comprova prontidão; exigir o segundo sucesso consecutivo. Uma falha antes dessa confirmação interrompe a sequência de sucessos.
+
+Após confirmar prontidão na nova sequência, aplicar os limiares usuais de três falhas consecutivas para perda e dois sucessos para recuperação. Contar os cinco minutos de estabilidade individual somente a partir da nova confirmação. Uma nova lacuna invalida novamente a continuidade do período atravessado; repetir a separação sem preencher os intervalos ausentes por suposição.
+
+Para estabilidade do conjunto, exigir cinco minutos em que ambos os processos tenham prontidão demonstrada simultaneamente em históricos contínuos elegíveis. Uma lacuna de qualquer um impede aproveitar o período conjunto que a atravessa. Não unir intervalos anteriores e posteriores nem alterar a decisão de não exigir a comunicação pelo socket como critério adicional de estabilidade do conjunto.
+
+O aproveitamento depende de o mesmo supervisor manter registros suficientes para comprovar a sequência posterior, respeitando os prazos e a tolerância de agendamento já aprovados. Um reinício do supervisor ou perda desses registros exige novas confirmações, conforme a regra anterior. Um reinício do processo observado também exige distinguir a nova instância e recomeçar sua demonstração de prontidão.
+
+Durante a indisponibilidade do PostgreSQL, a nova sequência permanece evidência local e não autoriza liberações ou alterações confirmadas nos contadores. Após reconexão, reconciliar o estado durável e somente então persistir as transições justificadas pelo histórico elegível. Não usar essa evidência para apagar bloqueios, consumos ou decisões posteriores incompatíveis.
+
+Concluída a reconciliação, o processo cuja prontidão estiver demonstrada pela nova sequência pode ser reconhecido como pronto sem exigir repetir os mesmos dois sucessos depois da reconexão. Aos processos ainda não prontos, aplicar o novo minuto completo já aprovado. O aproveitamento de estabilidade exige o período inteiro demonstrado e sua transição persistida; não basta que as verificações tenham simplesmente voltado a responder.
+
+A escolha permite reconhecer recuperação anterior à reconexão, mas exige separar períodos e reconciliar o histórico na ordem correta. Ela não muda o tratamento ainda pendente de lacunas fora da reconciliação nem autoriza reiniciar um processo somente por uma lacuna.
+
+Após a aprovação desta subseção, continuar pelo tratamento de lacunas enquanto o controle no PostgreSQL permanece acessível. Permanecem pendentes identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Lacuna com controle acessível: preservar prontidão e interromper estabilidade
+
+O autor escolheu a opção B em 2026-11-16: se houver lacuna nas verificações enquanto o controle no PostgreSQL permanecer acessível, manter o estado declarado de prontidão anterior e interromper apenas a contagem de estabilidade afetada. Aguardar resultados reais para aplicar os limiares de falha e recuperação. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Detectar a lacuna segundo a tolerância já escolhida: o início da próxima verificação pode atrasar até 5 segundos além dos 5 segundos previstos após o término da anterior. Ultrapassar esse limite não constitui, por si só, um resultado malsucedido de verificação. Não inventar falhas ou sucessos para preencher o período sem observação.
+
+Se o processo estava declarado pronto, não mudá-lo automaticamente para não pronto nem iniciar o minuto sem prontidão somente por causa da lacuna. Se já estava não pronto, não conceder prontidão nem recomeçar seu minuto por esse motivo. Preservar a política vigente de encerramento e a exceção de suspensão quando o controle ficar inacessível; uma lacuna não cria outra suspensão.
+
+Interromper o período de estabilidade individual do processo cuja sequência teve lacuna e o período conjunto que a atravessa. Não somar tempo anterior e posterior para completar os cinco minutos. Preservar as tentativas e os bloqueios existentes, sem interpretar a interrupção de estabilidade como autorização para zerá-los.
+
+Ao retomar as verificações, aplicar somente resultados efetivamente observados aos critérios de prontidão. O tratamento das sequências parciais de falhas ou sucessos anteriores à lacuna e o marco exato para recomeçar estabilidade enquanto a prontidão anterior estiver preservada permanecem por especificar. Não presumir que a manutenção do indicador comprove funcionamento durante o intervalo ausente.
+
+Essa regra trata a operação normal com controle acessível. Não substitui a exigência já aprovada de demonstrar nova sequência contínua para aproveitar histórico após uma lacuna durante indisponibilidade do controle e sua posterior reconciliação. Manter distinta a preservação operacional do indicador e a evidência necessária para reconhecer estabilidade e persistir transições de contadores.
+
+Continuar exigindo confirmação de cada operação de negócio e avaliar as dependências efetivamente disponíveis. Um indicador preservado não permite concluir gravações, recebimentos ou vínculos com resultado incerto. Uma saída real do processo continua sujeita à política de reinício, sem aguardar resultados de verificações que deixaram de ocorrer.
+
+A escolha evita encerrar processos saudáveis somente por atraso de observação, mas pode manter o indicador de pronto durante falhas não observadas. A ausência persistente de verificações exige tratamento operacional ainda por definir; não apresentar essa política como garantia de detecção de travamentos do supervisor.
+
+Após a aprovação desta subseção, continuar pelo tratamento de sequências parciais de falhas e sucessos ao retomar verificações após uma lacuna com controle acessível. Permanecem pendentes marco de retomada de estabilidade, ausência persistente de verificações, identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Sequências parciais após lacuna com controle acessível: preservar resultados anteriores
+
+O autor escolheu a opção B em 2026-11-16: após uma lacuna nas verificações com o controle no PostgreSQL acessível, preservar as sequências parciais de falhas e sucessos anteriores. A lacuna não conta como resultado nem zera essas sequências. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar a regra separadamente por processo, preservando o estado declarado de prontidão conforme a decisão anterior. Para os limiares de mudança de prontidão, considerar consecutivos os resultados efetivamente observados sem resultado oposto entre eles, mesmo que separados por uma lacuna. Esta escolha explicita que consecutividade de resultados não comprova continuidade temporal das observações.
+
+Se um processo pronto tiver duas falhas consecutivas registradas antes da lacuna, uma nova falha após a retomada completa a sequência de três e declara perda de prontidão. Nesse momento, iniciar o minuto sem prontidão conforme o marco normal, sem retroagir à lacuna ou à primeira falha. Um sucesso após a lacuna interrompe a sequência anterior de falhas.
+
+Se um processo não pronto tiver um sucesso registrado antes da lacuna, outro sucesso na retomada completa a sequência de dois e recupera a prontidão. Uma falha interrompe a sequência anterior de sucessos. A preservação da sequência não pausa nem renova o minuto sem prontidão que já estiver em curso, não revoga uma decisão de parada e não autoriza recuperação depois de um encerramento já decidido.
+
+Preservar essa sequência somente para a mesma instância do processo e no contexto de controle acessível. Um reinício não herda resultados de outra instância. Não estender automaticamente essa regra ao aproveitamento de histórico durante indisponibilidade do controle: nesse caso, continuam valendo as novas confirmações e a continuidade da sequência posterior à lacuna já exigidas para a reconciliação.
+
+A estabilidade individual e conjunta continua interrompida pela lacuna, mesmo quando os resultados parciais são preservados para mudar prontidão. Não somar tempos anteriores e posteriores nem usar a sequência parcial como prova dos cinco minutos contínuos. O marco para recomeçar a estabilidade de um processo que permaneceu declarado pronto durante a lacuna ainda será definido.
+
+A regra pode antecipar uma mudança de prontidão na retomada, mas permite combinar resultados separados por um intervalo sem observação. Não presume que o processo tenha permanecido funcionando ou falhando nesse intervalo. Tampouco remove a necessidade de tratar ausência persistente de verificações.
+
+Após a aprovação desta subseção, continuar pelo marco de retomada da estabilidade quando o processo preservou prontidão durante uma lacuna com controle acessível. Permanecem pendentes ausência persistente de verificações, identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Retomada da estabilidade após lacuna: dois novos sucessos consecutivos
+
+O autor escolheu a opção B em 2026-11-16: quando um processo preservar o estado declarado de pronto durante uma lacuna com controle no PostgreSQL acessível, exigir dois novos sucessos consecutivos posteriores à lacuna antes de recomeçar seus cinco minutos de estabilidade. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar somente resultados posteriores à lacuna para essa confirmação de retomada da estabilidade. Um sucesso anterior não serve como primeiro dos dois exigidos, ainda que as sequências parciais sejam preservadas para decidir mudanças de prontidão. O primeiro novo sucesso não inicia o período estável; o segundo sucesso consecutivo inicia uma nova contagem completa de cinco minutos, sem retroagir ao primeiro.
+
+Uma falha entre esses sucessos interrompe a sequência específica de confirmação da estabilidade. Outra lacuna também exige recomeçar essa confirmação, sem somar resultados de períodos separados. Manter as verificações com intervalo de 5 segundos após seu término, prazo total de 2 segundos e tolerância de agendamento já definidos.
+
+Distinguir a confirmação para recomeçar estabilidade dos limiares que mudam prontidão. Continuar preservando as sequências parciais anteriores à lacuna para declarar perda de prontidão após três falhas ou recuperação após dois sucessos, conforme aprovado. O processo pode permanecer declarado pronto e, ainda assim, não estar acumulando estabilidade enquanto aguarda os dois novos sucessos.
+
+Se o processo perder prontidão durante essa espera, aplicar o minuto sem prontidão e a regra normal de recuperação. Não revogar encerramento já decidido. Se houver reinício do processo, não herdar resultados da instância anterior. O reconhecimento de estabilidade exige continuidade posterior válida e não concede tentativas adicionais antes da conclusão e persistência dos cinco minutos.
+
+Para o período estável do conjunto interrompido pela lacuna, aguardar que ambos estejam prontos e que o processo afetado tenha completado a confirmação posterior exigida. Se ambos tiveram lacunas, cada um precisa cumprir seus dois novos sucessos. Iniciar a nova contagem conjunta quando a última condição necessária estiver confirmada, sem somar o período anterior. Preservar a decisão de não exigir comunicação pelo socket como condição adicional desse critério.
+
+A exigência reduz o risco de recomeçar estabilidade por uma resposta positiva isolada, mas adia a contagem mesmo quando o estado de prontidão nunca mudou. Ela não comprova funcionamento no intervalo sem observação nem transforma resultados locais em transições duráveis sem persistência.
+
+Após a aprovação desta subseção, continuar pelo tratamento da ausência persistente de verificações. Permanecem pendentes identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Ausência prolongada de verificações: declarar não pronto após limite
+
+O autor escolheu a opção B em 2026-11-16: quando o supervisor continuar funcionando, mas não conseguir retomar as verificações por um período prolongado, declarar o processo afetado não pronto após um limite e iniciar então o minuto sem prontidão já aprovado. O limite permanece por definir. Esta é uma exceção explícita à preservação da prontidão durante lacunas comuns; não altera a regra de que a lacuna não equivale a um resultado de falha. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar a condição separadamente à sequência de cada processo. Uma lacuna dentro do limite prolongado preserva o estado anterior e interrompe a estabilidade conforme aprovado. Quando a ausência atingir o limite prolongado, o supervisor declara falta de prontidão por ausência de observação, sem inventar três resultados malsucedidos nem registrar verificações retroativas.
+
+Para um processo que ainda estava declarado pronto, iniciar o minuto contínuo sem prontidão no momento dessa declaração, sem retroagir ao início da lacuna. Para um processo já não pronto, a ausência prolongada não concede um novo minuto nem reinicia o prazo que estiver em curso. Preservar a suspensão de encerramentos enquanto o controle no PostgreSQL estiver inacessível e o novo minuto após sua reconciliação, nos termos das exceções já aprovadas.
+
+Se o minuto aplicável vencer sem recuperação da prontidão, seguir o encerramento normal com tolerância de 15 segundos, a parada forçada quando necessária e a espera de até 2 segundos por confirmação antes da escalada. Respeitar os limites individuais e do conjunto, a confirmação de parada antes de substituição e o bloqueio de novas liberações sem controle durável confirmado.
+
+O valor e o marco inicial do limite prolongado, a diferença entre ausência de início e ausência de resultado de verificação e a evidência necessária para considerar as verificações retomadas permanecem por especificar. Também definir como essa mudança por ausência de observação afeta sequências parciais anteriores e quais confirmações posteriores permitem recuperar prontidão. Não presumir que iniciar um teste ou receber uma resposta tardia encerre a ausência.
+
+Preservar a interrupção da estabilidade individual e conjunta durante a lacuna. A declaração de não prontidão por ausência prolongada não zera tentativas, não confirma falha de uma operação de negócio e não revoga resultados persistidos. Distinguir essa causa nos registros de supervisão, sem pressupor novo painel ou canal de notificação.
+
+A política permite tentar recuperação automática quando a observação deixa de funcionar, mas pode encerrar processos saudáveis por problema no mecanismo de verificação. Depende de o supervisor continuar capaz de observar o tempo e executar decisões. Se o próprio supervisor travar completamente, esta escolha não oferece um monitor externo capaz de agir e não garante recuperação automática.
+
+Após a aprovação desta subseção, continuar pelo valor e pelo marco inicial do limite de ausência prolongada de verificações. Permanecem pendentes critério de retomada e sequências parciais, identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Ausência prolongada: um minuto desde a detecção da lacuna
+
+O autor escolheu a opção B em 2026-11-16: declarar ausência prolongada de verificações após um minuto contado desde a detecção da lacuna na sequência do processo afetado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O marco inicial é a detecção da lacuna segundo a tolerância já aprovada: ultrapassar os 5 segundos adicionais aos 5 segundos previstos após o término da verificação anterior. Não contar o minuto desde o último sucesso, desde a primeira falha real ou desde a declaração anterior de prontidão. O supervisor deve acompanhar esse prazo separadamente para cada processo.
+
+Enquanto a ausência não atingir um minuto, aplicar o tratamento de lacuna comum: preservar a prontidão anterior, interromper estabilidade e não inventar resultados de verificação. Se a ausência persistir ao completar o minuto, declarar o processo não pronto por falta prolongada de observação, mesmo que não tenham sido recebidas três falhas reais.
+
+Para um processo que ainda estava pronto, essa declaração inicia o minuto contínuo sem prontidão já escolhido. O minuto de ausência prolongada vem antes desse prazo, sem substituí-lo ou executá-lo em paralelo. Para um processo já não pronto, preservar o prazo aplicável que estiver em curso, sem renová-lo por atingir o limite de ausência. Manter as exceções relativas à indisponibilidade do controle no PostgreSQL e à reconciliação posterior.
+
+Não estender o minuto de ausência por mera tentativa de iniciar uma verificação, resposta tardia ou atualização de um indicador sem resultado comprovado. O critério exato para considerar a observação retomada e encerrar esse período permanece por definir. Uma vez decidida uma parada, a retomada tardia das verificações não a revoga automaticamente.
+
+O limite tolera interrupções transitórias de observação, mas mantém a prontidão anterior por mais tempo sem confirmação. Em um processo antes pronto, a decisão de encerrar pode ocorrer somente depois desse minuto e de mais um minuto sem prontidão, além da detecção inicial da lacuna e dos procedimentos de parada; não apresentar o limite como garantia de recuperação em um minuto.
+
+Após a aprovação desta subseção, continuar pelo critério de retomada das verificações que encerra a ausência prolongada e pela recuperação da prontidão após essa declaração. Permanecem pendentes sequências parciais, identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Retomada da observação: novo resultado válido positivo ou negativo
+
+O autor escolheu a opção A em 2026-11-16: encerrar a contagem de ausência de verificações ao receber um novo resultado válido, positivo ou negativo. Esse resultado comprova retomada da observação, não necessariamente recuperação da prontidão. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Exigir resultado de uma nova verificação identificada, referente à instância vigente do processo e avaliada dentro do prazo total de 2 segundos. Um resultado negativo explícito obtido dentro desse prazo pode confirmar que a observação voltou a funcionar. Iniciar um teste, receber resposta de verificação anterior já encerrada ou obter resposta fora do prazo não basta para encerrar a ausência. O esgotamento de prazo continua sendo resultado malsucedido para prontidão, mas, sozinho, não comprova a retomada de observação exigida aqui.
+
+Ao confirmar esse novo resultado, encerrar o período de ausência em curso, sem apagar a lacuna ou recompor estabilidade anterior. Se outra lacuna ocorrer depois, iniciar seu acompanhamento pelo marco já aprovado. Não renovar continuamente o período de ausência apenas por iniciar testes que não produzam a confirmação exigida.
+
+Aplicar o resultado também aos critérios de prontidão. Um resultado negativo encerra a ausência, mas conta como falha real; não declara o processo pronto, não encerra um minuto sem prontidão e não zera tentativas. Um resultado positivo conta para a sequência de sucessos exigida, sem dispensar as demais confirmações.
+
+Se a ausência prolongada já tiver declarado o processo não pronto, continuar exigindo dois sucessos consecutivos para recuperar prontidão. O aproveitamento de sucesso parcial anterior a essa declaração permanece por definir. Uma retomada negativa deixa o processo não pronto e preserva o prazo de encerramento aplicável. Se a parada já estiver decidida, o resultado tardio não a revoga automaticamente.
+
+Se a ausência terminou antes de provocar perda de prontidão e o processo permaneceu declarado pronto, preservar os contadores conforme a regra de lacuna com controle acessível. Para recomeçar estabilidade, continuar exigindo dois novos sucessos consecutivos posteriores à lacuna. A retomada por resultado negativo não satisfaz essa confirmação.
+
+Durante indisponibilidade do controle no PostgreSQL, o resultado permanece observação local sujeita à reconciliação e às regras de continuidade já escolhidas. Ele não autoriza novas liberações nem confirma transições de contadores sem persistência. Preservar a suspensão de encerramentos e o novo minuto após reconciliação quando aplicáveis.
+
+A escolha distingue falta de observação de falha efetivamente observada: uma resposta negativa pode demonstrar que o monitoramento voltou sem demonstrar que o processo está apto ao trabalho. Exige identificar resultados e rejeitar respostas antigas para não encerrar indevidamente um período de ausência.
+
+Após a aprovação desta subseção, continuar pelo tratamento de sucessos parciais anteriores à declaração de não prontidão por ausência prolongada. Permanecem pendentes identidade e exclusão entre supervisores, persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Recuperação após ausência prolongada: exigir dois sucessos posteriores à declaração
+
+O autor escolheu a opção A em 2026-11-16: quando a ausência prolongada declarar o processo não pronto, descartar sucessos parciais anteriores para fins de recuperação e exigir dois novos sucessos consecutivos posteriores à declaração. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+No momento de declarar não prontidão por ausência prolongada, iniciar uma nova sequência de confirmação de recuperação, sem aproveitar sucesso anterior à declaração. Essa regra é uma exceção específica à preservação de sequências parciais durante lacunas comuns com controle acessível. Não apagar os resultados anteriores do registro de observações; apenas não os utilizar para completar a nova confirmação.
+
+O primeiro novo sucesso pode encerrar a ausência de observação, mas não recupera a prontidão. O segundo sucesso consecutivo posterior à declaração recupera a prontidão e inicia um novo período individual de cinco minutos de estabilidade. Não retroagir esse início ao primeiro sucesso nem somar estabilidade anterior à lacuna. Um resultado negativo interrompe a sequência de sucessos e, quando válido, também pode comprovar retomada da observação, sem recuperar prontidão.
+
+Aplicar as exigências de identificação da verificação, instância vigente e prazo de resposta já aprovadas. Uma resposta tardia de teste anterior não pode servir como novo sucesso. Uma nova declaração por ausência prolongada exige novamente confirmações posteriores a ela; não transportar resultados entre instâncias do processo.
+
+Enquanto não houver os dois sucessos, preservar o minuto sem prontidão aplicável e as exceções relativas à indisponibilidade do controle no PostgreSQL. Recuperar prontidão antes da decisão de encerramento encerra esse prazo, mas não revoga uma parada ou escalada já decidida. Não renovar o minuto a cada sucesso isolado ou tentativa de teste.
+
+Para estabilidade conjunta, exigir que ambos os processos estejam prontos no mesmo período contínuo e que as confirmações posteriores às lacunas tenham sido cumpridas. Preservar a persistência das transições que zeram tentativas e os limites individuais e do conjunto. Os novos sucessos, sozinhos, não concedem tentativas adicionais antes da estabilidade exigida.
+
+A escolha exige evidência posterior à declaração de não prontidão e evita recuperar o estado com sucesso antigo, mas pode atrasar a recuperação mesmo quando o processo voltou a funcionar. Não altera o tratamento de lacunas comuns que ainda não provocaram declaração de não prontidão por ausência prolongada.
+
+Após a aprovação desta subseção, continuar pela identificação do supervisor vigente e pela exclusão de decisões concorrentes de supervisão. Permanecem pendentes persistência e ordenação das transições, reconexão, decisões com resultado incerto, confirmação e instante da parada anterior, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Exclusão de supervisores: trava exclusiva por conexão no PostgreSQL
+
+O autor escolheu a opção A em 2026-11-16: usar uma trava exclusiva por conexão no PostgreSQL para autorizar um único supervisor a alterar o controle do conjunto. O supervisor mantém uma conexão dedicada com essa trava; sem sua posse confirmada, não altera o controle. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Definir uma chave de trava estável para o conjunto de Atendimento, compartilhada por todos os supervisores que possam tentar controlá-lo. A identidade da instância do supervisor deve ser distinta dessa chave comum. A forma concreta da chave e da identificação permanece por especificar. Não usar uma chave aleatória por supervisor como se isso oferecesse exclusão entre eles.
+
+Manter a conexão dedicada e a posse da trava durante o período de controle autorizado. Não devolver essa conexão a um pool de uso geral nem presumir que uma conexão nova herdou a trava. As alterações do controle devem ocorrer sob essa mesma sessão de posse, em transações apropriadas, evitando conferir a trava em uma conexão e gravar por outra depois de perder a exclusão. A implementação SQL e o tratamento de falhas de sessão serão detalhados posteriormente.
+
+Antes de liberar processos, consumir tentativas, alterar bloqueios ou confirmar transições de estabilidade, exigir a posse vigente e o estado durável reconciliado. Um supervisor que não obtiver a trava não pode assumir essas decisões nem iniciar processos como alternativa. O comportamento de espera de uma instância concorrente permanece por definir.
+
+Perda ou incerteza da conexão invalida a confirmação local de posse: bloquear alterações e novas liberações e aplicar a política já escolhida para controle inacessível. Para voltar a decidir, estabelecer conexão dedicada, obter novamente a trava e reconciliar o estado persistido. Não usar uma lembrança de posse anterior para prosseguir e não presumir que uma resposta perdida autorize repetir uma transição.
+
+A liberação da trava não comprova que o supervisor anterior ou seus processos terminaram. Adquirir a trava autoriza reconciliar o controle, mas não substitui a confirmação de parada exigida antes de iniciar substitutos. Um supervisor ainda vivo que perdeu a conexão deve obedecer às restrições já aprovadas; o mecanismo de identidade e confirmação da instância anterior continua pendente.
+
+A exclusão da sessão impede alterações concorrentes válidas no controle, mas não cancela efeitos locais ou operações já enviadas por um supervisor anterior. Preservar a separação de privilégios, a autorização durável antes de liberar processos e a conferência de efeitos incertos. Não apresentar a trava como proteção suficiente contra sobreposição física de containers.
+
+A opção evita introduzir renovação periódica de posse no registro de controle, mas depende da sessão dedicada e do tratamento de perda de conexão. A impossibilidade de adquirir a trava durante falha de comunicação pode atrasar a recuperação. Configurações de detecção de conexão perdida e limites de espera permanecem por decidir.
+
+Após a aprovação desta subseção, continuar pelo comportamento de uma instância de supervisor que não consegue adquirir a trava. Permanecem pendentes chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, decisões com resultado incerto, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Trava ocupada: aguardar sem liberar processos
+
+O autor escolheu a opção A em 2026-11-16: se outro supervisor mantiver a trava exclusiva, a instância sem posse permanece ativa e tenta adquiri-la novamente em intervalos, sem liberar processos e sem encerrar o container apenas por disputa de posse. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar a espera antes da autorização inicial ou da retomada do controle. Uma instância que ainda não liberou processos mantém somente o supervisor ativo. Não iniciar Atendimento ou o componente de arquivos, consumir uma tentativa de recuperação ou remover bloqueios enquanto a posse não for confirmada. A partida técnica do container não equivale a disponibilidade das funções do sistema.
+
+Se a espera ocorrer após perda de conexão de um supervisor que já tinha processos liberados, preservar a política de controle inacessível: bloquear novas liberações e alterações do controle, observar os processos e suspender encerramentos motivados por falta de prontidão conforme a exceção aprovada. Não duplicar os processos existentes ao readquirir a trava; reconciliar as instâncias e o estado durável primeiro.
+
+Não estabelecer prazo automático de desistência nem exigir intervenção somente pelo tempo de espera: a opção escolhida permite aguardar indefinidamente. O intervalo entre tentativas, o prazo de cada consulta e a sinalização operacional da espera permanecem por definir. Não realizar tentativas contínuas sem espera nem ocultar a condição como se os processos de negócio estivessem liberados.
+
+Uma resposta confirmando que a trava está ocupada não é equivalente a indisponibilidade do PostgreSQL. Se houver falha de conexão ou resultado incerto, tratar a posse como não confirmada e seguir as restrições correspondentes. Não forçar retirada da trava, encerrar a sessão alheia ou assumir que o proprietário anterior morreu por demora na aquisição.
+
+Quando adquirir a trava, reconciliar o controle antes de decidir pela liberação ou pela retomada de decisões. A aquisição não confirma parada da instância anterior, não zera tentativas e não substitui a espera de recuperação aplicável. Preservar as exigências de não sobrepor instâncias e de reconhecer autorizações com início incerto.
+
+A espera evita ciclos de partida técnica do container causados apenas por disputa de posse, mas pode durar indefinidamente se a sessão proprietária permanecer ativa ou a disputa não for resolvida. Não oferece garantia de recuperação automática de um supervisor anterior travado que continue mantendo a trava.
+
+Após a aprovação desta subseção, continuar pelo intervalo entre tentativas de adquirir a trava e pelo prazo de resposta de cada tentativa. Permanecem pendentes chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, decisões com resultado incerto, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Tentativas de adquirir a trava: intervalo de 5 segundos e prazo de 2 segundos
+
+O autor escolheu a opção A em 2026-11-16: aguardar 5 segundos entre tentativas de adquirir a trava exclusiva do supervisor, com prazo de resposta de 2 segundos por tentativa. A consulta deve retornar aquisição ou ocupação sem aguardar a liberação da trava. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Enquanto a aquisição estiver pendente, executar uma tentativa por vez na conexão dedicada. Depois de receber confirmação de ocupação, aguardar 5 segundos antes de tentar novamente. O prazo de 2 segundos limita a espera pela resposta da tentativa; não transforma a consulta em espera bloqueante pela liberação da trava. Esses controles são separados das verificações de prontidão, mesmo que usem valores iguais.
+
+Somente considerar a posse adquirida após confirmação inequívoca referente à sessão dedicada vigente. Depois disso, interromper as tentativas de aquisição e iniciar a reconciliação do controle, sem liberar processos antes de cumprir as demais condições. Não repetir a aquisição como sinal periódico de atividade ou presumir que sucessivas aquisições na mesma sessão sejam necessárias para manter a posse.
+
+Se a resposta não chegar dentro de 2 segundos, tratar a posse como incerta. Não considerar automaticamente a trava ocupada ou inexistente e não iniciar outra tentativa sobre uma operação anterior ainda sem desfecho. O término da espera não comprova cancelamento da consulta no servidor. O procedimento para reconciliar ou descartar a sessão incerta, confirmar o encerramento da operação e então retomar as tentativas permanece por definir.
+
+Depois de resolver a tentativa incerta ou reconhecer a sessão encerrada de forma segura, preservar o intervalo de 5 segundos antes da próxima tentativa elegível. Falhas para estabelecer uma conexão dedicada não confirmam ocupação da trava; sua política de reconexão continua pendente. Não liberar processos ou alterar contadores usando resultados antigos de outra sessão.
+
+Preservar a espera indefinida já aprovada quando a trava estiver ocupada, sem consumir tentativas de recuperação por mera consulta ou encerrar o container por disputa de posse. A aquisição posterior não comprova parada do supervisor anterior nem substitui reconciliação, autorização durável ou cumprimento das esperas de recuperação.
+
+O intervalo curto pode reconhecer rapidamente uma liberação, mas aumenta a frequência de consultas. O prazo de 2 segundos pode produzir resultados incertos durante lentidão transitória. Os valores foram escolhidos sem medições operacionais e não garantem posse ou liberação das funções em um tempo fixo.
+
+Após a aprovação desta subseção, continuar pelo tratamento de uma tentativa de aquisição cujo resultado ficou incerto. Permanecem pendentes reconexão, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, decisões com resultado incerto, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Aquisição incerta: descartar a conexão e tentar em nova sessão
+
+O autor escolheu a opção A em 2026-11-16: quando o resultado de aquisição da trava ficar incerto, descartar a conexão dedicada afetada, impedir sua reutilização, solicitar seu fechamento e retomar as tentativas em uma nova conexão dedicada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Tratar a sessão incerta como sem posse confirmada, sem concluir que a aquisição falhou ou que a trava está livre. Não executar nela alterações de controle, consultas de reconciliação ou nova aquisição. Não devolver a conexão a um pool nem utilizá-la novamente caso uma resposta tardia chegue. O descarte deve impedir que tarefas locais pendentes continuem emitindo comandos por essa sessão.
+
+Solicitar o fechamento da conexão e encerrar seu uso local antes de retomar o fluxo em outra sessão. Não presumir que o fechamento local ou o cancelamento de uma espera confirmem a liberação da trava no servidor. A sessão antiga pode ter adquirido a trava antes da perda de resposta e permanecer mantendo-a até o PostgreSQL reconhecer seu encerramento.
+
+Após o descarte local, respeitar a espera de 5 segundos antes da próxima tentativa elegível. Estabelecer nova conexão dedicada e solicitar aquisição com o prazo de 2 segundos já aprovado. A nova sessão somente pode assumir controle após confirmação inequívoca de sua própria posse e reconciliação do estado durável. Não transportar uma suposta posse da sessão antiga para a nova.
+
+Não exigir comprovação de encerramento da sessão antiga para simplesmente tentar adquirir pela nova: a exclusão no PostgreSQL impede a confirmação de duas posses exclusivas da mesma chave. Se a sessão antiga ainda mantiver a trava, a nova deve reconhecer ocupação e aguardar conforme a política já escolhida, sem forçar a retirada da trava ou encerrar a sessão alheia. A trava adquirida continua não comprovando parada dos processos anteriormente liberados.
+
+Se a nova tentativa também ficar incerta, repetir o descarte e o intervalo, sem liberar processos ou consumir tentativas de recuperação por mera consulta. A política de reconexão e os controles para evitar acúmulo de conexões cujo encerramento ainda não foi reconhecido permanecem por definir. Não iniciar conexões simultâneas descontroladamente nem apresentar o descarte como garantia de liberação imediata de recursos no servidor.
+
+Preservar as restrições de controle inacessível para processos já liberados: não autorizar substitutos ou alterações sem posse confirmada e estado reconciliado. Respostas tardias da sessão descartada não podem confirmar autorizações novas, zerar contadores ou revogar decisões da sessão vigente.
+
+A escolha simplifica o tratamento de uma sessão cujo resultado não pode ser confiado, mas pode prolongar a espera por uma trava mantida pela própria sessão descartada. Detecção de conexão perdida no servidor e limites de recursos ainda precisam ser especificados; não garantir recuperação em tempo fixo.
+
+Após a aprovação desta subseção, continuar pela política de reconexão ao PostgreSQL e pelo controle de tentativas quando uma nova conexão não pode ser estabelecida. Permanecem pendentes conexões antigas ainda reconhecidas no servidor, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Reconexão do supervisor ao PostgreSQL: espera fixa de 5 segundos e prazo de 2 segundos
+
+O autor escolheu a opção A em 2026-11-16: quando não for possível estabelecer a conexão dedicada com o PostgreSQL, repetir a conexão com espera fixa de 5 segundos e prazo de 2 segundos por tentativa. Continuar sem limite de quantidade, uma tentativa por vez. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar os 5 segundos após o término ou reconhecimento do prazo esgotado da tentativa anterior. Não iniciar conexões concorrentes nem acumular tentativas para compensar indisponibilidade. O prazo de 2 segundos se refere ao estabelecimento da conexão; a consulta de aquisição da trava tem seu próprio prazo de 2 segundos, já aprovado. Conexão estabelecida, por si só, não comprova posse nem autoriza liberar processos.
+
+Ao esgotar o prazo de conexão, encerrar o uso local da tentativa e impedir que uma conexão concluída tardiamente seja adotada por tarefas fora do fluxo vigente. Solicitar liberação dos recursos correspondentes e coordenar o cancelamento antes de iniciar trabalho incompatível. Não presumir que terminar a espera elimine imediatamente conexões ainda reconhecidas no servidor. O mecanismo concreto de cancelamento e os limites de recursos permanecem por especificar.
+
+Depois de confirmar uma nova conexão dedicada, seguir a aquisição da trava e a reconciliação do controle, preservando bloqueios, contagens e autorizações anteriores. Se a trava estiver ocupada, usar a política de espera por posse, sem abrir outra conexão apenas por esse resultado. Se a aquisição ficar incerta, descartar a sessão conforme a regra anterior e respeitar o intervalo antes de retomar.
+
+As tentativas de conexão não consomem as três tentativas de reinício individual, as três liberações autorizadas do conjunto ou as recuperações de um envio. Também não zeram esses controles nem substituem a autorização durável. Enquanto a posse e o estado necessário não estiverem confirmados, manter o bloqueio de novas liberações.
+
+Se os processos já estiverem liberados, preservar a suspensão de encerramentos motivados por falta de prontidão enquanto o controle estiver inacessível. Continuar observando conforme possível e, após recuperar posse e reconciliar o estado, aplicar as regras de aproveitamento de histórico e de novo minuto para processos ainda não prontos. Não considerar a reconciliação concluída apenas porque a conexão voltou.
+
+A espera curta permite tentar reconhecer rapidamente a volta do banco, mas mantém tentativas frequentes durante uma falha longa. O prazo de 2 segundos pode rejeitar conexões lentas que depois se tornariam utilizáveis. Os valores foram escolhidos sem medições operacionais; controle de logs, recursos e sinalização da indisponibilidade ainda precisam ser detalhados.
+
+Após a aprovação desta subseção, continuar pelo controle de conexões descartadas cujo encerramento ainda não foi reconhecido e pelos limites de recursos dessas tentativas. Permanecem pendentes chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup, intervenção após esgotamento e demais contratos em aberto.
+
+### Recursos de conexão: limite no PostgreSQL e pausa após descartes incertos repetidos
+
+O autor escolheu a opção B em 2026-11-16: configurar um limite de conexões no PostgreSQL para a credencial do supervisor e suspender novas tentativas após uma quantidade de descartes por resultado incerto, exigindo intervenção. Esta é uma exceção explícita à reconexão indefinida já aprovada. Os valores dos limites permanecem por definir. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Aplicar o limite de conexões à credencial restrita do supervisor, sem usar credencial administrativa ou alternativa para contorná-lo. Preservar a conexão dedicada de posse e a proibição de tentativas locais sobrepostas. O teto no servidor complementa esse controle, pois uma sessão descartada localmente pode continuar existindo ou mantendo a trava até o servidor reconhecer sua desconexão.
+
+Se sessões antigas ocuparem as vagas, novas conexões podem ser recusadas e a recuperação pode ficar atrasada. Não forçar a retirada da trava ou presumir que essas sessões terminaram apenas por estarem associadas a uma tentativa antiga. A identificação operacional e a intervenção sobre sessões continuam por detalhar. O limite deve considerar também a disputa entre instâncias autorizadas a usar essa credencial, sem conceder posse a uma sessão somente porque ela conseguiu conectar.
+
+Manter as tentativas nos intervalos aprovados até atingir o limiar de descartes incertos. Ao atingi-lo, suspender novas tentativas de conexão e aquisição e exigir intervenção, sem encerrar automaticamente o container para reiniciar a contagem. Não usar essa pausa para zerar tentativas de recuperação, liberar processos ou remover bloqueios. O critério de contagem, sua persistência e as condições de retomada permanecem pendentes.
+
+Distinguir resultado incerto de falha confirmada: confirmação de trava ocupada ou recusa explícita de conexão não prova aquisição sem resposta. O conjunto exato de situações que consome o limite de descartes incertos, o caráter consecutivo ou acumulado da contagem e o tratamento de conexões estabelecidas tardiamente ainda precisam ser definidos. Não tratar toda indisponibilidade como sessão potencialmente detentora de trava.
+
+Se os processos já estiverem liberados ao ocorrer a pausa, preservar as restrições de controle inacessível, a observação possível e a suspensão de encerramentos motivados por falta de prontidão. A pausa de reconexão não declara o sistema recuperado nem garante continuidade das operações de negócio. Uma instância que ainda não liberou processos permanece sem fazê-lo.
+
+A escolha limita recursos e interrompe tentativas persistentes de resultado incerto, mas pode exigir ação manual mesmo depois de a causa desaparecer. O bloqueio precisa sobreviver aos reinícios que não tenham autorização explícita para removê-lo; armazenamento, inicialização e intervenção devem ser conciliados com a possibilidade de o próprio PostgreSQL estar inacessível.
+
+Após a aprovação desta subseção, continuar pelo valor do limite de conexões da credencial do supervisor. Permanecem pendentes limiar e contagem de descartes incertos, persistência da pausa e intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Teto da credencial do supervisor: três conexões
+
+O autor escolheu a opção B em 2026-11-16: estabelecer no PostgreSQL um teto de três conexões para a credencial restrita do supervisor. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O teto é compartilhado pelas instâncias que utilizarem essa credencial, não três conexões por instância. Preservar a regra de uma conexão dedicada de controle por supervisor e a proibição de tentativas locais sobrepostas. A margem não autoriza abrir conexões paralelas para acelerar aquisição nem manter um pool de três sessões de controle.
+
+As vagas adicionais permitem tentar uma nova sessão quando uma conexão descartada ainda existir no servidor, respeitando o intervalo de 5 segundos e as demais condições de reconexão. Elas não garantem aquisição: uma sessão antiga pode continuar mantendo a trava exclusiva. Se as três vagas estiverem ocupadas, novas conexões podem ser recusadas até liberação de recursos ou intervenção.
+
+Não usar outra credencial, privilégios administrativos ou novo usuário para contornar o teto. Separar as credenciais dos processos de negócio conforme aprovado. A criação e a configuração da credencial e de seu limite serão detalhadas com o provisionamento e as migrações; não aplicar configurações de produção nesta etapa de desenho.
+
+Preservar a pausa após descartes incertos repetidos como controle adicional, cujo limiar e regras de contagem ainda serão definidos. Uma recusa explícita por limite de conexões não comprova resultado incerto de aquisição de trava e não deve ser automaticamente classificada como tal. Não zerar contagens nem liberar processos por haver uma vaga disponível.
+
+Três conexões oferecem margem de reconexão sem permitir acúmulo irrestrito, mas sessões antigas podem ocupar todas as vagas e impedir recuperação automática. O valor não resolve detecção de sessão perdida, comprovação de parada anterior ou tratamento de supervisor travado. Sua compatibilidade concreta com a configuração do PostgreSQL precisa ser verificada na implementação.
+
+Após a aprovação desta subseção, continuar pelo limiar e pela regra de contagem de descartes incertos que provocam pausa para intervenção. Permanecem pendentes situações elegíveis para essa contagem, persistência da pausa, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Pausa de reconexão: três descartes incertos em dez minutos
+
+O autor escolheu a opção B em 2026-11-16: suspender novas tentativas de conexão e aquisição e exigir intervenção ao atingir três descartes incertos em uma janela móvel de dez minutos. Resultados confirmados intercalados não apagam ocorrências ainda dentro da janela. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Registrar o instante de cada descarte elegível e considerar as ocorrências nos dez minutos anteriores ao avaliar uma nova ocorrência. Não reiniciar a contagem por blocos de relógio nem exigir que os descartes sejam consecutivos. Ao registrar o terceiro descarte dentro dessa janela, entrar em pausa antes de outra tentativa automática. A definição concreta de quais descartes são elegíveis permanece por detalhar.
+
+Uma resposta confirmada de aquisição ou ocupação da trava não apaga descartes anteriores. O teto de três conexões no PostgreSQL continua sendo um controle independente: a janela não comprova quantas sessões ainda existem no servidor nem quantas vagas estão disponíveis. Não contar uma recusa explícita por teto de conexões como aquisição incerta apenas por impedir conexão.
+
+A pausa exige intervenção, conforme a decisão anterior. A expiração posterior das ocorrências na janela não autoriza retomada automática: o bloqueio já acionado deve ser preservado até a ação de intervenção cuja regra será definida. Não zerá-lo por reinício do supervisor ou partida técnica do container.
+
+Persistir as ocorrências e a ativação da pausa de modo que perda de acesso ao PostgreSQL ou reinício não apaguem o limite. Como descartes podem ocorrer enquanto o controle estiver inacessível, o armazenamento e a reconciliação dessas informações precisam ser explicitamente definidos. Não presumir que uma contagem apenas em memória satisfaça a persistência exigida nem registrar sucesso fictício para prosseguir sem ela.
+
+Durante a pausa, não liberar novos processos, alterar contagens sem autorização ou encerrar o container para obter nova sequência. Para processos já liberados, preservar as restrições de controle inacessível e a observação possível, conforme aprovado. A pausa não confirma recuperação e pode manter o conjunto sem disponibilidade até intervenção.
+
+A janela identifica falhas intermitentes mesmo quando há resultados confirmados entre elas, mas pode exigir intervenção depois de a causa desaparecer. Os dez minutos são uma janela de contagem, não prazo máximo da pausa ou garantia de liberação de sessões antigas.
+
+Após a aprovação desta subseção, continuar pela definição dos descartes incertos que consomem esse limite. Permanecem pendentes armazenamento da janela e da pausa durante falha do banco, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Descartes elegíveis para a pausa: somente aquisição de trava com resultado incerto
+
+O autor escolheu a opção A em 2026-11-16: contar na janela de três ocorrências em dez minutos somente descartes de conexão motivados por aquisição de trava cujo resultado ficou incerto. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Uma ocorrência elegível corresponde ao descarte de uma sessão após uma solicitação de aquisição que pode ter adquirido a trava no servidor sem confirmação inequívoca de seu resultado. Isso inclui a ausência de resposta dentro do prazo de 2 segundos ou interrupção que deixe esse resultado desconhecido. Não exigir prova de que a trava foi adquirida, pois a incerteza sobre esse efeito é justamente a causa do descarte.
+
+Registrar uma ocorrência por tentativa de aquisição incerta descartada. Eventos derivados da mesma tentativa — vencimento do prazo, pedido de fechamento e resposta tardia — não são ocorrências adicionais. Não apagar uma ocorrência porque depois chegou resposta da sessão descartada, já que essa sessão não pode voltar a ser usada para controle. Identificar as tentativas para impedir duplicidade no registro e na reconciliação; o formato dessa identificação permanece por definir.
+
+Não incluir nessa janela falha ou incerteza ao estabelecer conexão antes de solicitar aquisição, perda de uma sessão cuja posse já estava confirmada, recusa explícita de conexão ou resposta confirmada de trava ocupada. Esses casos continuam sujeitos às restrições e aos procedimentos próprios de reconexão, descarte e bloqueio de liberações, mas não consomem este limite específico.
+
+Manter a regra de pausa para intervenção ao registrar a terceira ocorrência elegível na janela móvel de dez minutos. Resultados confirmados intercalados não apagam ocorrências. Depois de acionada, a pausa não termina automaticamente por expiração da janela, reinício ou partida técnica do container. O teto de três conexões da credencial permanece independente.
+
+A delimitação concentra a pausa no risco de aquisição sem resposta, mas deixa fora outras causas de sessões ainda existentes no servidor. Portanto, a ausência de ocorrências elegíveis não comprova ausência de acúmulo de conexões ou disponibilidade de vagas. Preservar o limite de conexões e o tratamento ainda pendente de sessões antigas e falhas prolongadas de estabelecimento.
+
+O armazenamento das ocorrências e do bloqueio precisa funcionar mesmo quando o PostgreSQL estiver inacessível ou o supervisor reiniciar. Essa capacidade ainda não foi definida; não tratar o registro em memória como solução durável nem permitir que falha de persistência apague uma ocorrência e autorize tentativas indevidas.
+
+Após a aprovação desta subseção, continuar pelo armazenamento durável das ocorrências e da pausa quando o controle no PostgreSQL estiver inacessível. Permanecem pendentes intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, persistência e ordenação da reconciliação, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Registro complementar do supervisor: arquivo em volume persistente
+
+O autor escolheu a opção A em 2026-11-16: manter um arquivo de registro em volume persistente exclusivo do supervisor para preservar eventos de aquisição incerta e a pausa de reconexão quando o PostgreSQL estiver inacessível. Reconciliar esses eventos com o banco quando o acesso voltar. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+O arquivo complementa o controle no PostgreSQL; não substitui suas autorizações, contagens de recuperação, bloqueios ou trava exclusiva. Não introduzir SQLite nesta etapa. O registro local não autoriza liberar processos, consumir tentativas de recuperação ou remover bloqueios sem posse confirmada e reconciliação do controle durável no banco.
+
+Preservar no registro os eventos identificados necessários à janela móvel de três aquisições incertas descartadas em dez minutos e ao bloqueio acionado por seu esgotamento. Cada tentativa descartada deve produzir uma única ocorrência lógica, inclusive se houver repetição de gravação ou reconciliação após resposta perdida. A expiração das ocorrências não remove automaticamente uma pausa já acionada.
+
+Usar armazenamento persistente acessível ao supervisor antes de liberar os processos de negócio e com escrita restrita à sua identidade. Atendimento e o componente de arquivos não podem alterar o registro ou apagar a pausa. O isolamento entre instâncias que compartilhem esse armazenamento e o vínculo entre o arquivo e o conjunto supervisionado ainda precisam ser definidos; a trava no PostgreSQL não coordena gravações locais enquanto ele estiver inacessível.
+
+Confirmar a persistência necessária antes de continuar tentativas que dependam desse registro. Falha de escrita, leitura incerta, corrupção ou impossibilidade de determinar o bloqueio devem impedir novas tentativas de conexão e aquisição, sem presumir janela vazia. O tratamento de escrita interrompida, a confirmação de durabilidade, a inicialização legítima e a intervenção para recuperar o arquivo permanecem por especificar.
+
+Na partida do supervisor, recuperar o registro antes de retomar conexões, respeitando a pausa existente. Não criar silenciosamente um arquivo vazio se o anterior estiver ausente de modo inesperado ou se o volume não estiver montado. Reiniciar o supervisor ou o container não deve apagar ocorrências ainda relevantes nem o bloqueio que exige intervenção.
+
+Após recuperar acesso ao PostgreSQL e adquirir a trava, reconciliar os eventos sem duplicação e sem descartar bloqueios locais ainda não registrados no banco. Definir confirmação da aplicação, ordenação e limpeza do arquivo para que uma falha entre gravar no banco e atualizar o registro local não apague nem duplique efeitos. Não remover eventos pendentes apenas porque houve conexão bem-sucedida.
+
+O arquivo evita outro banco, mas exige tratar integridade, gravações interrompidas, concorrência, crescimento e restauração consistente com o PostgreSQL. O formato, os limites de tamanho, a compactação e a relação com o backup continuam pendentes. Sua existência no volume não comprova, sozinha, que o conteúdo foi persistido corretamente.
+
+Após a aprovação desta subseção, continuar pela coordenação de acesso ao registro local entre instâncias do supervisor. Permanecem pendentes formato e durabilidade, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Coordenação do registro local: arquivo compartilhado com trava exclusiva
+
+O autor escolheu a opção A em 2026-11-18: usar um registro local compartilhado com trava exclusiva, permitindo somente ao supervisor que obtiver essa trava usar o registro e iniciar o fluxo de conexão ao PostgreSQL. As demais instâncias aguardam. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Disponibilizar o mesmo registro persistente e a mesma trava local às instâncias que possam supervisionar o conjunto de Atendimento. Não criar um arquivo vazio por instância ou usar caminhos isolados como se oferecessem exclusão compartilhada. Preservar escrita restrita à identidade do supervisor e impedir alterações por Atendimento ou pelo componente de arquivos. O caminho, o mecanismo concreto da trava e sua compatibilidade com o volume permanecem por especificar.
+
+Adquirir a trava local antes de ler e recuperar o registro para decidir novas tentativas. Somente sua proprietária pode registrar ocorrências, avaliar a janela de três descartes incertos em dez minutos, persistir a pausa e iniciar o fluxo de conexão e aquisição no PostgreSQL. Manter a exclusão enquanto essas responsabilidades estiverem ativas, inclusive durante indisponibilidade do banco. Não liberar a trava entre etapas como se a decisão anterior continuasse protegida.
+
+Uma instância sem a trava local não altera o registro, não inicia novas conexões de controle, não consome tentativas e não libera processos de negócio. Ela aguarda sem presumir que a proprietária anterior terminou. O intervalo de espera e o tratamento de erro ou perda de confirmação da trava local ainda precisam ser definidos. Não forçar retirada da trava apenas pelo tempo decorrido.
+
+A ordem de aquisição é trava local, recuperação do registro e, quando permitido, conexão dedicada e trava exclusiva no PostgreSQL. A trava local não substitui a posse no banco: alterações do controle central e liberações continuam exigindo a sessão autorizada, o estado reconciliado e os demais critérios já aprovados. A posse no banco, por sua vez, não dispensa a exclusão local para usar o arquivo.
+
+Se houver falha do registro, bloqueio por pausa ou incerteza sobre a posse local, não prosseguir com novas tentativas por uma cópia alternativa do arquivo. Um supervisor substituto deve recuperar o registro existente após obter a trava, preservando ocorrências e bloqueios. Os mecanismos de recuperação de gravação interrompida e de retomada de decisões incertas continuam pendentes.
+
+A aquisição da trava local ou da trava no banco não comprova parada de processos anteriormente liberados. Preservar a confirmação exigida antes de iniciar substitutos e as regras para processos já ativos quando o controle central fica inacessível. Não usar uma trava liberada como evidência suficiente para duplicar a instância de negócio.
+
+A escolha simplifica a contagem compartilhada e evita escritores locais concorrentes, mas uma instância travada que continue mantendo a trava pode impedir a recuperação. Não acrescenta monitor externo nem garante recuperação automática desse caso. Também depende de todas as instâncias usarem o mesmo armazenamento e obedecerem ao protocolo de exclusão.
+
+Após a aprovação desta subseção, continuar pelo mecanismo concreto da trava local e sua duração de posse. Permanecem pendentes espera e erros de aquisição, formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Mecanismo da trava local: arquivo separado com posse mantida pelo sistema operacional
+
+O autor escolheu a opção A em 2026-11-18: usar uma trava de arquivo mantida pelo sistema operacional, com o supervisor conservando aberto um arquivo de trava separado do registro de eventos durante todo o período de supervisão autorizado. Impedir a herança dos descritores dessa trava pelos processos filhos. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Usar um arquivo de trava estável no armazenamento compartilhado entre as instâncias que possam supervisionar o conjunto. Mantê-lo separado do registro permite atualizar ou reorganizar os eventos sem substituir o objeto sobre o qual a exclusão é mantida. Não remover, recriar ou substituir o arquivo de trava enquanto houver possibilidade de posse ativa, pois instâncias poderiam acabar coordenando por objetos diferentes apesar de usarem o mesmo caminho.
+
+O supervisor deve adquirir a trava exclusiva antes de recuperar o registro e iniciar o fluxo de conexão ao PostgreSQL, mantendo sua posse durante a supervisão autorizada. A existência do arquivo ou um identificador escrito nele não comprova posse: somente o resultado confirmado do mecanismo de trava permite prosseguir. Uma instância que não obtiver a exclusão aguarda sem alterar o registro ou iniciar conexões de controle.
+
+Restringir a abertura e a manipulação do arquivo à identidade autorizada do supervisor. Impedir que Atendimento, o componente de arquivos ou auxiliares herdem ou recebam os descritores que mantêm a trava. Não considerar suficiente fechar uma cópia do descritor se outra ainda conservar a posse. O mecanismo concreto e as opções de abertura serão especificados na implementação.
+
+Na saída controlada, concluir as operações locais necessárias antes de liberar a posse, sem tratar essa liberação como confirmação de parada de processos de negócio. Na saída inesperada, o fechamento dos descritores pode permitir a aquisição por outra instância, mas esta ainda deve recuperar o registro, adquirir a trava no PostgreSQL e confirmar as condições de substituição. Não presumir que uma trava livre comprove encerramento de todos os processos anteriormente liberados.
+
+Validar a exclusão efetiva no volume usado pela implantação e entre as instâncias concorrentes previstas. Não presumir que caminhos iguais em volumes diferentes ofereçam coordenação, nem usar uma implementação que falhe silenciosamente e permita prosseguir sem exclusão confirmada. Erros de abertura, aquisição ou confirmação devem bloquear o acesso ao registro e novas conexões de controle até seu tratamento.
+
+A trava não precisa de renovação periódica de posse, mas um supervisor travado que mantenha os descritores pode continuar impedindo aquisição. A escolha não acrescenta monitor externo ou retirada automática por prazo. Frequência de novas tentativas, tratamento de erros persistentes e intervenção permanecem por definir.
+
+Após a aprovação desta subseção, continuar pelo intervalo e pelo modo de espera das tentativas de adquirir a trava local. Permanecem pendentes formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Espera pela trava local: tentativas sem bloqueio a cada cinco segundos
+
+O autor escolheu a opção A em 2026-11-18: tentar adquirir a trava local sem aguardar sua liberação dentro da operação e, quando estiver ocupada, aguardar 5 segundos antes de tentar novamente. Manter a espera sem prazo de desistência. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Executar uma tentativa de aquisição por vez. Se o mecanismo confirmar ocupação, contar os 5 segundos a partir do término dessa tentativa. Não executar consultas contínuas sem espera nem acumular tentativas para compensar atrasos. O intervalo não é garantia de aquisição em cinco segundos, pois a proprietária pode continuar mantendo a trava indefinidamente.
+
+Enquanto aguarda, o supervisor deve continuar capaz de atender pedidos de encerramento e identificar operacionalmente sua condição de espera. Não iniciar processos de negócio, acessar o registro compartilhado ou abrir conexões de controle no PostgreSQL antes de confirmar a posse local. A espera não consome tentativas de recuperação nem remove bloqueios.
+
+Ao confirmar aquisição, interromper as tentativas periódicas, conservar o descritor e recuperar o registro local antes de decidir o fluxo seguinte. Não repetir aquisições como sinal de atividade e não fechar ou substituir o objeto de trava durante a posse. Preservar a ausência de herança pelos processos filhos e a exigência posterior de trava e reconciliação no PostgreSQL.
+
+Distinguir ocupação confirmada de erro de abertura, falha do mecanismo ou resultado incerto. A escolha do intervalo não autoriza tratar qualquer erro como simples disputa nem prosseguir sem exclusão. O tratamento de erros de aquisição permanece por definir; uma operação sem espera pela liberação também não garante resposta imediata se o armazenamento estiver bloqueado.
+
+O supervisor não deve forçar retirada da trava, recriar seu arquivo ou encerrar outra instância apenas pelo tempo de espera. Uma aquisição posterior continua não comprovando parada dos processos anteriormente liberados. Preservar as condições de substituição e a separação entre exclusão local e autorização central.
+
+A tentativa periódica mantém o fluxo de espera separado de uma operação bloqueante pela liberação, mas gera chamadas recorrentes e pode atrasar o reconhecimento de uma trava recém-liberada até uma próxima tentativa. Não acrescenta detecção externa de supervisor travado nem garante recuperação de bloqueios do sistema operacional.
+
+Após a aprovação desta subseção, continuar pelo tratamento de erros de abertura e aquisição da trava local. Permanecem pendentes formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, intervenção, chave e identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Erro na trava local: até três novas tentativas antes de bloquear
+
+O autor escolheu a opção C em 2026-11-18: após erro de abertura ou aquisição da trava local, permitir até três novas tentativas e, se não houver recuperação, bloquear para intervenção. A ocupação confirmada continua seguindo a espera indefinida já aprovada. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Tratar essa sequência como recuperação de erro do mecanismo local, não como tentativas de recuperação de processos, do conjunto ou de envios. Não consumir essas outras cotas nem encerrar automaticamente o container para obter nova sequência. O intervalo entre as novas tentativas e o marco de consumo de cada uma permanecem por definir; não presumir que a escolha do limite também definiu esses parâmetros.
+
+Enquanto não houver posse local confirmada, não acessar o registro compartilhado, abrir conexões de controle no PostgreSQL ou liberar processos de negócio. Uma falha não pode ser convertida em ocupação confirmada para contornar o limite. Não remover, recriar ou substituir o arquivo de trava como tentativa de recuperação.
+
+Se uma tentativa confirmar aquisição, seguir a recuperação do registro e os controles posteriores. Se confirmar ocupação, reconhecer que o mecanismo respondeu com disputa de posse e aplicar a política de espera correspondente. O tratamento do saldo de tentativas de erro depois de ocupação ou aquisição confirmadas ainda precisa ser especificado; não presumir contagem zerada sem uma regra explícita.
+
+Depois de esgotar as três novas tentativas sem recuperação, manter somente o supervisor ativo e bloquear novas tentativas por esse motivo até intervenção. Não iniciar processos como alternativa, nem usar uma trava diferente. O bloqueio não deve desaparecer por reinício do supervisor ou partida técnica do container.
+
+A persistência desse controle exige tratamento próprio: durante erro de trava, o supervisor ainda não pode acessar com exclusão o registro compartilhado, e a ordem aprovada também impede iniciar o controle no PostgreSQL. O armazenamento e a coordenação do saldo e do bloqueio nessa condição permanecem pendentes. Não declarar resolvida a persistência com escrita desprotegida no arquivo de eventos ou com estado somente em memória.
+
+A política permite recuperar erros transitórios sem tentativas ilimitadas, mas pode exigir intervenção por erro persistente de permissão, montagem ou armazenamento. O mecanismo sem bloqueio pela liberação da trava não garante resposta de uma operação presa no sistema operacional; a detecção e o tratamento desse caso ainda precisam ser definidos.
+
+Após a aprovação desta subseção, continuar pelos intervalos das três novas tentativas após erro na trava local. Permanecem pendentes consumo e reinicialização dessa sequência, persistência anterior à posse local, intervenção, formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Esperas após erro na trava local: 10, 30 e 60 segundos
+
+O autor escolheu a opção B em 2026-11-18: aguardar 10 segundos antes da primeira nova tentativa após erro de abertura ou aquisição da trava local, 30 segundos antes da segunda e 60 segundos antes da terceira. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Contar cada espera a partir da confirmação do erro da tentativa anterior. A tentativa inicial que revelou o erro antecede essas três novas tentativas; não confundir esse fluxo com um limite de três chamadas totais. Não iniciar tentativas concorrentes nem contar todos os intervalos desde o primeiro erro.
+
+Preservar as operações sem espera pela liberação da trava. Enquanto aguarda uma nova tentativa após erro, o supervisor continua sem acesso autorizado ao registro compartilhado, sem iniciar conexões de controle no PostgreSQL e sem liberar processos de negócio. A espera não comprova que o erro foi resolvido nem autoriza remover ou substituir o arquivo de trava.
+
+Ocupação confirmada continua sendo resultado distinto de erro e usa a espera de 5 segundos já aprovada, sem prazo de desistência. Aquisição confirmada permite seguir a recuperação do registro e os controles posteriores. O efeito desses resultados sobre o saldo de tentativas de erro permanece por definir; não presumir reinício da sequência apenas porque uma consulta respondeu.
+
+Após a terceira nova tentativa sem recuperação, bloquear para intervenção conforme aprovado. Não obter mais tentativas por reinício do supervisor ou partida técnica do container. A persistência do saldo, dos instantes previstos e do bloqueio antes de obter a trava local continua pendente; não tratar memória local como suficiente para garantir essa regra.
+
+Os intervalos determinam esperas mínimas antes de tentativas elegíveis, sem garantir execução no instante exato. Atrasos de agendamento ou indisponibilidade do armazenamento podem ampliar o tempo. Não acumular tentativas simultâneas para compensar atrasos; o tratamento de espera vencida após reinício será definido com a persistência do controle.
+
+A sequência reduz a concentração de tentativas durante erros persistentes, mas prolonga a recuperação de falhas breves. Seus valores não alteram os intervalos de aquisição no PostgreSQL, reconexão, reinício individual ou recuperação do conjunto, que mantêm controles separados.
+
+Após a aprovação desta subseção, continuar pelo efeito de ocupação ou aquisição confirmadas sobre a sequência de tentativas de erro da trava local. Permanecem pendentes marco de consumo, persistência anterior à posse local, esperas vencidas após reinício, intervenção, formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Fim da sequência de erros locais: aquisição ou ocupação confirmada
+
+O autor escolheu a opção A em 2026-11-18: uma aquisição ou ocupação confirmada da trava local encerra a sequência de erros em curso e restaura a margem de três novas tentativas para um erro futuro. Essa regra não remove um bloqueio já acionado, que continua exigindo intervenção. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Considerar somente resultados confirmados do mecanismo de trava sobre o arquivo compartilhado correto. Uma abertura bem-sucedida sem resultado de aquisição, uma resposta incerta ou o simples decurso de tempo não encerram a sequência. Não converter erros em ocupação para restaurar tentativas.
+
+Se uma das novas tentativas confirmar ocupação antes do bloqueio, encerrar a sequência de erros e voltar à espera de 5 segundos sem prazo de desistência. A ocupação não concede acesso ao registro, conexão ao controle central ou liberação dos processos. Se ocorrer erro posterior, iniciar nova sequência com até três novas tentativas e esperas de 10, 30 e 60 segundos.
+
+Se uma tentativa confirmar aquisição antes do bloqueio, encerrar a sequência de erros, manter a posse e recuperar o registro compartilhado antes do fluxo de conexão ao PostgreSQL. A restauração da margem local não zera contagens de recuperação de processos, do conjunto ou de envios, nem remove pausas registradas por aquisições incertas no banco.
+
+Depois de esgotamento e ativação do bloqueio para intervenção, não executar uma tentativa automática adicional para obter resultado favorável e apagar o bloqueio. Resposta tardia também não o remove. A intervenção e seu registro persistente continuam por definir.
+
+Persistir a transição de encerramento da sequência de modo coerente com o saldo e o bloqueio. Como uma resposta de ocupação ocorre sem posse local e antes do acesso autorizado ao registro compartilhado, o armazenamento desse controle ainda precisa ser definido. Não escrever sem exclusão no arquivo de eventos para declarar resolvida essa persistência.
+
+A escolha reconhece que ocupação é funcionamento válido do mecanismo e evita carregar erros antigos para uma disputa legítima. Porém, respostas confirmadas intercaladas com erros podem permitir novas sequências indefinidamente, sem garantir aquisição da trava ou recuperação das funções do sistema.
+
+Após a aprovação desta subseção, continuar pelo armazenamento do saldo, das esperas e do bloqueio de erros locais antes de obter a trava compartilhada. Permanecem pendentes marco de consumo, esperas vencidas após reinício, intervenção, formato e durabilidade do registro, recuperação de arquivo incompleto ou ausente, reconciliação e limpeza, identidade das instâncias, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Controle anterior à trava local: arquivo separado por instância configurada
+
+O autor escolheu a opção A em 2026-11-18: guardar saldo, esperas e bloqueio dos erros de trava local em arquivo separado por instância configurada, em volume persistente, com identidade estável entre reinícios. Falha ou incerteza nesse armazenamento bloqueia a inicialização para intervenção, sem iniciar outra sequência automática para protegê-lo. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Esse arquivo é distinto do registro compartilhado de aquisições incertas no PostgreSQL e de seu arquivo de trava. Ele permite recuperar o controle de erros antes de tentar obter a trava principal, sem escrever desprotegidamente no registro compartilhado. Não substitui a exclusão local ou a autorização central para acessar os demais controles.
+
+Associar o arquivo a uma identidade de instância definida pela configuração de implantação, preservada em reinícios e substituições da mesma instância. Não gerar nova identidade aleatória a cada partida. Uma nova identidade representa outra instância configurada, não uma recuperação automática da anterior; sua criação não pode servir para ignorar bloqueio ou saldo existente.
+
+Impedir dois supervisores simultâneos com a mesma identidade de acessar e alterar esse estado. O mecanismo de exclusividade da identidade ainda precisa ser definido, sem presumir que nomes iguais ou a existência do arquivo comprovem escritor único. Instâncias distintas podem ter arquivos próprios, mas continuam disputando a mesma trava principal antes de acessar o registro compartilhado e o PostgreSQL.
+
+Recuperar e confirmar o estado da instância antes de iniciar tentativas de aquisição da trava local. Respeitar bloqueio já acionado, saldo de tentativas e esperas pendentes. Não tratar ausência inesperada do arquivo, volume não montado, leitura incerta ou conteúdo inválido como estado inicial vazio. A criação legítima e a recuperação desse arquivo permanecem por especificar.
+
+Persistir as transições de erro e os resultados confirmados que encerram uma sequência antes de prosseguir com decisões que dependam delas. Preservar a decisão de que ocupação ou aquisição confirmadas restauram a margem somente antes de um bloqueio já acionado. O formato, as garantias de gravação e o marco de consumo das tentativas ainda serão detalhados.
+
+Se esse armazenamento ou a exclusividade da identidade não puderem ser confirmados, bloquear o fluxo de inicialização para intervenção. Não acrescentar outra sequência de tentativas automáticas, iniciar conexões ao controle central ou liberar processos como alternativa. Não encerrar o container para obter estado vazio em uma nova partida. As ações de intervenção e sua persistência continuam pendentes.
+
+Restringir a escrita à identidade autorizada do supervisor e preservar o arquivo no volume entre partidas técnicas. Incluir sua relação com backup, restauração e mudança de configuração no desenho posterior, para que uma recuperação não reapresente contagens antigas como atuais ou remova silenciosamente um bloqueio.
+
+A escolha evita compartilhar a escrita desse controle inicial entre instâncias distintas, mas exige identidade estável e exclusividade por identidade. Não oferece, por si só, um limite agregado de erros locais entre instâncias diferentes nem autoriza criar novas instâncias para contornar uma condição de intervenção.
+
+Após a aprovação desta subseção, continuar pelo mecanismo que impede dois supervisores simultâneos com a mesma identidade configurada. Permanecem pendentes formato e durabilidade do estado inicial, criação e recuperação de arquivo ausente ou incompleto, marco de consumo e esperas vencidas, intervenção, reconciliação e limpeza do registro compartilhado, identidade do supervisor vigente, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Exclusividade da identidade: trava de arquivo anterior ao estado inicial
+
+O autor escolheu a opção A em 2026-11-18: adquirir uma trava de arquivo exclusiva por identidade configurada antes de acessar o estado inicial e mantê-la durante a execução do supervisor. Ocupação, erro ou posse incerta bloqueiam essa inicialização para intervenção, sem novas tentativas automáticas. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Usar um arquivo de trava estável por identidade, distinto do arquivo de estado inicial, da trava principal compartilhada e do registro de eventos. Todas as partidas com a mesma identidade devem acessar o mesmo objeto de trava no volume persistente. Não gerar outro caminho ou identidade para evitar uma ocupação. Restringir sua manipulação à identidade operacional do supervisor.
+
+Na partida, tentar obter essa exclusão antes de ler, inicializar ou alterar o arquivo que guarda saldo, esperas e bloqueio dos erros da trava principal. Somente após posse confirmada recuperar esse estado e seguir o fluxo já aprovado. Manter a ordem: exclusividade da identidade, recuperação do estado inicial, trava principal compartilhada, recuperação do registro de eventos e controle no PostgreSQL.
+
+Conservar o descritor durante toda a execução e impedir herança pelos processos filhos. Não remover, substituir ou recriar o arquivo de trava enquanto houver possibilidade de posse ativa. Seu mecanismo e funcionamento no volume precisam ser verificados junto às demais travas locais. A existência do arquivo não comprova posse nem abandono.
+
+Se a exclusividade não puder ser confirmada, não acessar o estado protegido, não iniciar o fluxo da trava principal, não abrir conexões de controle e não liberar processos. A partida fica bloqueada para intervenção, sem repetir automaticamente a aquisição e sem encerrar o container para tentar outra sequência. Uma instância já proprietária continua sujeita às suas políticas; a tentativa concorrente não a encerra ou retira sua posse.
+
+Esse bloqueio da partida não exige escrever no estado cuja exclusividade não foi obtida. Cada nova partida deve passar pela mesma barreira antes de qualquer acesso; não pode presumir autorização a partir de memória ou resultado de uma execução anterior. A forma de sinalizar a condição e a ação explícita de intervenção permanecem por detalhar, sem criar outro ciclo de travas ou tentativas para autorizar essa etapa.
+
+Quando a posse for obtida legitimamente, recuperar os bloqueios persistidos no estado inicial; a exclusão por identidade não os remove. Se a posse se perder ou ficar incerta durante a execução, não continuar alterando esse estado ou iniciando novas liberações. O tratamento dos processos já ativos nessa situação ainda precisa ser definido.
+
+A trava evita escritores simultâneos com a mesma identidade quando todos usam o mesmo objeto e respeitam o protocolo. Uma instância travada pode mantê-la e exigir intervenção. Sua liberação não comprova parada dos processos de negócio anteriores, e não há garantia de exclusão entre ambientes que usem cópias independentes do volume.
+
+Após a aprovação desta subseção, continuar pelo tratamento de perda ou incerteza da posse por identidade com processos já ativos. Permanecem pendentes sinalização e intervenção, formato e durabilidade do estado inicial, criação e recuperação de arquivo ausente ou incompleto, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, identidade do supervisor vigente, confirmação e instante da parada anterior, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, política nativa do Docker, tratamento durante backup e demais contratos em aberto.
+
+### Perda de exclusividade da identidade: encerrar o conjunto e exigir intervenção
+
+O autor escolheu a opção A em 2026-11-18: se a posse da trava por identidade se perder ou ficar incerta com processos já ativos, encerrar os processos sob responsabilidade dessa instância, confirmar sua parada e impedir recuperação automática até intervenção. Não tentar readquirir automaticamente a trava. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Ao reconhecer a condição, bloquear novas liberações, reinícios e alterações de controle que dependam da exclusividade perdida. Não continuar escrevendo no arquivo de estado inicial nem presumir autorização por ainda manter outra trava. A perda da exclusividade da identidade é distinta da perda de conexão ao PostgreSQL: esta decisão impõe encerramento do conjunto, em vez de aplicar a suspensão de encerramentos por falta de prontidão.
+
+Solicitar a parada dos processos e auxiliares pertencentes à instância afetada, sem sinalizar processos de outra instância cuja identidade operacional não tenha sido comprovada. Preservar as regras já aprovadas de tolerância de 15 segundos para encerramento normal, parada forçada quando necessária e até 2 segundos para confirmação posterior. A condição é motivo direto de encerramento, sem aguardar outro minuto sem prontidão.
+
+Não iniciar substitutos individuais após a parada. Se for necessário escalar para encerramento do container por ausência de confirmação, preservar o bloqueio de recuperação automática: a escalada não autoriza liberar novamente os processos ou restaurar contagens. O mecanismo que fará esse bloqueio sobreviver à saída do supervisor e à política de reinício do Docker ainda precisa ser definido.
+
+Confirmar a parada antes de considerar o conjunto encerrado. Enviar sinais, perder comunicação ou liberar descritores não comprova a saída de todos os processos. Se a parada não puder ser confirmada, manter a condição de intervenção e não iniciar outra instância para substituí-los. A ação operacional para resolver esse caso permanece pendente.
+
+Preservar resultados duráveis e conferir operações incertas na recuperação autorizada pela equipe. O encerramento não desfaz efeitos já produzidos, não recupera autorizações vencidas e não permite duplicar chamados ou anexos. Não apagar registros anteriores para marcar o conjunto como limpo.
+
+A persistência da exigência de intervenção precisa respeitar a ausência de exclusividade: não escrever desprotegidamente no estado por identidade ou no registro compartilhado para marcar o bloqueio. O armazenamento ou mecanismo de implantação que preservará essa condição antes de qualquer nova liberação permanece pendente. Não presumir que memória ou logs bastem para impedir recuperação automática após reinício.
+
+A escolha reduz a continuidade de processos supervisionados sem exclusividade confirmada, mas interrompe também funções ainda operantes. Depende de o supervisor conseguir reconhecer a condição e executar o encerramento; não acrescenta monitor externo nem garante recuperação de um supervisor completamente travado.
+
+Após a aprovação desta subseção, continuar pelo mecanismo que preserva a exigência de intervenção após perda de exclusividade, sem escrever nos estados cuja posse ficou incerta. Permanecem pendentes integração com a política do Docker, confirmação de parada, sinalização e ação de intervenção, formato e durabilidade do estado inicial, criação e recuperação de arquivo ausente ou incompleto, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, identidade do supervisor vigente, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, bloqueio e partidas técnicas sem liberação, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Marca de intervenção após perda de exclusividade: bloqueio por identidade
+
+O autor escolheu a opção B em 2026-11-18: usar uma marca persistente de intervenção separada dos estados protegidos, bloqueando somente a identidade afetada pela perda ou incerteza de sua exclusividade. Outra identidade somente pode assumir após comprovar a parada anterior e cumprir os controles existentes. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+A marca acrescenta uma exigência de intervenção e não altera o saldo, os bloqueios ou os eventos nos arquivos cuja exclusividade ficou incerta. Associá-la à identidade estável configurada, preservando-a entre reinícios do supervisor e partidas técnicas do container. Os supervisores não podem removê-la automaticamente por obter uma trava, completar estabilidade, reconectar ao banco ou iniciar nova sequência.
+
+Consultar a marca antes de liberar processos dessa identidade, inclusive após reinício. Se estiver presente, manter o bloqueio até intervenção autorizada. A criação e a consulta precisam ser coordenadas com a decisão de liberação para impedir que uma partida concorrente ignore uma marca em gravação. O formato, a localização e o protocolo concreto permanecem por definir; não presumir que uma leitura isolada de ausência prove autorização futura.
+
+Permitir que a instância afetada registre a marca sem modificar os estados cuja posse perdeu. A operação deve apenas acrescentar bloqueio, sem sobrescrever ou apagar marcas anteriores. Definir confirmação de persistência, tratamento de gravação interrompida e restrições de acesso. Uma falha ou resultado incerto ao gravar ou consultar não pode ser tratado como ausência de bloqueio.
+
+A marca não bloqueia automaticamente todas as outras identidades, mas isso não autoriza uma substituição imediata. Uma identidade distinta precisa obter suas exclusões, recuperar o registro compartilhado, adquirir a trava no PostgreSQL e reconciliar o controle. Também precisa comprovar a parada da instância anterior antes de liberar substitutos. Nenhuma trava livre ou marca restrita a outra identidade substitui essa comprovação.
+
+Criar ou renomear uma identidade não é uma ação automática de recuperação e não pode contornar bloqueio ou processo cuja parada esteja incerta. A configuração e a intervenção devem distinguir substituição legítima de simples troca de nome. A marca anterior permanece preservada até a ação explícita da equipe, mesmo se outra identidade assumir legitimamente.
+
+Preservar o encerramento dos processos da identidade afetada e a exigência de intervenção já aprovados. A marca não desfaz efeitos de negócio, não zera limites do conjunto e não concede novas tentativas de recuperação. O tratamento de falha do armazenamento que impeça confirmar a marca e a integração com a política de reinício do Docker continuam pendentes.
+
+A delimitação por identidade evita bloquear automaticamente outra instância saudável, mas exige rastrear identidades e comprovar a parada anterior para não transformar a substituição em fuga do bloqueio. Não oferece recuperação automática de processos cuja saída permaneça incerta.
+
+Após a aprovação desta subseção, continuar pelo protocolo de criação e consulta da marca e sua coordenação com a liberação dos processos. Permanecem pendentes persistência e falhas da marca, integração com a política do Docker, confirmação de parada, sinalização e ação de intervenção, formato e durabilidade do estado inicial, criação e recuperação de arquivo ausente ou incompleto, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, identidade do supervisor vigente, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Representação do bloqueio por identidade: marca única sem sobrescrita
+
+O autor escolheu a opção B em 2026-11-18: representar o bloqueio de intervenção por um único arquivo de marca para cada identidade configurada. Criá-lo exclusivamente e, se já existir, preservar o bloqueio sem sobrescrever seu conteúdo. Os detalhes de incidentes posteriores precisam de registro separado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Associar a marca ao caminho estável da identidade e preservá-la no armazenamento persistente entre reinícios. Não gerar uma marca diferente por partida nem substituir o arquivo existente para registrar nova ocorrência. A confirmação de que uma marca já existe mantém a identidade bloqueada; não significa que o incidente anterior foi resolvido ou que os processos associados pararam.
+
+Usar criação exclusiva para distinguir uma nova marca de uma já presente, sem sequência desprotegida de verificar ausência e depois sobrescrever. Confirmar a persistência necessária antes de declarar o bloqueio registrado. A operação de criação exclusiva não comprova, sozinha, durabilidade contra interrupção; os detalhes de gravação, integridade e confirmação ainda precisam ser especificados.
+
+Na consulta, presença da marca impede liberação dessa identidade. Erro, conteúdo inválido ou leitura incerta não equivalem a ausência e também impedem liberação. Ausência confirmada é somente uma condição necessária: continuar exigindo as travas, a recuperação dos estados, a reconciliação e a confirmação de parada anterior. O protocolo que coordena essa consulta com criação concorrente ainda permanece pendente.
+
+Supervisores não removem a marca automaticamente após estabilidade, nova posse ou reconexão. Sua remoção exige intervenção explícita, com critérios e registro a definir. Não apagar uma marca para permitir que outra chamada de criação registre o incidente mais recente. A exclusividade da identidade continua exigida para o acesso aos estados protegidos, mas não autoriza ignorar a marca.
+
+Manter os detalhes de incidentes posteriores em registro separado, sem modificar o bloqueio existente. Esse registro não pode exigir escrita desprotegida nos arquivos cuja exclusividade ficou incerta. Seu armazenamento e tratamento de falhas permanecem por definir. A ausência de detalhes adicionais não pode remover ou enfraquecer uma marca já existente.
+
+Se não for possível confirmar a criação ou consulta da marca, preservar o bloqueio do fluxo e o encerramento aplicável, sem declarar persistência concluída. A prevenção de liberação indevida em uma nova partida após falha desse armazenamento ainda precisa ser resolvida com o protocolo de inicialização e a implantação; não presumir que memória ou logs garantam essa prevenção.
+
+A marca única simplifica a decisão de bloqueio e evita sobrescrever a ocorrência original, mas não conserva, por si só, todos os incidentes posteriores. Ela também não prova parada de processos nem substitui o controle das autorizações no PostgreSQL.
+
+Após a aprovação desta subseção, continuar pela coordenação entre criação da marca e consulta anterior à liberação dos processos em partidas concorrentes. Permanecem pendentes durabilidade e falhas da marca, registro de incidentes posteriores, integração com a política do Docker, confirmação de parada, sinalização e intervenção, formato do estado inicial, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, identidade do supervisor vigente, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Coordenação da marca com a partida: reconciliar a instância anterior antes de autorizar
+
+Esta subseção consolida as exigências anteriores de exclusividade da identidade, confirmação de parada e consulta da marca de intervenção. O autor aprovou a redação e autorizou continuar o detalhamento; não constitui aprovação do plano técnico completo ou autorização de implementação.
+
+Não usar uma consulta antecipada de ausência da marca como autorização para iniciar processos depois. Antes de autorizar a recuperação da mesma identidade, confirmar que o supervisor anterior e seus auxiliares capazes de criar a marca terminaram, além dos processos de negócio cuja parada já é exigida. Uma trava liberada ou uma sessão PostgreSQL encerrada não substitui essa confirmação.
+
+Obter e manter a exclusividade por identidade, recuperar seu estado persistente e resolver qualquer dúvida sobre a instância anterior antes de consultar a marca para a decisão de liberação. Se um supervisor anterior ainda puder registrar o incidente, a partida não pode tratar a ausência observada como definitiva. A forma concreta de identificar essas instâncias e comprovar sua saída continua pendente.
+
+Depois de resolver a instância anterior, consultar a marca no armazenamento persistente correto e confirmar a integridade necessária desse armazenamento. Presença, falha ou resultado incerto impedem liberação. Ausência confirmada permite somente prosseguir com as demais barreiras: trava principal, recuperação do registro compartilhado, posse no PostgreSQL, reconciliação e autorização durável da tentativa. Manter a exclusividade por identidade durante todo esse fluxo.
+
+Se ocorrer perda ou incerteza de exclusividade durante a própria partida, invalidar a decisão local de prosseguir, bloquear novas liberações e seguir o tratamento de intervenção aplicável. Não executar uma liberação já preparada em memória com base em uma consulta antiga. Se processos já tiverem iniciado, aplicar o encerramento do conjunto previamente aprovado.
+
+Na instância que reconhece o incidente, solicitar a criação da marca antes de encerrar sua supervisão e confirmar sua persistência quando possível, sem adiar indevidamente o encerramento dos processos. Uma falha nessa gravação não pode ser convertida em saída normal que sugira inicialização anterior concluída sem incidente. Ainda é necessário definir como registrar conclusão normal ou interrupção incerta de uma execução para que a próxima partida detecte esse caso mesmo se a marca não chegou a ser persistida.
+
+O protocolo depende de preservar a evidência de uma execução anterior não reconciliada: não basta confirmar sua saída e encontrar a marca ausente se houve falha de armazenamento ou encerramento antes de registrar o incidente. Nessa condição, bloquear a liberação até reconciliação ou intervenção. O mecanismo durável dessa evidência permanece como a próxima decisão de desenho.
+
+Essas regras impedem usar uma leitura antiga como autorização e tornam explícita a necessidade de tratar um supervisor anterior ainda capaz de gravar. Não oferecem garantia de persistência quando o armazenamento falha; a partida precisa reconhecer essa incerteza sem supor estado vazio.
+
+Após a aprovação desta subseção, continuar pelo registro durável de execução iniciada e não reconciliada, necessário para detectar encerramento anterior sem marca confirmada. Permanecem pendentes identificação e confirmação de saída do supervisor anterior, durabilidade e falhas da marca, registro de incidentes posteriores, integração com a política do Docker, sinalização e intervenção, formato do estado inicial, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Execução anterior sem encerramento confirmado: tentar reconciliação automática
+
+O autor escolheu a opção B em 2026-11-18: quando a partida encontrar registro de execução iniciada sem confirmação durável de encerramento, tentar reconciliação automática antes de decidir pela liberação. Confirmar a parada anterior e verificar os estados local e central. Se não for possível distinguir uma interrupção recuperável de um incidente que exige intervenção, manter bloqueado. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Registrar de forma durável o início da execução do supervisor antes de liberar trabalho, sob exclusividade da identidade. Associar o registro à execução concreta, sem substituir a identidade configurada estável. Preservar evidências da execução anterior até concluir sua reconciliação; não sobrescrever um início pendente com uma nova execução como se a anterior tivesse terminado normalmente. O formato e o procedimento de transição permanecem por especificar.
+
+Na partida seguinte, um início sem encerramento confirmado indica execução anterior não reconciliada, não prova automática de perda de exclusividade. Antes de qualquer liberação, obter a exclusividade por identidade, confirmar a saída do supervisor anterior e dos processos relevantes e recuperar seus estados persistentes. A ausência de trava, de conexão ou de marca de intervenção não comprova, isoladamente, encerramento normal.
+
+Uma marca de intervenção existente continua bloqueando a identidade; a reconciliação automática não a remove nem a ignora. Respeitar também bloqueios por esgotamento de tentativas e pausas já acionadas. Recuperar o registro compartilhado sob sua trava e, quando permitido pelo estado local, adquirir a trava no PostgreSQL e reconciliar o controle central. Não abrir conexão para contornar uma pausa local que já a proíba.
+
+Somente classificar a interrupção como recuperável com evidências suficientes e coerentes nos registros disponíveis. A lista concreta dessas evidências e das situações elegíveis permanece por definir. Um registro ausente, corrompido ou com resultado incerto não equivale a uma saída limpa; uma marca ausente também não prova que sua criação nunca foi necessária. Se a classificação continuar indeterminada, exigir intervenção sem liberar processos.
+
+Quando a reconciliação permitir recuperação automática, confirmar duravelmente sua conclusão antes de autorizar uma nova liberação. Preservar tentativas consumidas, esperas e resultados de operações anteriores, sem repetir efeitos ou conferir novas tentativas por mera mudança de execução. A recuperação continua sujeita aos limites individuais e do conjunto e à autorização durável correspondente.
+
+Se uma operação de reconciliação perder resposta, consultar seu resultado persistido antes de repeti-la. Não registrar encerramento normal retroativo apenas para limpar a pendência nem apagar o início anterior antes de confirmar a decisão. A identificação das transições e sua coordenação entre arquivo e PostgreSQL permanecem pendentes.
+
+A escolha permite recuperar algumas quedas comuns sem intervenção, mas depende de critérios que realmente diferenciem interrupção recuperável e incidente. Sem evidência suficiente, o bloqueio conservador continua necessário. Esta decisão não garante recuperação automática de toda partida interrompida e não altera a ausência de monitor externo para supervisor travado.
+
+Após a aprovação desta subseção, continuar pelos critérios de evidência que permitem classificar uma execução interrompida como recuperável automaticamente. Permanecem pendentes formato e durabilidade do registro de execução, transições entre arquivo e PostgreSQL, identificação e confirmação de saída do supervisor anterior, falhas da marca, registro de incidentes posteriores, integração com a política do Docker, sinalização e intervenção, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Evidência para recuperação automática: decisão previamente persistida
+
+O autor escolheu a opção A em 2026-11-18: classificar uma execução sem encerramento confirmado como recuperável automaticamente somente quando houver decisão explícita de recuperação previamente persistida, estados coerentes e parada anterior confirmada. Quedas abruptas sem essa evidência exigem intervenção. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Exigir um registro de escalada autorizada vinculado à execução anterior e ao conjunto correspondente, confirmado antes de sua saída. O registro deve permitir reconhecer a decisão concreta, sua causa e sua relação com a sequência de recuperação. Não inferir essa decisão de logs, ausência de marca, código de saída isolado, trava livre ou existência de tentativas restantes. O formato e a coordenação de sua persistência continuam por especificar.
+
+Além da decisão registrada, confirmar a parada do supervisor anterior, de seus auxiliares relevantes e dos processos de negócio cuja substituição esteja prevista. Recuperar os estados locais e centrais e verificar sua coerência antes de autorizar nova liberação. Uma decisão persistida não dispensa as travas, a espera aplicável, o consumo de tentativa ou a reconciliação de resultados incertos.
+
+Marca de intervenção, bloqueio por esgotamento, pausa acionada ou evidência contraditória impedem a liberação nos termos de seus controles. Um incidente impeditivo posterior à decisão de recuperação não pode ser ignorado por existir autorização antiga. A forma de ordenar esses registros e comprovar que a decisão continua aplicável permanece pendente; se isso não puder ser determinado, manter bloqueado para intervenção.
+
+Queda abrupta do supervisor ou do container sem decisão de recuperação confirmada não recebe classificação automática favorável apenas porque poderia ser uma falha comum. A reconciliação pode identificar e preservar resultados e pendências, mas não liberar processos dessa identidade sem intervenção quando faltar a evidência exigida. Não acrescentar fonte externa de causa da queda nesta etapa.
+
+Aplicar esta regra às partidas que encontram execução iniciada sem encerramento confirmado. Não transformar essa condição em primeira instalação ou saída normal, nem apagar o início pendente para liberar uma nova sequência. Partidas posteriores continuam sujeitas à pendência até sua resolução durável. O tratamento de inicialização legítima e encerramento planejado permanece por detalhar.
+
+Quando todas as evidências e condições forem confirmadas, persistir a conclusão da reconciliação antes de liberar os processos e preservar os limites existentes. Uma resposta perdida dessa persistência exige consulta do resultado, sem repetir consumo ou presumir conclusão. O registro prévio de decisão não concede tentativas adicionais nem autoriza ultrapassar o limite de três liberações do conjunto.
+
+A escolha limita a recuperação automática aos casos cuja decisão já foi registrada, evitando depender de uma causa presumida da queda. Em contrapartida, falhas abruptas comuns podem exigir intervenção e prolongar a indisponibilidade. Não apresentar as três tentativas do conjunto como garantia de recuperação automática para qualquer falha do container.
+
+Após a aprovação desta subseção, continuar pela persistência e ordenação da decisão de recuperação em relação a incidentes impeditivos posteriores. Permanecem pendentes formato e durabilidade do registro de execução, transições entre arquivo e PostgreSQL, identificação e confirmação de saída do supervisor anterior, falhas da marca, registro de incidentes posteriores, integração com a política do Docker, sinalização e intervenção, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+### Decisão de recuperação: registro no estado persistente da identidade
+
+O autor escolheu a opção A em 2026-11-18: registrar a decisão que comprova elegibilidade para recuperação automática no estado persistente da identidade, com sua sequência explícita. Na próxima partida, confrontar esse registro com a marca de intervenção e o controle no PostgreSQL. Não exigir uma segunda gravação correspondente no banco somente para registrar essa decisão. O autor aprovou esta subseção e autorizou continuar o detalhamento; o plano técnico completo permanece em construção, sem autorização de implementação.
+
+Registrar a decisão sob exclusividade confirmada da identidade e vinculá-la à execução anterior concreta. Incluir a causa autorizada da escalada e a ordem da transição no estado local, sem substituir a identidade estável por um identificador de partida. A decisão somente pode ser apresentada como persistida após confirmação da gravação necessária; o formato e o mecanismo de atualização ainda precisam ser especificados.
+
+Esse registro é evidência de uma decisão, não autorização de liberação nem consumo de tentativa. Autorizações, contagens e bloqueios do controle central continuam no PostgreSQL. A nova partida somente pode liberar processos depois de recuperar os estados, confirmar a parada anterior e cumprir as travas, esperas, limites e autorização durável já aprovados.
+
+Preservar a ordem dos eventos locais para não usar uma decisão anterior a um incidente impeditivo como se fosse atual. Uma marca de intervenção existente bloqueia a identidade, independentemente de haver decisão de recuperação registrada. Se os registros disponíveis indicarem incidente posterior ou não permitirem determinar sua ordem e aplicabilidade, exigir intervenção. Não ordenar eventos de execuções diferentes apenas por rótulo de arquivo ou relógio de parede sem garantias definidas.
+
+Ao perder ou ficar incerta a exclusividade da identidade, não continuar atualizando esse estado para cancelar ou substituir a decisão anterior. Aplicar a marca e o encerramento já escolhidos. A próxima partida precisa reconciliar a execução não concluída e não pode inferir ausência de incidente somente porque encontrou uma decisão antiga. A detecção de interrupção durante a tentativa de registrar um incidente continua dependente do protocolo de durabilidade ainda pendente.
+
+Na recuperação, ler a decisão sob exclusividade e verificar sua identidade de execução, integridade, sequência e compatibilidade com os estados central e local. Falta, corrupção, transição incompleta ou contradição não equivale a decisão favorável. A ausência de uma cópia no PostgreSQL não é, por si só, erro nesta opção; o banco deve confirmar os controles que efetivamente lhe pertencem.
+
+Não apagar a decisão ou a execução anterior antes de confirmar duravelmente o resultado da reconciliação. Impedir que uma decisão já tratada seja reutilizada para liberar indefinidamente novas tentativas. A identificação da resolução, sua persistência e a coordenação com o consumo de autorização no PostgreSQL permanecem por definir.
+
+A escolha evita exigir duas gravações para comprovar a decisão anterior à saída, mas concentra essa evidência no armazenamento local. Exige detectar gravações interrompidas, estados antigos e restauração divergente, sem presumir que um arquivo legível seja necessariamente atual ou íntegro.
+
+Após a aprovação desta subseção, continuar pelo formato e pelo protocolo de atualização durável do estado da identidade, incluindo detecção de transição interrompida. Permanecem pendentes resolução e reutilização da decisão, transições entre arquivo e PostgreSQL, identificação e confirmação de saída do supervisor anterior, falhas da marca, registro de incidentes posteriores, integração com a política do Docker, sinalização e intervenção, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
 
 ## Referências
 
