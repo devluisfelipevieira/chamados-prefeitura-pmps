@@ -8,6 +8,8 @@
 
 ## Ponto de retomada — 2026-11-12
 
+**Atualização de retomada — 2026-11-25:** o autor confirmou que o trabalho continua apenas na documentação e pediu prosseguir com `egm-draft`. O escopo funcional de “Chamados por técnico” está aprovado e registrado ao final deste documento. O autor escolheu consulta periódica para atualizar o quadro. O ciclo de consulta foi aprovado. O intervalo escolhido é de 10 segundos após cada consulta. O autor escolheu suspender consultas em abas ocultas e atualizar ao retornar. O prazo máximo de cada consulta é de 20 segundos. As esperas após falhas consecutivas são de 10, 20, 40 e 60 segundos, mantendo 60 nas seguintes. Os critérios de aceite da atualização foram aprovados. O autor escolheu permitir mostrar ou ocultar colunas de técnicos ativos sem cartões. O padrão inicial escolhido é mostrar essas colunas. A preferência será salva na conta do técnico pelo serviço Atendimento. Se o salvamento da preferência não for confirmado, manter a escolha na tela com aviso. Se a leitura da preferência falhar, mostrar colunas vazias provisoriamente, com aviso e alternância liberada, sem salvar o padrão automaticamente. A recuperação da leitura será automática, com prazo de 20 segundos e esperas de 10, 20, 40 e 60 segundos, suspensa em aba oculta e encerrada após leitura válida. Em sessões diferentes, prevalece a última gravação aceita pelo servidor. Os critérios de apresentação e preferência foram aprovados. Continuar pelo contrato de gravação, depois pelos participantes desativados e pelo contrato de consulta. As pendências anteriores continuam abertas; esta retomada não aprova nem encerra as demais seções.
+
 Continuar com a skill `egm-draft`, usando este documento e `concepts_brief.md`. O autor pediu salvar e sincronizar o trabalho para continuar em outro computador. Não há autorização de implementação nem aprovação do plano técnico completo. Problema, objetivos, aprovação documental, interface e publicação, banco e implantação, anexos e retenção, backup e limitação por IP possuem aprovações parciais registradas nas respectivas seções.
 
 A discussão atual é o configurador visual de formulários. Decisões mais recentes: perguntas condicionais em linguagem simples orientam a triagem; o técnico define a categoria efetiva; somente dois tipos de formulário, uso externo e uso interno; um formulário interno pode atender vários grupos; a associação define quem pode usá-lo para abrir um chamado, sem restringir por si só a consulta posterior.
@@ -3500,6 +3502,234 @@ Não apagar a decisão ou a execução anterior antes de confirmar duravelmente 
 A escolha evita exigir duas gravações para comprovar a decisão anterior à saída, mas concentra essa evidência no armazenamento local. Exige detectar gravações interrompidas, estados antigos e restauração divergente, sem presumir que um arquivo legível seja necessariamente atual ou íntegro.
 
 Após a aprovação desta subseção, continuar pelo formato e pelo protocolo de atualização durável do estado da identidade, incluindo detecção de transição interrompida. Permanecem pendentes resolução e reutilização da decisão, transições entre arquivo e PostgreSQL, identificação e confirmação de saída do supervisor anterior, falhas da marca, registro de incidentes posteriores, integração com a política do Docker, sinalização e intervenção, marco de consumo e esperas vencidas, reconciliação e limpeza do registro compartilhado, detecção de perda de conexão, primeira instalação e restauração, credenciais e migrações, falhas precoces do supervisor, tratamento durante backup e demais contratos em aberto.
+
+## Chamados por técnico — escopo aprovado em 2026-11-25
+
+Criar a página “Chamados por técnico” no painel autenticado, com uma coluna por técnico e uma coluna “Sem técnico”. O objetivo é visualizar a distribuição dos atendimentos. Aplicar as permissões de consulta e edição já existentes; a página não concede novos acessos.
+
+Cada cartão apresenta número, título, status, prioridade e setor solicitante, e abre a página do chamado ao ser clicado. A coluna do técnico contém os chamados dos quais ele participa. Um chamado com vários participantes aparece uma vez em cada coluna correspondente, sempre referenciando o mesmo registro. Não criar cópias de chamados nem históricos independentes para compor o quadro.
+
+Mostrar inicialmente os chamados em aberto e permitir filtros para consultar os demais estados. Preservar os novos aguardando triagem na coluna “Sem técnico”, independentemente dos filtros pessoais. Manter a ordem vigente de prioridade e antiguidade nos atendimentos atribuídos, sem atribuir prioridade implícita aos novos. Exibir em cada coluna a contagem dos cartões apresentados; não usar a soma das colunas como total de chamados distintos.
+
+Assumir atendimento e alterar participantes continuam sendo ações na página do chamado. Ao assumir um chamado sem técnico, sua representação sai de “Sem técnico” e passa à coluna do participante. Ao adicionar outro participante, o cartão passa a aparecer também na coluna dele; ao remover um vínculo, deixa de aparecer naquela coluna. Mudanças de status e conteúdo devem atualizar todas as representações, respeitando os filtros vigentes. O quadro não permite arrastar cartões nesta etapa.
+
+### Critérios de aceite da página
+
+1. Um chamado associado somente a Ana aparece uma vez na coluna de Ana, com os campos previstos e a contagem correspondente.
+2. Ao associar Bruno ao mesmo chamado, ele aparece também na coluna de Bruno, com o mesmo número; abrir qualquer cartão leva ao mesmo chamado e histórico.
+3. Alterar título, prioridade ou status reflete em todas as representações do chamado. Remover Bruno da associação retira somente sua representação na coluna de Bruno.
+4. Um chamado novo sem participante aparece em “Sem técnico”, inclusive quando há filtros pessoais ativos. Assumi-lo o retira dessa coluna e o inclui na coluna do técnico, aplicando as regras vigentes de triagem e prioridade.
+5. Chamados fechados e cancelados ficam fora da visão inicial e podem ser consultados pelos filtros. Um fechamento retira todas as representações da visão de chamados em aberto.
+6. Um chamado compartilhado conta uma vez em cada coluna dos participantes; isso não duplica o registro nem um eventual total de chamados distintos.
+7. Clicar no cartão abre os detalhes; arrastar não altera participantes nem status. As ações nos detalhes continuam sujeitas às permissões existentes.
+
+O autor esclareceu que o trabalho permanece apenas na documentação e solicitou continuar com `egm-draft`. O escopo funcional está aprovado; o detalhamento técnico permanece em construção, sem autorização de implementação em código. Os critérios acima ainda não foram executados contra uma aplicação.
+
+### Atualização do quadro — consulta periódica escolhida
+
+O quadro pode ficar aberto enquanto outro técnico assume, compartilha ou fecha um chamado. Atualizar somente após ações realizadas na própria página não garante que a distribuição apresentada corresponda ao trabalho da equipe. Todas as representações de um chamado devem ser atualizadas juntas a partir do mesmo estado recebido; uma falha de consulta não deve ser apresentada como ausência de chamados.
+
+O autor escolheu a alternativa 2: consulta periódica ao servidor. O intervalo e o tratamento de abas em segundo plano ainda precisam ser definidos. As alternativas abaixo ficam preservadas para registrar os mecanismos e os limites considerados:
+
+| Alternativa | Funcionamento | Custo e limite | Quando deixa de atender |
+| --- | --- | --- | --- |
+| Atualização manual | Consultar ao abrir a página e quando o técnico acionar “Atualizar”. | Exige pouca comunicação, mas depende da iniciativa do técnico. | A página pode permanecer desatualizada indefinidamente enquanto outros técnicos trabalham. |
+| Consulta periódica | O navegador consulta o estado do quadro em intervalos e substitui os cartões e as contagens em conjunto. | Gera consultas mesmo sem mudanças; o intervalo define o atraso e a carga. Intervalo e tratamento de abas em segundo plano precisam ser definidos depois da escolha. | Muitas sessões ou consultas lentas podem gerar carga excessiva; a informação permanece atrasada entre consultas. |
+| Avisos do servidor | Manter um canal do servidor para o navegador; ao receber aviso de mudança, consultar novamente o estado autorizado do quadro. | Exige manter conexões e recuperar a comunicação após interrupções. O transporte e a recuperação precisam ser definidos depois da escolha. | Uma conexão perdida pode deixar o quadro antigo se a retomada não buscar o estado atual. |
+
+O argumento a favor da atualização manual é reduzir complexidade em uma equipe pequena. Seu limite é depender de cada pessoa lembrar de atualizar justamente a tela usada para acompanhar a equipe. Consultas periódicas reduzem essa dependência, ao custo de atraso e requisições recorrentes. Avisos reduzem o atraso percebido, mas acrescentam manutenção de conexões e recuperação. O autor escolheu as consultas periódicas; atualização exclusivamente manual e avisos do servidor não serão o mecanismo desta página nesta etapa.
+
+Consultar e modificar o chamado continuam sujeitos às permissões no servidor. O quadro não substitui as verificações realizadas ao assumir ou editar um atendimento; um cartão desatualizado não autoriza sobrescrever mudanças posteriores.
+
+### Ciclo de consulta periódica — aprovado
+
+Consultar ao abrir a página. Após concluir cada consulta, aguardar o intervalo definido antes de iniciar a próxima. Manter no máximo uma consulta em andamento por quadro aberto, sem acumular consultas se a resposta demorar. Assim, o intervalo representa uma espera entre consultas, não uma garantia de atualização em tempo real.
+
+Substituir cartões e contagens em conjunto somente após uma resposta válida para os filtros atuais. Se o usuário mudar os filtros enquanto houver consulta em andamento, descartar a resposta dos filtros anteriores. Ao sair da página, interromper o ciclo e impedir que respostas anteriores alterem uma nova abertura do quadro.
+
+Em falha temporária, preservar a última apresentação válida, indicar que a atualização falhou e mostrar o horário da última consulta bem-sucedida. Se a primeira consulta falhar, apresentar falha de carregamento, sem mostrar colunas vazias como se não houvesse chamados. Não realizar tentativas imediatas em sequência; a próxima tentativa respeita a espera definida. Ao receber uma nova resposta válida, substituir o conjunto e retirar o aviso de falha.
+
+Se a sessão expirar ou o acesso for negado, interromper o ciclo e retirar os dados da área do quadro, conduzindo ao fluxo de autenticação ou de acesso negado correspondente. Não tratar perda de autorização como simples falha temporária de comunicação.
+
+O autor aprovou este ciclo e autorizou continuar pela definição do intervalo. Intervalo e política para abas em segundo plano foram definidos nas subseções seguintes. O limite de duração de cada consulta foi definido em 20 segundos. As esperas após falhas repetidas foram definidas na subseção correspondente. Esses valores e comportamentos não foram escolhidos implicitamente pela adoção de consulta periódica.
+
+### Intervalo entre consultas — 10 segundos escolhidos
+
+O intervalo será contado a partir do término da consulta anterior, conforme o ciclo aprovado. O atraso para perceber uma mudança também inclui o tempo de resposta do servidor e eventuais atrasos do navegador. Não prometer que cada mudança aparecerá dentro do intervalo nominal.
+
+As opções abaixo são propostas para escolha, sem medição de volume ou desempenho que permita afirmar qual atende melhor à equipe. As estimativas consideram um quadro continuamente aberto e respostas rápidas; não incluem a consulta inicial nem consultas provocadas por mudanças de filtro. São valores aproximados por quadro aberto, não por técnico cadastrado.
+
+| Opção | Espera após cada consulta | Consultas por minuto por quadro | Compromisso e limite |
+| --- | --- | --- | --- |
+| A | 10 segundos | Até aproximadamente 6 | Reduz o tempo até perceber mudanças, mas faz três vezes mais consultas que a opção C. Pode custar mais que o necessário se houver poucas mudanças ou muitos quadros abertos. |
+| B | 30 segundos | Até aproximadamente 2 | Reduz a frequência de consultas em relação à opção A, aceitando uma espera maior. Não atende se a distribuição precisar refletir mudanças em poucos segundos. |
+| C | 60 segundos | Até aproximadamente 1 | Faz menos consultas entre estas opções, mas pode apresentar uma distribuição antiga por cerca de um minuto, além do tempo de resposta. Pode prejudicar a coordenação de atendimentos que mudam com frequência. |
+
+Em dez quadros abertos, essas frequências correspondem a aproximadamente 60, 20 ou 10 consultas por minuto, respectivamente, nas mesmas condições. O número de cartões e a duração da consulta ainda precisam ser considerados para avaliar a carga; frequência isolada não comprova capacidade.
+
+O autor escolheu a opção A: aguardar 10 segundos após o término de cada consulta antes de iniciar a próxima. As opções de 30 e 60 segundos ficam preservadas como alternativas consideradas, sem adoção. A decisão deste trecho é somente a espera entre consultas; não define limite de duração de requisição nem esperas adicionais por falhas repetidas.
+
+### Consultas em abas em segundo plano — suspensão escolhida
+
+Um quadro aberto em uma aba oculta pode continuar gerando consultas sem estar sendo acompanhado. Por outro lado, suspender as consultas exige buscar o estado atual quando a aba voltar a ficar visível. O intervalo escolhido não determina esse comportamento.
+
+| Opção | Funcionamento | Custo e limite | Quando deixa de atender |
+| --- | --- | --- | --- |
+| A — Suspender enquanto oculta | Ao ocultar a aba, não iniciar novas consultas periódicas. Uma consulta já em andamento pode terminar. Ao voltar à aba, solicitar atualização sem esperar os 10 segundos, mantendo no máximo uma consulta em andamento. | Reduz consultas sem observação; o quadro pode apresentar os dados anteriores enquanto a atualização de retorno está em andamento. | Não atende se houver outro uso previsto para os dados da aba oculta; esse uso não faz parte do quadro aprovado. |
+| B — Continuar o ciclo | Manter a espera de 10 segundos também quando a aba estiver oculta. Ao voltar, continuar o ciclo sem exigir consulta adicional. | Continua consumindo consultas sem observação. O navegador pode atrasar tarefas em segundo plano, portanto não há garantia de atualização a cada 10 segundos. | Não atende a uma exigência de informação recente no retorno se o navegador tiver suspendido a aba. |
+| C — Reduzir a frequência enquanto oculta | Usar uma espera maior em segundo plano e solicitar atualização ao voltar, sem sobrepor consultas. | Reduz parte das consultas, mas mantém atividade sem observação e exige definir um segundo intervalo. | Não resolve suspensão pelo navegador e acrescenta uma configuração que pode não ter utilidade para uma tela de acompanhamento. |
+
+O autor escolheu a opção A: suspender novas consultas enquanto a aba estiver oculta e solicitar atualização ao retornar, sem aguardar os 10 segundos. Permitir que uma consulta já em andamento termine. Não acumular consultas que seriam realizadas durante a suspensão nem executá-las em sequência no retorno. As opções B e C não foram adotadas.
+
+Se ainda houver uma consulta em andamento ao voltar, aguardar sua conclusão antes da atualização solicitada pelo retorno; reunir retornos repetidos em uma única solicitação pendente. Iniciar essa atualização somente se a página continuar visível, aberta e autorizada. Continuar descartando respostas de filtros anteriores. Ao concluir a atualização de retorno, retomar a espera normal de 10 segundos, sem manter um segundo temporizador concorrente.
+
+Esta decisão trata da visibilidade da página, não de encerrar a sessão ou fechar o quadro. Falha no retorno segue a regra já aprovada: preservar a última apresentação válida com aviso, sem mostrar o quadro como atualizado. O controle do prazo de uma consulta ainda depende da decisão abaixo.
+
+### Prazo máximo de cada consulta do quadro — 20 segundos escolhidos
+
+Uma consulta que não termina impede novas consultas no ciclo aprovado. Definir um prazo no navegador para encerrar a espera por aquela resposta e tratar o resultado como falha temporária. Uma resposta recebida depois desse encerramento não pode substituir o quadro. Isso não comprova que o processamento no servidor foi interrompido; esta operação é somente de leitura.
+
+| Opção | Prazo de espera por resposta | Compromisso e limite |
+| --- | --- | --- |
+| A | 10 segundos | Reconhece mais cedo uma consulta sem resposta, mas pode interromper consultas legítimas em condições lentas. |
+| B | 20 segundos | Tolera consultas mais lentas, mantendo o quadro antigo por mais tempo antes de indicar falha. |
+| C | 30 segundos | Aceita maior demora, mas uma consulta travada segura o ciclo e a atualização de retorno por mais tempo. |
+
+O autor escolheu a opção B: aguardar no máximo 20 segundos desde o início de cada consulta. Não há medição de desempenho que valide esse valor; trata-se de uma decisão de comportamento. As opções de 10 e 30 segundos não foram adotadas. O prazo é independente dos 10 segundos de espera entre consultas. Após esgotá-lo, aplicar a regra de falha e a espera normal antes da próxima tentativa, quando a aba estiver visível, aplicando a sequência de esperas após falhas definida abaixo.
+
+### Esperas após falhas consecutivas — sequência até 60 segundos escolhida
+
+Manter consultas frequentes durante uma indisponibilidade facilita perceber a recuperação, mas continua gerando requisições sem resultado. Aumentar a espera reduz essas requisições e pode atrasar a retomada. O autor escolheu a opção B entre as alternativas abaixo:
+
+| Opção | Espera após cada falha consecutiva | Compromisso e limite |
+| --- | --- | --- |
+| A — Manter a espera normal | Sempre 10 segundos após a falha. | Mantém tentativas frequentes; não reduz a frequência durante uma indisponibilidade prolongada. Cada tentativa ainda pode consumir até 20 segundos de espera pela resposta. |
+| B — Aumentar até 60 segundos | 10 segundos após a primeira falha, 20 após a segunda, 40 após a terceira e 60 a partir da quarta. | Reduz consultas durante falhas prolongadas, mas pode demorar até a próxima tentativa para reconhecer a recuperação. |
+| C — Aumentar até 120 segundos | 10 segundos após a primeira falha, 30 após a segunda, 60 após a terceira e 120 a partir da quarta. | Reduz mais as consultas em falhas prolongadas, mas pode deixar o quadro antigo por cerca de dois minutos adicionais antes de tentar novamente. |
+
+Em todas as opções, contar a espera depois do término da tentativa, sem acumular consultas. Uma resposta válida encerra a sequência de falhas e restaura o ciclo normal de 10 segundos. Preservar o aviso e a última apresentação válida enquanto não houver resposta válida; não indicar recuperação somente porque uma nova tentativa começou. Expiração de sessão e acesso negado continuam interrompendo o ciclo, sem repetição automática.
+
+A sequência escolhida é: 10 segundos após a primeira falha, 20 após a segunda, 40 após a terceira e 60 após a quarta e todas as seguintes, até uma resposta válida. As opções A e C não foram adotadas.
+
+A suspensão em aba oculta e a solicitação de atualização ao retornar continuam conforme a decisão já aprovada. A suspensão não apaga a sequência de falhas: uma atualização de retorno que falhe permanece na mesma sequência. Essas esperas controlam as consultas deste quadro no navegador; não alteram as filas de integração de materiais nem as políticas dos demais serviços.
+
+### Critérios de aceite da atualização — aprovados
+
+Os cenários abaixo consolidam as decisões do autor; são critérios para futura verificação, não testes executados.
+
+1. Ao abrir o quadro visível, iniciar uma consulta. Depois de uma resposta válida, atualizar cartões e contagens juntos e aguardar 10 segundos antes da próxima consulta. Nunca manter duas consultas em andamento no mesmo quadro.
+2. Se uma consulta atingir 20 segundos sem terminar, encerrar a espera e indicar falha. Uma resposta tardia dessa consulta não pode alterar cartões, contagens ou o horário da última atualização válida.
+3. Após falhas consecutivas, aguardar respectivamente 10, 20, 40 e 60 segundos; manter 60 segundos nas falhas seguintes. Contar cada espera depois do término da tentativa, incluindo o esgotamento do prazo quando aplicável.
+4. Uma resposta válida encerra a sequência de falhas, retira o aviso, atualiza o horário da última atualização e retoma a espera normal de 10 segundos. Iniciar uma tentativa não equivale a recuperar a comunicação.
+5. Em falha temporária após um carregamento válido, preservar os cartões anteriores com aviso. Em falha inicial, mostrar erro de carregamento; não apresentar colunas vazias como resultado de uma consulta bem-sucedida.
+6. Ao ocultar a aba, suspender novas consultas, permitindo terminar a que já estiver em andamento. Não acumular consultas durante a suspensão. Ao voltar, solicitar atualização sem esperar o intervalo, respeitando a consulta que ainda estiver em andamento e reunindo retornos repetidos em uma única solicitação pendente.
+7. Ocultar e reabrir a aba não zera a sequência de falhas. Por exemplo: depois de três falhas, se a consulta de retorno também falhar, a próxima espera será de 60 segundos. Se a aba voltar a ficar oculta, não iniciar essa próxima consulta até o retorno.
+8. Ao trocar filtros, não aplicar respostas referentes à seleção anterior. Ao sair da página, interromper o ciclo e impedir que respostas antigas alterem uma nova abertura do quadro.
+9. Ao receber expiração de sessão ou acesso negado, interromper o ciclo, retirar os dados da área do quadro e seguir o fluxo correspondente. Não manter tentativas automáticas como se fosse uma falha temporária.
+
+O autor aprovou os critérios de aceite da atualização e autorizou continuar pela composição das colunas. Essa aprovação não encerra o planejamento técnico da página: ainda é necessário especificar o contrato de consulta e a composição das colunas, incluindo técnicos sem chamados e participantes desativados, sem alterar as regras vigentes de substituição e histórico.
+
+### Colunas de técnicos ativos sem cartões — alternância escolhida
+
+Uma coluna vazia permite reconhecer que um técnico não tem chamados na seleção atual, mas aumenta a largura do quadro. Ocultar essas colunas concentra os atendimentos e dificulta distinguir quem está sem chamados de quem não está representado. Zero cartões não comprova disponibilidade: pode ser efeito dos filtros, e o quadro não registra presença, jornada ou outros trabalhos.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Mostrar todos os técnicos ativos | Manter a coluna de cada técnico ativo, mesmo com zero cartões na seleção atual, respeitando o acesso aos cadastros da equipe. | Permite visualizar quem está sem chamados na seleção, mas pode exigir mais rolagem horizontal em equipes grandes. |
+| B — Mostrar somente quem tem cartões | Exibir colunas de técnicos ativos apenas quando houver ao menos um chamado correspondente à seleção atual. | Reduz colunas vazias, mas não apresenta quem ficou sem chamados; as colunas podem aparecer e desaparecer nas atualizações. |
+| C — Permitir alternar a apresentação | Oferecer um controle para mostrar ou ocultar técnicos ativos sem cartões. | Atende aos dois usos, mas exige um controle adicional; apresentação inicial e preservação da preferência precisam ser definidas após a escolha. |
+
+O autor escolheu a opção C: permitir alternar entre mostrar e ocultar técnicos ativos sem cartões. As opções A e B não serão comportamentos fixos obrigatórios. A decisão refere-se aos técnicos ativos sem cartões na seleção atual; não altera a regra de um chamado compartilhado em cada coluna dos participantes. A coluna “Sem técnico” e a preservação dos novos aguardando triagem continuam no escopo aprovado, independentemente desta escolha. A representação de participantes desativados será definida separadamente, preservando histórico e substituição obrigatória do último participante ativo conforme as regras existentes.
+
+O controle pode ser apresentado como “Mostrar técnicos sem chamados nesta seleção”. Ligado, mantém as colunas vazias de técnicos ativos; desligado, oculta somente essas colunas. Não altera vínculos, permissões, cartões correspondentes aos filtros ou a contagem de cada coluna. Não interpretar a coluna vazia como indicação de que o técnico está disponível.
+
+### Estado inicial do controle de colunas vazias — mostrar escolhido
+
+O controle aprovado precisa de um estado inicial. Esta escolha define o padrão quando não há preferência anterior aplicável; ainda não decide se a preferência será preservada entre visitas ou dispositivos.
+
+| Opção | Estado inicial | Compromisso e limite |
+| --- | --- | --- |
+| A — Mostrar colunas vazias | Iniciar com o controle ligado. | Apresenta todos os técnicos ativos desde a primeira abertura, mas aumenta a largura do quadro mesmo quando há poucos chamados. |
+| B — Ocultar colunas vazias | Iniciar com o controle desligado. | Concentra os chamados em menos colunas, mas exige acionar o controle para visualizar técnicos sem cartões na seleção atual. |
+
+O autor escolheu a opção A: iniciar mostrando as colunas vazias de técnicos ativos, com o controle ligado, quando não houver preferência anterior aplicável. O usuário pode desligá-lo para ocultar essas colunas. A opção B não foi adotada como padrão. A preservação foi definida na subseção seguinte: salvar na conta do técnico pelo serviço Atendimento.
+
+### Preservação da preferência de colunas vazias — conta do técnico escolhida
+
+O padrão aprovado é mostrar colunas vazias. Lembrar a escolha evita repetir ajustes, mas exige definir a quem ela pertence e onde será guardada. Essa preferência muda somente a apresentação do quadro; não concede acesso nem altera filtros ou participantes.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Usar o padrão em cada abertura | Manter a escolha somente enquanto a página estiver aberta; ao abri-la novamente, mostrar colunas vazias. | Dispensa armazenamento persistente, mas exige repetir o ajuste em cada visita. |
+| B — Lembrar neste navegador por técnico | Guardar a escolha localmente, vinculada à identidade do técnico autenticado. Sem escolha local, mostrar colunas vazias. | Evita repetir o ajuste no mesmo navegador, mas não acompanha outros dispositivos e pode desaparecer ao limpar os dados locais. Não compartilhar a preferência entre contas no mesmo navegador. |
+| C — Lembrar na conta do técnico | Guardar a escolha no serviço Atendimento como preferência do usuário autenticado e recuperá-la nas próximas aberturas. Sem escolha salva, mostrar colunas vazias. | Acompanha o técnico em outros navegadores, mas exige leitura e gravação no servidor e tratamento de falhas e alterações concorrentes da preferência. |
+
+O autor escolheu a opção C: guardar a preferência na conta do técnico, no serviço Atendimento, para recuperá-la em outros navegadores e dispositivos. As opções A e B não foram adotadas. Ausência de preferência salva usa o padrão aprovado de mostrar colunas vazias; falha ao ler uma preferência não comprova que ela inexiste. A decisão não muda a preservação de filtros pessoais já aprovada para o painel.
+
+A identidade da preferência deve vir da sessão autenticada, sem permitir que um técnico altere a preferência de outra conta. Essa preferência diz respeito somente à apresentação de colunas vazias deste quadro. Recuperar a escolha nas próximas aberturas não implica sincronização instantânea do controle em telas já abertas. Contrato de leitura e gravação, falha no carregamento inicial e alterações concorrentes em dispositivos diferentes permanecem em detalhamento.
+
+### Falha ao salvar a preferência — manter a escolha na tela
+
+Uma mudança no controle pode não ter gravação confirmada no servidor. O quadro precisa distinguir a apresentação atual da preferência efetivamente salva, sem informar que a escolha acompanhará a conta antes da confirmação. As alternativas abaixo tratam da apresentação após falha ou resultado incerto de gravação; não definem repetição automática nem resolução de concorrência.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Manter a escolha na tela | Continuar mostrando a seleção feita nesta abertura e informar que ela não teve salvamento confirmado na conta. | Preserva o ajuste durante o uso, mas outra abertura pode apresentar a preferência anterior ou o padrão. A escolha local não pode ser anunciada como salva. |
+| B — Voltar à apresentação anterior | Repor o estado do controle anterior à tentativa e informar que a mudança não teve salvamento confirmado. | Evita manter uma escolha local diferente da última apresentação conhecida, mas desfaz o ajuste visual do técnico. Uma resposta perdida ainda pode significar que o servidor gravou a mudança; o retorno visual não comprova desfazimento no servidor. |
+
+O autor escolheu a opção A: manter a escolha nesta abertura e avisar que seu salvamento na conta não foi confirmado. Não voltar automaticamente à apresentação anterior. Uma falha ao salvar esta preferência não é evidência de falha na consulta de chamados e não deve apagar seus cartões. Perda de sessão ou autorização segue os controles de acesso existentes. A recuperação do estado efetivamente salvo e o tratamento de carregamento inicial continuam em detalhamento.
+
+### Falha ao carregar a preferência na abertura — padrão provisório com alternância
+
+Não conseguir ler a preferência não significa que ela esteja ausente. Uma apresentação provisória não pode ser gravada automaticamente como se fosse uma escolha do técnico, pois poderia sobrescrever a preferência já existente. Considerar aqui uma falha temporária da leitura da preferência, com consulta de chamados autorizada e disponível.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Usar o padrão provisoriamente | Mostrar colunas vazias com aviso de que a preferência não pôde ser carregada e permitir alternar o controle. Não salvar o padrão por causa da falha. | Mantém o quadro utilizável, mas a apresentação pode diferir da preferência salva. A distinção entre seleção local e salvamento confirmado permanece necessária. |
+| B — Usar o padrão e suspender o controle | Mostrar colunas vazias com aviso e desabilitar somente a alternância até conseguir ler a preferência. | Permite acompanhar os chamados e evita editar uma preferência desconhecida, mas impede ocultar colunas vazias enquanto a leitura não se recuperar. |
+
+O autor escolheu a opção A: mostrar colunas vazias provisoriamente, avisar que a preferência não pôde ser carregada e permitir alternar o controle. Não gravar automaticamente o padrão por causa da falha. A opção B não foi adotada. Essa decisão não cria armazenamento persistente no navegador nem impede a consulta de chamados por causa de uma preferência visual. Recuperação da leitura, mudanças feitas durante essa recuperação e alterações concorrentes em outras sessões continuam em detalhamento.
+
+### Recuperação da leitura da preferência — automática escolhida
+
+Uma leitura recuperada pode trazer uma escolha diferente da apresentação provisória. Se o técnico já alterou o controle nesta abertura, uma resposta iniciada antes dessa alteração não deve desfazer sua escolha nem confirmá-la como salva. A recuperação da preferência e a atualização dos chamados devem manter seus resultados distintos: sucesso em uma não comprova sucesso na outra.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Recuperar por ação do técnico | No aviso, oferecer “Tentar carregar preferência novamente”. Não repetir automaticamente a leitura que falhou. | Evita novas consultas sem solicitação, mas o aviso e a apresentação provisória podem permanecer até o técnico agir ou reabrir a página. |
+| B — Recuperar automaticamente | Enquanto a leitura estiver pendente por falha, repetir a consulta da preferência com as mesmas esperas de falha e o prazo já definidos para o quadro, suspendendo-a em aba oculta. Encerrar as repetições após leitura válida. | Dispensa ação do técnico, mas acrescenta consultas durante a falha e exige controlar a recuperação sem sobrepor leituras da própria preferência nem sobrescrever escolhas locais posteriores. |
+
+O autor escolheu a opção B: recuperar automaticamente a leitura da preferência. Após falhas consecutivas dessa leitura, aguardar 10, 20, 40 e 60 segundos, mantendo 60 nas seguintes, com prazo máximo de 20 segundos por tentativa. Manter no máximo uma leitura da própria preferência em andamento, suspender novas tentativas em aba oculta e encerrar as repetições após leitura válida. Perda de sessão ou autorização interrompe a recuperação, conforme os controles de acesso existentes. A opção A não foi adotada como mecanismo de recuperação.
+
+Reutilizar os valores de espera não significa compartilhar a contagem de falhas com a consulta de chamados: uma preferência recuperada não zera falhas do quadro nem o contrário. O sucesso de uma leitura não autoriza repetir automaticamente uma gravação cujo resultado seja incerto. A aplicação do valor recuperado e a gravação de escolhas locais serão consolidadas com a decisão de concorrência.
+
+### Alterações da preferência em sessões diferentes — última gravação aceita
+
+O mesmo técnico pode abrir o quadro em dois dispositivos e escolher apresentações diferentes. É necessário definir qual valor ficará salvo para as próximas aberturas. A preferência permanece individual; este caso não envolve alterações feitas por outros técnicos em suas próprias contas. Nenhuma alternativa exige sincronizar instantaneamente controles de telas já abertas.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Prevalece a última gravação aceita | O serviço salva cada escolha explícita; o valor da gravação aceita por último no servidor fica na conta. Não ordenar pelo relógio dos dispositivos. | Dispensa resolução de conflitos pelo técnico, mas uma solicitação antiga que chegar atrasada pode substituir uma escolha enviada depois em outro dispositivo. |
+| B — Recusar gravação baseada em versão antiga | A leitura devolve uma versão da preferência. O servidor aceita a alteração somente se a versão ainda for atual; caso contrário, informa conflito sem sobrescrever o valor salvo. | Evita sobrescrever uma alteração não conhecida pela tela, mas exige recuperar a versão atual e tratar o conflito. Quando a leitura inicial falhou, a escolha pode permanecer local até obter a versão necessária. |
+
+O autor escolheu a opção A: prevalece a última gravação aceita pelo servidor. Não usar os horários dos dispositivos para ordenar escolhas nem exigir uma versão anterior como condição da gravação. A opção B não foi adotada. Uma solicitação atrasada de outra sessão pode substituir uma escolha mais recente na perspectiva do técnico; esse é o limite da regra escolhida.
+
+Não deixar uma resposta antiga desfazer uma escolha local posterior. Continuar distinguindo seleção na tela e gravação confirmada na conta. O mecanismo de gravação na própria tela e o tratamento de resultados incertos ainda precisam ser especificados, sem introduzir uma fila durável de preferências ou armazenamento persistente no navegador.
+
+### Apresentação e preferência de colunas vazias — critérios aprovados
+
+Os critérios abaixo consolidam as escolhas do autor e explicitam a proteção da escolha local durante a recuperação. São cenários para futura verificação; não foram executados contra uma aplicação.
+
+1. Sem preferência salva, o quadro mostra colunas vazias de técnicos ativos. O controle permite ocultá-las e mostrá-las novamente sem alterar chamados, participantes ou a coluna “Sem técnico”. Zero cartões continua significando ausência de chamados na seleção, sem comprovar disponibilidade.
+2. Após uma gravação confirmada, outra abertura autenticada na mesma conta recupera a preferência salva, inclusive em outro navegador. A preferência de uma conta não altera a de outro técnico. Não exigir sincronização instantânea de telas já abertas.
+3. Se a gravação falhar ou seu resultado ficar incerto, manter a escolha nesta abertura com aviso de que o salvamento não foi confirmado. Não anunciar sucesso nem voltar automaticamente à apresentação anterior. Uma resposta perdida não comprova que o servidor deixou de gravar.
+4. Se a leitura inicial falhar, mostrar colunas vazias provisoriamente, avisar sobre a falha e manter o controle disponível. Não salvar o padrão somente por causa dessa falha nem impedir a consulta de chamados.
+5. Repetir automaticamente a leitura com prazo de 20 segundos e esperas de 10, 20, 40 e 60 segundos, mantendo 60 nas falhas seguintes. Suspender novas tentativas em aba oculta, manter no máximo uma leitura da própria preferência em andamento e encerrar as repetições após leitura válida. Não misturar a contagem de falhas com a consulta de chamados.
+6. Quando a leitura se recuperar sem escolha local posterior, aplicar a preferência obtida ou o padrão se sua ausência for confirmada. Se o técnico já alterou o controle nesta abertura, preservar essa escolha local: a leitura recuperada informa o estado salvo, mas não desfaz a seleção local nem comprova seu salvamento. Aviso de leitura e aviso de gravação devem corresponder aos respectivos resultados.
+7. Em gravações de sessões diferentes, o valor aceito por último pelo servidor fica salvo para próximas aberturas. Uma resposta anterior não deve substituir a seleção local feita depois dela. Não usar relógios dos dispositivos para arbitrar a ordem.
+8. Perda de sessão ou autorização interrompe as operações protegidas e segue o fluxo de acesso existente. Falha temporária da preferência não apaga os cartões obtidos por uma consulta válida de chamados.
+
+O autor aprovou esta consolidação e solicitou sincronizar a documentação com o GitHub. Essa aprovação não encerra o contrato técnico de persistência: faltam detalhar envio de mudanças sucessivas na mesma tela e recuperação de gravação incerta. Depois, continuar pela representação de participantes desativados e pelo contrato de consulta do quadro.
 
 ## Referências
 
