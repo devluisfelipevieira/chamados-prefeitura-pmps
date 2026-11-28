@@ -3729,7 +3729,374 @@ Os critérios abaixo consolidam as escolhas do autor e explicitam a proteção d
 7. Em gravações de sessões diferentes, o valor aceito por último pelo servidor fica salvo para próximas aberturas. Uma resposta anterior não deve substituir a seleção local feita depois dela. Não usar relógios dos dispositivos para arbitrar a ordem.
 8. Perda de sessão ou autorização interrompe as operações protegidas e segue o fluxo de acesso existente. Falha temporária da preferência não apaga os cartões obtidos por uma consulta válida de chamados.
 
-O autor aprovou esta consolidação e solicitou sincronizar a documentação com o GitHub. Essa aprovação não encerra o contrato técnico de persistência: faltam detalhar envio de mudanças sucessivas na mesma tela e recuperação de gravação incerta. Depois, continuar pela representação de participantes desativados e pelo contrato de consulta do quadro.
+O autor aprovou esta consolidação e solicitou sincronizar a documentação com o GitHub. As decisões posteriores sobre envio de mudanças sucessivas e gravação incerta estão registradas abaixo.
+
+### Envio de alterações sucessivas da preferência — envio imediato escolhido
+
+O controle responde imediatamente à escolha do técnico. Se ele alternar duas vezes enquanto a primeira gravação ainda está em andamento, o servidor pode aceitar os pedidos em ordem diferente da ordem dos cliques. Ignorar respostas antigas protege a apresentação local, mas a conta ainda pode guardar o valor anterior.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Enviar cada escolha imediatamente | Cada alteração gera um pedido. A tela preserva a seleção mais recente e ignora respostas de escolhas anteriores ao atualizar o controle. | A última escolha chega ao servidor sem esperar. Se um pedido anterior for aceito depois, seu valor pode prevalecer na conta. |
+| B — Enviar uma escolha por vez | Manter um pedido em andamento. Se houver novas alterações durante a espera, reter apenas a seleção mais recente para envio depois de um resultado conhecido do pedido anterior. | Evita pedidos concorrentes da mesma tela quando o resultado é conhecido e reduz gravações intermediárias. Uma resposta perdida exige definir quando liberar a próxima escolha, pois o pedido anterior ainda pode ser aceito. |
+
+O autor escolheu a opção A. Cada mudança explícita gera um pedido imediato. A tela mantém a seleção mais recente e usa a resposta do pedido correspondente a essa seleção para atualizar o aviso de salvamento. A ordem de aceitação pelo servidor determina o valor salvo, inclusive para pedidos da mesma tela. Uma resposta de sucesso confirma que aquele pedido foi aceito. Um pedido anterior ainda pode ser aceito depois e mudar o valor salvo.
+
+### Recuperação de gravação incerta — manter o aviso
+
+Se a resposta se perder, o servidor ainda pode ter aceitado a mudança. Uma nova leitura informa o valor salvo no momento da consulta. Esse valor pode mudar depois se houver pedidos pendentes ou outra sessão gravar uma preferência. Em ambas as opções, a tela mantém a última escolha local e evita reenviar automaticamente a gravação.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Manter o aviso até a próxima ação | Informar que o salvamento da escolha atual ficou sem confirmação. Uma nova mudança explícita gera outro pedido. Uma nova abertura consulta a preferência da conta. | Evita uma consulta adicional, mas deixa o técnico sem saber qual valor está salvo enquanto permanecer nessa abertura. |
+| B — Consultar o valor salvo após a falha | Fazer uma leitura após o resultado incerto do pedido da escolha atual. Preservar a seleção local e informar se o valor lido coincide com ela naquele momento. Se a leitura falhar, manter o aviso de salvamento sem confirmação. | Dá retorno sem exigir nova ação, mas acrescenta uma consulta. A coincidência indica o valor observado na conta e não comprova qual pedido foi aceito. |
+
+O autor escolheu a opção A. Se a gravação da escolha atual ficar sem confirmação, manter a seleção local e o aviso. Uma nova mudança explícita gera outro pedido. Na próxima abertura, consultar a preferência da conta pelo fluxo de leitura já aprovado.
+
+### Participantes desativados no quadro — coluna “Sem participante ativo”
+
+O quadro acompanha a distribuição atual e permite consultar chamados encerrados. Alguns desses chamados podem ter somente participantes desativados. Se o quadro ocultar as respectivas colunas sem prever onde mostrar os cartões, esses chamados desaparecem do resultado mesmo quando correspondem aos filtros. A substituição obrigatória do último participante ativo segue as regras existentes, inclusive para chamados encerrados com pendências de integração. Em todas as opções, preservar os vínculos existentes, a autoria e o histórico.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Mostrar uma coluna por técnico desativado com cartões | Identificar cada coluna como desativada. Mostrar o cartão nela mesmo quando o chamado também aparecer na coluna de um participante ativo. | Preserva a leitura por pessoa. Ao consultar chamados antigos, pode aumentar a largura do quadro e repetir cartões em colunas históricas. |
+| B — Agrupar em uma coluna “Técnicos desativados” | Mostrar uma vez nessa coluna cada chamado selecionado que tenha algum participante desativado. Se houver participantes ativos, mostrar o cartão também nas colunas deles. | Limita a largura. Para distinguir quais técnicos desativados participaram, é preciso abrir o chamado. |
+| C — Mostrar em separado apenas chamados sem participante ativo | Exibir em “Sem participante ativo” os chamados que tenham vínculos apenas com desativados. Chamados com participantes ativos aparecem nas colunas dos ativos. | Mantém o foco na distribuição atual. Para ver a participação de técnicos desativados em chamados com participantes ativos, é preciso abrir o chamado. |
+
+“Sem técnico” continua reservada aos chamados sem atribuição. A preferência de ocultar colunas vazias se aplica aos técnicos ativos.
+
+O autor escolheu a opção C. Cada chamado da seleção com vínculos apenas a técnicos desativados aparece uma vez em “Sem participante ativo”. Se houver participantes ativos, o chamado aparece uma vez na coluna de cada um deles. Os vínculos com participantes desativados continuam disponíveis nos detalhes do chamado conforme as permissões vigentes. A regra de substituição do último participante ativo continua sendo aplicada no fluxo de desativação.
+
+### Formato da consulta do quadro — composição em Atendimento
+
+Cada atualização precisa aplicar os filtros, preservar os chamados novos em triagem e publicar cartões e contagens juntos. Consultas separadas para cartões e participantes podem observar momentos diferentes. Por exemplo, uma desativação entre as consultas pode deixar o navegador com um cartão cuja coluna já desapareceu. As duas opções usam uma única resposta coerente do serviço Atendimento e aplicam as permissões no servidor.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Retornar o quadro organizado | Atendimento devolve as colunas com seus cartões e contagens, incluindo as colunas especiais. Um chamado compartilhado integra a lista de cada coluna aplicável. O navegador aplica a preferência visual às colunas vazias dos técnicos ativos. | Centraliza as regras de composição e simplifica a atualização da tela. A resposta repete os dados dos cartões compartilhados. |
+| B — Retornar os dados para montar o quadro | Atendimento devolve cada chamado uma vez, com as referências aos participantes ativos e a indicação necessária para distinguir ausência de atribuição de vínculos somente com desativados. A mesma resposta traz os técnicos ativos que podem aparecer no quadro. O navegador monta as colunas e calcula as contagens. | Reduz a repetição de dados na consulta periódica. A interface passa a ser responsável pela composição e precisa aplicar as mesmas regras ao montar cartões e contagens. |
+
+O autor escolheu a opção A. Atendimento recebe os filtros, verifica as permissões e devolve em uma única resposta as colunas, os cartões ordenados e a contagem de cada coluna, calculados a partir do mesmo estado dos dados. Cada cartão contém o identificador usado para abrir o chamado, o número, o título, o status, a prioridade e o setor solicitante. O mesmo identificador acompanha todas as representações de um chamado compartilhado.
+
+Atendimento inclui os novos aguardando triagem em “Sem técnico” mesmo quando há filtros pessoais. Chamados da seleção com vínculos apenas a técnicos desativados aparecem em “Sem participante ativo”. Cada coluna de técnico ativo vem identificada para que o navegador possa ocultá-la quando estiver vazia, conforme a preferência da conta. O navegador aplica essa preferência à apresentação e atualiza cartões e contagens juntos após receber uma resposta válida para os filtros atuais.
+
+O autor aprovou o contrato de consulta acima.
+
+### Composição do quadro — critérios de aceite aprovados
+
+1. Com filtros pessoais ativos, um chamado novo aguardando triagem continua em “Sem técnico”, sem prioridade atribuída. Ao assumir o chamado, a próxima consulta válida o retira dessa coluna e o mostra na coluna do técnico, seguindo as regras de prioridade vigentes.
+2. Um chamado com dois participantes ativos e um desativado aparece uma vez na coluna de cada ativo, com o mesmo identificador e os mesmos dados. O vínculo com o participante desativado permanece disponível nos detalhes do chamado, conforme as permissões vigentes.
+3. Ao consultar chamados encerrados, um chamado que corresponda aos filtros e tenha vínculos somente com participantes desativados aparece uma vez em “Sem participante ativo”. Um chamado sem vínculo fica em “Sem técnico”.
+4. Quando o técnico oculta colunas vazias, o navegador retira da exibição somente as colunas de técnicos ativos com zero cartões. Ao mostrá-las novamente, as contagens são as da última resposta válida.
+5. Cada contagem corresponde aos cartões daquela coluna. Os cartões compartilhados contam uma vez em cada coluna em que aparecem. Cada atualização válida troca cartões e contagens juntos. Uma resposta de filtros anteriores é descartada.
+6. A consulta aplica as permissões vigentes antes de incluir dados na resposta. Quando houver perda de sessão ou de autorização para consultar o quadro, a interface retira os dados exibidos e interrompe as consultas automáticas.
+
+O autor aprovou os seis critérios de aceite da composição do quadro.
+
+### Ordem das colunas de técnicos ativos — ordem alfabética
+
+A ordem afeta onde o técnico encontra uma coluna após cada consulta periódica. As opções abaixo tratam das colunas de técnicos ativos. A posição de “Sem técnico” e “Sem participante ativo” permanece por definir.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Ordenar pelo nome do técnico | Manter as colunas em ordem alfabética. | Facilita encontrar uma pessoa e mantém sua posição relativa quando mudam as contagens. Para comparar as maiores cargas na seleção, é preciso percorrer as colunas. |
+| B — Ordenar pela quantidade de cartões | Mostrar primeiro as colunas com mais cartões na seleção, com desempate pelo nome. | Facilita localizar as colunas mais cheias, mas as colunas podem trocar de posição durante a atualização ou ao mudar filtros. A contagem inclui chamados compartilhados e reflete somente a seleção atual. |
+
+O autor escolheu a opção A. Atendimento ordena as colunas dos técnicos ativos pelo nome exibido, com desempate pelo identificador do técnico para manter a ordem entre homônimos. Mudanças nas contagens preservam a ordem relativa dessas colunas.
+
+### Posição das colunas especiais — ordenação aprovada
+
+Colocar “Sem técnico” no início mantém a triagem visível na abertura do quadro, mesmo quando a lista de técnicos exige rolagem horizontal. Falta definir onde fica “Sem participante ativo” quando houver chamados nessa coluna.
+
+| Opção | Ordem | Compromisso e limite |
+| --- | --- | --- |
+| A — Agrupar as colunas especiais no início | “Sem técnico”, “Sem participante ativo” e técnicos ativos em ordem alfabética. | Facilita encontrar chamados sem participante ativo, mas ocupa espaço antes das colunas dos técnicos. |
+| B — Manter apenas a triagem no início | “Sem técnico”, técnicos ativos em ordem alfabética e “Sem participante ativo”. | Deixa a triagem ao lado das primeiras colunas de técnicos. Encontrar chamados com vínculos apenas a desativados pode exigir rolagem até o fim. |
+
+O autor escolheu a opção B. Atendimento devolve primeiro “Sem técnico”, depois as colunas dos técnicos ativos em ordem alfabética e, quando houver cartões correspondentes, “Sem participante ativo” no fim. O navegador preserva essa ordem ao aplicar a preferência de ocultar colunas vazias dos técnicos ativos.
+
+Para verificar a ordenação, usar uma resposta que tenha cartões nas duas colunas especiais e colunas de técnicos ativos com contagens diferentes. Após uma atualização que altere apenas as contagens, a ordem relativa dos técnicos permanece alfabética. Ao ocultar colunas vazias, “Sem técnico” continua no início e “Sem participante ativo” continua no fim enquanto houver cartões nessa coluna.
+
+O autor aprovou a ordenação e o cenário de verificação. O bloco “Chamados por técnico” reúne as decisões sobre atualização, preferência de exibição, composição, consulta e ordenação. Os cenários de aceite ficam registrados para a futura verificação da implementação.
+
+## Matriz de permissões — em construção
+
+O autor encerrou o detalhamento de “Chamados por técnico” e autorizou iniciar a matriz de permissões. O administrador master configura permissões por grupos. Os nomes N1, N2 e N3 não definem privilégios fixos. A autorização para usar um formulário interno na abertura decorre dos grupos associados ao formulário e não concede acesso adicional ao chamado criado. As verificações de acesso ocorrem no servidor.
+
+### Ações básicas da equipe — concessão por grupo
+
+As regras vigentes dão à equipe técnica acesso compartilhado à triagem e permitem, por exemplo, alterar prioridade sem assumir o chamado. A matriz precisa indicar se essas ações são inerentes ao acesso técnico ou se cada concessão deve aparecer nos grupos. Em ambos os casos, preservam-se as condições já aprovadas de acesso ao chamado e as permissões específicas por formulário e por ação configurada.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Acesso básico inerente à função técnica | Uma conta ativa com acesso ao painel técnico recebe as ações básicas já previstas para a equipe. Os grupos controlam as demais ações configuráveis. | Mantém o acesso básico uniforme, mas não permite retirar uma dessas ações de um grupo específico sem rever essa regra. |
+| B — Acesso básico concedido por grupo | Representar as ações básicas na matriz e concedê-las a todos os grupos de atendimento na configuração inicial. O administrador master pode ajustar essas concessões. | Permite configurações mais restritivas, mas uma remoção pode impedir triagem ou impedir ações hoje previstas para qualquer técnico. Essa opção torna configurável o alcance dessas regras. |
+
+O autor escolheu a opção B e definiu que o administrador master seleciona as permissões de cada grupo na criação e pode adicioná-las ou removê-las depois. As ações básicas, como consultar a triagem e alterar a prioridade, também dependem das permissões concedidas. A regra de alterar prioridade sem assumir o chamado continua aplicável a quem tem acesso ao chamado e permissão para essa ação. A configuração inicial dos grupos permanece por definir.
+
+### Quantidade de grupos por técnico — permissões acumuladas
+
+Permitir vários grupos facilita combinar funções, mas pode manter uma permissão efetiva mesmo depois de sua remoção de um grupo. A matriz precisa deixar claro de onde vem o acesso.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Um grupo por técnico | As permissões do técnico vêm do único grupo ao qual ele pertence. | Facilita saber de onde veio cada permissão. Combinações diferentes de funções podem exigir grupos próprios. |
+| B — Vários grupos com permissões acumuladas | A permissão vale se ao menos um dos grupos do técnico a conceder. Removê-la de um grupo só retira o acesso se nenhum outro grupo continuar concedendo a mesma permissão. | Permite reutilizar grupos para combinar funções. Ao investigar ou retirar um acesso, é preciso verificar todas as concessões aplicáveis. |
+
+O autor escolheu a opção B. Um técnico pode pertencer a vários grupos. Uma permissão está concedida se pelo menos um dos grupos atuais do técnico a conceder. Remover a permissão de um grupo ou retirar o técnico desse grupo só encerra a concessão efetiva quando os demais grupos também deixam de concedê-la. Continuam valendo as condições específicas da ação, como o acesso ao chamado.
+
+### Vigência de alterações de permissão — revogação das sessões afetadas
+
+Uma sessão pode continuar aberta depois que o administrador master altera as permissões de um grupo ou os vínculos de um técnico. Se as permissões antigas permanecerem válidas, um técnico poderá continuar executando uma ação depois que sua última concessão for removida. As opções abaixo preservam a revogação de sessões já definida para desativação de conta e redefinição de senha.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Aplicar na próxima requisição protegida | Manter a sessão e avaliar a ação com as permissões vigentes no servidor. A próxima requisição autorizada após a gravação já usa a nova configuração. | A mudança vale sem novo login. A autorização de cada ação precisa consultar o estado vigente ou usar uma cópia cuja atualização esteja garantida. |
+| B — Encerrar as sessões dos técnicos afetados | Revogar as sessões quando a alteração mudar as permissões efetivas do técnico. O próximo login usa a nova configuração. | Garante a aplicação da mudança por meio de nova autenticação. Uma edição de grupo pode interromper o trabalho de várias pessoas, inclusive quando apenas acrescenta acesso. |
+
+O autor escolheu a opção B. Ao editar permissões de um grupo ou mudar os vínculos de um técnico, Atendimento compara as permissões efetivas antes e depois da alteração. Se o conjunto mudar, por acréscimo ou retirada, revoga todas as sessões abertas do técnico e exige novo login. Uma concessão que continua disponível por outro grupo preserva as sessões quando o conjunto efetivo permanece igual. A alteração e a revogação devem produzir efeito juntas, de modo que uma nova requisição protegida após a gravação não use uma sessão revogada.
+
+### Administração de grupos e permissões — concessão por grupo
+
+A administração precisa continuar acessível após a edição de grupos, a troca de vínculos ou a desativação de contas. Se a última conta com esse acesso o perder, a equipe fica sem como corrigir os grupos pelo painel.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Reservar a administração ao perfil master | A conta com perfil master administra grupos e permissões por uma atribuição própria. A edição de grupos não altera essa atribuição. Impedir a desativação da última conta master ativa sem substituição. | Preserva a administração mesmo diante de erro na configuração de grupos. Exige um fluxo próprio para conceder ou transferir o perfil master. |
+| B — Conceder a administração por grupo | Incluir a gestão de grupos e permissões na matriz. Impedir qualquer alteração que deixe o sistema sem uma conta ativa com essa permissão efetiva. | Permite delegar a administração pelos mesmos grupos. A proteção precisa abranger edição, remoção de vínculos e desativação de contas, inclusive alterações simultâneas. |
+
+O autor escolheu a opção B. Administrar grupos e permissões é uma permissão da matriz e pode ser concedida por grupo. A expressão “administrador master” usada acima, quando se refere à gestão de grupos, designa quem tem essa permissão efetiva. Atendimento deve impedir edição de grupos, mudanças de vínculo ou desativação de conta que deixem o sistema sem nenhuma conta ativa capaz de administrar grupos. A verificação e a alteração devem ocorrer juntas, inclusive quando dois administradores agirem ao mesmo tempo.
+
+### Alcance da delegação de permissões — qualquer permissão da matriz
+
+Quem pode editar grupos pode, em princípio, alterar um grupo ao qual pertence. Se a edição permitir conceder qualquer permissão da matriz, essa pessoa pode obter acesso a funções que ainda não possui. A regra precisa valer também ao vincular alguém a um grupo que já concede essas funções.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Permitir conceder qualquer permissão da matriz | Quem administra grupos pode atribuir qualquer permissão cadastrada ou vincular contas aos grupos que as concedem. | Permite configurar todos os grupos com uma única atribuição administrativa. Quem a possui pode conceder a si ou a terceiros funções que até então não podia executar. |
+| B — Limitar a concessão às permissões que o administrador já possui | Ao editar um grupo ou adicionar um vínculo, Atendimento verifica se cada permissão que a ação concede está entre as permissões efetivas do administrador antes da alteração. | Permite delegar a gestão com alcance limitado. Conceder uma permissão fora desse alcance exige outro administrador que já a possua. A configuração inicial precisa prever quem poderá conceder cada permissão. |
+
+O autor escolheu a opção A. Quem tem a permissão efetiva de administrar grupos pode conceder ou retirar qualquer permissão da matriz e vincular contas aos grupos, inclusive a própria conta. Se a mudança alterar as permissões efetivas de quem a executou, Atendimento também revoga as sessões dessa pessoa. Continua valendo a proteção da última conta ativa capaz de administrar grupos.
+
+### Primeiro acesso para administrar grupos — criação durante a instalação
+
+Uma instalação nova ainda não tem contas nem grupos. É preciso criar a primeira conta ativa com acesso à administração. As opções usam um grupo comum da matriz e exigem troca da senha temporária no primeiro acesso.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Criar durante a instalação | A rotina de implantação recebe o login inicial e uma senha temporária por entrada protegida. Em uma instalação nova, cria a conta e seu vínculo ao grupo com permissão de administrar grupos. | O painel fica pronto ao concluir a implantação. A rotina precisa rejeitar nova inicialização após a primeira criação e evitar expor a senha nos registros. |
+| B — Criar por comando administrativo separado | Após preparar o banco, um operador autorizado executa um comando no ambiente de Atendimento, informa o login e a senha temporária por entrada protegida e inicializa o grupo e a conta. | Separa a configuração do primeiro acesso da implantação. O painel só fica pronto para administração depois dessa etapa. O comando precisa rejeitar nova inicialização após a primeira criação. |
+
+O autor escolheu a opção A. Na primeira instalação, a rotina de implantação cria a conta inicial e seu vínculo a um grupo com permissão de administrar grupos. Recebe a senha temporária por entrada protegida, sem registrá-la em logs, e exige sua troca no primeiro acesso. Reexecutar a implantação após a inicialização não cria outra conta nem redefine a senha existente.
+
+### Permissões do grupo inicial — administrar grupos e criar usuários
+
+O grupo criado pela instalação precisa ter a permissão de administrar grupos. Como essa permissão permite conceder outras, a escolha abaixo define o acesso disponível por padrão no primeiro login e para futuras contas adicionadas ao grupo inicial.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Conceder apenas a administração de grupos | O primeiro administrador entra e configura os grupos com as funções necessárias, inclusive as da própria conta. | Reduz o acesso concedido automaticamente. A configuração das demais funções exige ajustes no painel e novo login se as permissões efetivas da própria conta mudarem. |
+| B — Conceder todas as permissões disponíveis na instalação | O grupo inicial recebe as permissões existentes no momento da criação. | Permite configurar o sistema e usar as funções operacionais desde o primeiro login. Toda conta adicionada a esse grupo herda o mesmo acesso amplo enquanto as concessões forem mantidas. |
+
+O autor escolheu partir de um conjunto restrito e depois acrescentou a permissão de criar usuários. O grupo criado durante a instalação recebe duas permissões: administrar grupos e criar usuários. Após trocar a senha temporária, o primeiro administrador pode criar contas e configurar as concessões necessárias, inclusive para sua própria conta. Se alterar suas permissões efetivas, deve entrar novamente.
+
+### Gestão de grupos — critérios de aceite aprovados
+
+1. Em uma instalação nova, criar a primeira conta e vinculá-la ao grupo inicial, que concede administração de grupos e criação de usuários. Exigir a troca da senha temporária antes do uso do painel. Após a troca, verificar que a primeira conta consegue administrar grupos e criar usuários. Ao repetir a implantação, preservar a conta, a senha e as concessões existentes.
+2. Quem tem permissão efetiva para administrar grupos pode criar grupos, adicionar ou retirar permissões e alterar vínculos, inclusive os da própria conta. O servidor recusa essas ações quando a conta não tem essa permissão.
+3. Um técnico com dois grupos que concedem a mesma ação mantém essa permissão e suas sessões quando apenas uma das concessões é removida e o resto do acesso permanece igual.
+4. Ao retirar a última concessão ou acrescentar uma permissão efetiva, revogar todas as sessões da conta afetada junto com a alteração. A próxima requisição protegida com uma dessas sessões deve ser recusada. Após novo login, aplicar o conjunto atualizado.
+5. Recusar qualquer alteração de permissões, vínculos ou contas que deixaria o sistema sem uma conta ativa capaz de administrar grupos. Se duas alterações concorrentes retirariam, juntas, os dois últimos administradores, preservar pelo menos uma conta ativa com essa permissão.
+
+O autor aprovou os critérios de aceite da gestão de grupos.
+
+### Permissões para redefinir senha e alterar a situação da conta — concessão única
+
+Criar usuários já é uma permissão própria. Após a criação, redefinir uma senha ou alterar a situação da conta são ações distintas, com efeitos diferentes. Redefinir a senha ou desativar a conta encerra as sessões abertas. A desativação também exige verificar os chamados vinculados e providenciar substituição quando a regra de continuidade exigir. Essas condições valem em ambas as opções.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Separar redefinição de senha e alteração da situação | Criar uma permissão para redefinir senhas e outra para desativar ou reativar contas. A criação de usuários continua independente. | Permite delegar recuperação de acesso sem conceder poder para desativar contas. Exige configurar duas permissões para quem executa as duas funções. |
+| B — Agrupar redefinição de senha e alteração da situação | Uma permissão concede redefinição de senha, desativação e reativação. A criação de usuários continua independente. | Simplifica a configuração de grupos que cuidam de contas. Quem puder redefinir senhas também poderá alterar a situação das contas. |
+
+O autor escolheu a opção B. Uma única permissão concede redefinição de senha, desativação e reativação de contas. A permissão de criar usuários continua independente. A instalação concede ao grupo inicial a criação de usuários e a administração de grupos. O acesso à redefinição de senha e à alteração da situação da conta exige uma concessão posterior.
+
+### Gestão de contas — critérios de aceite aprovados
+
+1. Uma conta com permissão de criar usuários consegue cadastrar uma conta com senha temporária. O novo usuário troca a senha antes de usar o painel. A permissão de criação, sozinha, é insuficiente para redefinir senhas ou alterar a situação de contas existentes.
+2. O servidor exige a mesma permissão para redefinir senha, desativar e reativar contas. Essa concessão, sozinha, é insuficiente para criar usuários ou alterar vínculos de grupos.
+3. Ao redefinir uma senha, revogar todas as sessões da conta e exigir a troca da nova senha temporária no próximo acesso. Ao desativar uma conta, revogar suas sessões e verificar a continuidade dos chamados vinculados antes de concluir a alteração. Se a substituição for obrigatória, exigir um técnico ativo, segundo as regras vigentes.
+4. Ao reativar a conta, exigir novo login e manter revogadas as sessões anteriores. Bloquear a desativação se ela deixar o sistema sem uma conta ativa capaz de administrar grupos.
+
+O autor aprovou os critérios de aceite da gestão de contas.
+
+### Consulta da triagem e dos chamados — permissões separadas
+
+O painel separa os chamados novos dos demais. A matriz pode permitir que um grupo consulte chamados sem ver a fila de novos. Em ambas as opções, consultar dados no painel, no quadro ou na página do chamado depende da mesma autorização no servidor. A abertura pública continua seguindo seu próprio fluxo.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Uma permissão para consultar chamados | A mesma permissão permite consultar a triagem e os demais chamados acessíveis à equipe, inclusive no quadro e nos detalhes. | Mantém a visão de atendimento uniforme. Qualquer grupo autorizado a acompanhar chamados também pode consultar os novos. |
+| B — Separar a triagem da consulta dos demais chamados | Uma permissão permite consultar chamados novos e outra permite consultar os demais. O servidor aplica a distinção nas listas, no quadro e nos detalhes. | Permite que grupos acompanhem chamados já triados sem acessar a fila de novos. Um chamado pode passar a ficar acessível a um grupo, ou deixar de ficar, quando sai da triagem. |
+
+O autor escolheu a opção B. Consultar chamados novos na triagem e consultar os demais chamados são permissões independentes. O servidor aplica a permissão correspondente ao estado atual do chamado no painel, no quadro e nos detalhes, inclusive em acessos diretos por identificador. Para quem pode consultar a triagem, os filtros pessoais continuam sem ocultar os chamados novos.
+
+### Permissão para assumir um chamado da triagem — concessão específica
+
+Assumir um chamado registra o técnico como participante e tira o chamado da triagem. Um técnico com acesso apenas à triagem pode perder acesso aos detalhes assim que o estado mudar. As opções abaixo exigem as duas permissões de consulta para assumir o chamado, de modo que o técnico consiga acompanhá-lo depois. O acesso para abrir e acompanhar chamados existentes segue as regras próprias.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Conceder a ação de assumir separadamente | Exigir uma permissão específica para assumir chamados da triagem, além das duas permissões de consulta. | Permite criar grupos que acompanham as duas filas sem assumir chamados. Exige uma concessão adicional para os técnicos que fazem triagem. |
+| B — Permitir assumir a quem consulta as duas filas | A combinação das duas permissões de consulta também permite assumir chamados da triagem. | Simplifica a configuração, mas qualquer grupo que possa consultar as duas filas poderá assumir chamados. |
+
+O autor escolheu a opção A. Para assumir um chamado da triagem, o técnico precisa da permissão específica para assumir e das duas permissões de consulta. Atendimento verifica as três concessões ao efetivar a ação. O técnico com acesso às duas filas pode acompanhá-las mesmo sem a permissão para assumir.
+
+### Alteração de participantes após a triagem — permissão compartilhada com assumir
+
+Em chamados já assumidos, a equipe pode incluir e remover participantes. Preservar a regra de incluir um substituto antes de remover o último participante. A substituição administrativa no fluxo de desativação de conta segue as regras desse fluxo.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Conceder uma permissão própria para alterar participantes | Exigir acesso ao chamado e uma permissão específica para se incluir, adicionar ou remover participantes após a triagem. | Permite separar quem assume chamados novos de quem organiza a equipe dos chamados em andamento. Técnicos que exercem as duas funções precisam das duas concessões. |
+| B — Usar uma permissão para assumir e alterar participantes | Ampliar a permissão de assumir para abranger inclusão e remoção de participantes após a triagem. Para assumir na triagem, continuam necessárias as duas permissões de consulta. Para alterar participantes depois, é necessário acesso ao chamado. | Simplifica a configuração. Quem pode assumir e tem acesso ao chamado em andamento também pode alterar seus participantes. |
+
+O autor escolheu a opção B. Uma única permissão concede assumir chamados da triagem e alterar participantes após a triagem. Para assumir, o técnico também precisa das duas permissões de consulta. Para alterar participantes após a triagem, precisa de acesso ao chamado. A substituição administrativa na desativação de conta segue as regras desse fluxo.
+
+### Consulta, triagem e participação — critérios de aceite aprovados
+
+1. Um técnico com permissão apenas para consultar a triagem vê os chamados novos, inclusive com filtros pessoais ativos, no painel, no quadro e nos detalhes. O servidor recusa a consulta a chamados fora da triagem, inclusive pelo identificador. Aplicar a regra inversa a quem pode consultar apenas os demais chamados.
+2. Um técnico com as duas permissões de consulta consegue acompanhar ambas as filas. O servidor recusa assumir um chamado se faltar a permissão de assumir e alterar participantes ou se faltar qualquer uma das permissões de consulta.
+3. Quando um técnico autorizado assume um chamado, o sistema registra sua participação e retira o chamado da triagem. O técnico mantém acesso ao chamado pela permissão de consultar os demais chamados.
+4. Após a triagem, a permissão compartilhada permite se incluir, adicionar ou remover participantes se o técnico tiver acesso ao chamado. Recusar a remoção do último participante enquanto não houver substituto. A permissão de consultar a triagem é exigida ao assumir um chamado novo.
+5. Alterar a prioridade exige acesso ao chamado e a concessão correspondente. O técnico autorizado pode fazer essa alteração sem assumir o chamado ou se tornar participante. A mudança fica no histórico segundo as regras vigentes.
+
+O autor aprovou os critérios de consulta, triagem e participação.
+
+### Registro técnico e fechamento por resolução — permissão conjunta
+
+Registrar intervenções, diagnóstico e solução documenta o trabalho. Confirmar a revisão final encerra o chamado e pode iniciar o consumo de materiais. Em ambas as opções, exigir acesso ao chamado, solução registrada e revisão atualizada, conforme as regras vigentes. As permissões para movimentar materiais diretamente, cancelar chamados e tratar reaberturas serão detalhadas em separado.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Separar registro técnico e fechamento | Uma permissão permite registrar intervenções e preencher diagnóstico e solução. Outra permite confirmar a revisão final e fechar o chamado. | Permite que um técnico documente o trabalho e outro confirme o fechamento. Se ninguém disponível tiver a permissão de fechar, o chamado fica aberto até que uma pessoa autorizada possa agir. |
+| B — Conceder registro técnico e fechamento juntos | Uma única permissão concede o registro técnico e a confirmação do fechamento. | Simplifica a configuração para equipes em que a mesma função documenta e fecha. Qualquer técnico com essa permissão pode concluir o chamado quando as condições de fechamento forem atendidas. |
+
+O autor escolheu conceder registro técnico e fechamento juntos. Com acesso ao chamado, essa permissão permite registrar intervenções, preencher o diagnóstico opcional, registrar a solução aplicada e confirmar a revisão final para fechar por resolução. Atendimento verifica a solução, a validade da revisão e as demais condições de fechamento vigentes antes de fechar o chamado ou iniciar consumo decorrente do fechamento.
+
+### Cancelamento técnico e decisão de reabertura — permissão conjunta
+
+Cancelar encerra um chamado mediante motivo obrigatório. Aceitar ou recusar um pedido de reabertura decide se um chamado fechado volta ao atendimento. As duas opções exigem acesso ao chamado e preservam as regras de cada fluxo, incluindo o registro do motivo nas ações que o exigem.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Conceder separadamente | Uma permissão permite cancelar chamados. Outra permite aceitar ou recusar pedidos de reabertura. | Permite delegar uma decisão sem conceder a outra. Grupos que executam ambas precisam das duas concessões. |
+| B — Conceder juntas | Uma só permissão permite cancelar chamados e aceitar ou recusar pedidos de reabertura. | Simplifica a configuração quando o mesmo grupo responde pelas duas decisões. A concessão sempre abrange ambas. |
+
+O autor escolheu a opção B. Uma única permissão concede cancelar chamados e aceitar ou recusar pedidos de reabertura. Atendimento exige acesso ao chamado e verifica as condições específicas da ação. Essa permissão é independente da concessão para registro técnico e fechamento por resolução.
+
+### Registro técnico e decisões sobre o chamado — critérios de aceite aprovados
+
+1. Com acesso ao chamado e a permissão de registro técnico e fechamento, o técnico pode registrar intervenções, diagnóstico opcional e solução aplicada. O servidor recusa essas ações e o fechamento quando faltar a permissão correspondente.
+2. Para fechar por resolução, exigir solução registrada e confirmação de uma revisão final atualizada. Recusar a confirmação quando a revisão estiver desatualizada ou houver aprovação obrigatória pendente. Nessas situações, preservar o estado do chamado e impedir o início de consumo decorrente do fechamento.
+3. Com acesso ao chamado e a permissão de cancelamento e decisão de reabertura, o técnico pode cancelar com motivo obrigatório ou aceitar ou recusar um pedido elegível. Sem essa permissão, o servidor recusa essas ações mesmo que o técnico possa registrar intervenções e fechar por resolução.
+4. Cancelar sem ser participante preserva a composição da equipe. Aceitar um pedido de reabertura leva o chamado a Em atendimento e inclui o técnico que aceitou, preservando os participantes anteriores. Recusar exige motivo e mantém o chamado fechado. Registrar as decisões no histórico conforme as regras vigentes.
+
+O autor aprovou os critérios de registro técnico e decisões sobre o chamado.
+
+### Consulta de estoque e gestão de reservas — permissão conjunta
+
+Consultar o estoque informa o saldo disponível. Reservar, ajustar ou liberar materiais altera o saldo disponível para outros atendimentos. As operações continuam sujeitas às regras do chamado e à confirmação do SupriTI. Esta decisão trata das ações diretas de estoque; o consumo decorrente do fechamento e o tratamento administrativo de pendências serão detalhados em separado.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Separar consulta e gestão de reservas | Uma permissão permite consultar estoque. Outra, combinada com a consulta e o acesso ao chamado, permite reservar, ajustar e liberar materiais. | Permite ver a disponibilidade sem poder comprometer saldo. Os grupos que cuidam de reservas precisam das duas permissões. |
+| B — Conceder consulta e gestão de reservas juntas | Uma permissão permite consultar estoque e, com acesso ao chamado, reservar, ajustar e liberar materiais. | Simplifica a configuração. Todo grupo que puder consultar estoque também poderá alterar reservas nos chamados aos quais tenha acesso, observadas as regras da operação. |
+
+O autor escolheu a opção B. Uma única permissão concede consulta de estoque e, com acesso ao chamado, permite reservar, ajustar e liberar materiais. Atendimento verifica a autorização antes de registrar a intenção da operação. O resultado no estoque depende da confirmação do SupriTI.
+
+### Confirmação de fechamento com consumo — confirmação por técnico autorizado
+
+A confirmação da revisão final atesta os materiais usados e pode iniciar uma baixa no SupriTI. Uma pessoa com permissão de fechar pode não ter a permissão conjunta de estoque e reservas. Em ambas as opções, fechar sem consumo exige a permissão de fechamento, além de acesso ao chamado e das condições vigentes. A autorização para fechar com consumo preserva as verificações de materiais e de revisão atualizada.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Usar a permissão de fechamento | Quem pode confirmar a revisão final pode também confirmar o consumo dos materiais nela registrados. | Permite que uma pessoa prepare as reservas e outra conclua o atendimento. Quem fecha pode iniciar a baixa pelo fechamento, mesmo sem acesso às ações diretas de estoque e reservas. |
+| B — Exigir também a permissão de estoque e reservas | Se a revisão inclui materiais a consumir, Atendimento exige as duas permissões antes de fechar. | Restringe a confirmação de baixas a quem tem acesso a estoque e reservas. O fechamento com consumo pode ter de aguardar um técnico com ambas as concessões. |
+
+O autor escolheu exigir autorização para confirmar o consumo. Se a pessoa responsável pelo fechamento tiver apenas a permissão de fechar, outro técnico com acesso ao chamado e permissão para confirmar o consumo deve confirmar os materiais. A confirmação deve se referir à revisão apresentada, com seus materiais e quantidades. Se essa revisão perder a validade antes do fechamento, exigir nova conferência. Fechar sem consumo continua seguindo a permissão de fechamento e as condições vigentes.
+
+### Conclusão do fechamento após confirmação por outro técnico — fechamento na confirmação
+
+Quando o responsável pelo fechamento depende de outro técnico para confirmar o consumo, falta definir se a confirmação também conclui o fechamento. Nas duas opções, registrar separadamente quem solicitou o fechamento e quem confirmou o consumo. Manter o chamado aberto até a etapa que efetivamente conclui o fechamento.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — A confirmação do consumo conclui o fechamento solicitado | O técnico com permissão de fechar solicita o fechamento da revisão que conferiu. Outro técnico, com permissão de confirmar consumo, confirma os materiais. O sistema revalida a revisão e conclui o fechamento autorizado pelo primeiro. | Evita exigir que o primeiro técnico volte ao chamado. A confirmação do consumo também dispara o fechamento, e a interface precisa explicitar esse efeito. |
+| B — O responsável volta para concluir o fechamento | Outro técnico confirma o consumo para a revisão apresentada. Depois, um técnico com permissão de fechar confirma o fechamento. O sistema verifica se a confirmação de consumo ainda corresponde à revisão válida. | Mantém a confirmação de consumo e a conclusão em ações distintas. O chamado permanece aberto depois da confirmação do consumo até que alguém autorizado o feche. |
+
+O autor escolheu a opção A. O técnico com permissão de fechar solicita o fechamento para a revisão que conferiu. Outro técnico com acesso ao chamado e autorização para confirmar consumo confirma os materiais e as quantidades. Atendimento revalida a solicitação, a revisão e as condições de fechamento e, se estiverem válidas, fecha o chamado e inicia o fluxo de consumo. A tela de confirmação informa que a ação também conclui o fechamento. Registrar separadamente quem solicitou o fechamento e quem confirmou o consumo.
+
+### Concessão para confirmar consumo — incluída em estoque e reservas
+
+Consultar estoque e gerenciar reservas já formam uma única permissão. A matriz precisa definir se essa permissão também autoriza confirmar os materiais usados no fechamento. Em ambas as opções, confirmar o consumo por outro técnico depende de acesso ao chamado e de uma solicitação válida de fechamento.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Incluir na permissão de estoque e reservas | Quem pode consultar estoque, reservar, ajustar e liberar também pode confirmar o consumo no fechamento. | Mantém uma concessão para as ações de materiais. Todo grupo que gerencia reservas também pode confirmar o consumo. |
+| B — Conceder confirmação de consumo separadamente | Criar uma permissão específica para confirmar os materiais usados no fechamento. | Permite delegar reservas a um grupo sem dar a ele a confirmação de consumo. A equipe precisa configurar essa concessão para quem responde pela confirmação. |
+
+O autor escolheu a opção A. A permissão de estoque e reservas concede consulta de estoque, reserva, ajuste, liberação e confirmação de consumo no fechamento. Um técnico com acesso ao chamado e as permissões de fechamento e de estoque e reservas pode concluir o fechamento com consumo diretamente. Se tiver apenas a permissão de fechamento, pode solicitar a confirmação a outro técnico autorizado pelo fluxo acima.
+
+### Fechamento com consumo — critérios de aceite aprovados
+
+1. Um técnico com acesso ao chamado e as permissões de fechamento e de estoque e reservas pode confirmar a revisão final e fechar com consumo quando as condições vigentes forem atendidas.
+2. Um técnico que pode fechar, mas não tem a permissão de estoque e reservas, pode solicitar a confirmação dos materiais e das quantidades conferidos. O chamado permanece aberto e o consumo não é iniciado enquanto a confirmação estiver pendente.
+3. Outro técnico com acesso ao chamado e permissão de estoque e reservas pode confirmar o consumo de uma solicitação válida. A tela informa que a confirmação também fechará o chamado. O histórico identifica quem solicitou e quem confirmou. A efetivação da baixa continua dependendo do resultado do SupriTI.
+4. Se a revisão ficar desatualizada ou outra condição de fechamento deixar de ser atendida, recusar a confirmação sem fechar o chamado nem iniciar o consumo. Quando a revisão mudar, exigir conferência do conteúdo atualizado.
+5. Para fechar sem consumo, continuar exigindo acesso ao chamado, permissão de fechamento e as condições vigentes.
+
+O autor aprovou os critérios de fechamento com consumo.
+
+### Gestão administrativa de operações de materiais pendentes — permissão própria
+
+Na desativação por suspeita de uso indevido, o administrador pode selecionar operações pendentes para suspensão. Após análise, um administrador pode autorizar a retomada ou cancelar a intenção suspensa. Suspender ou cancelar a intenção não desfaz efeitos já realizados no SupriTI nem resolve uma operação cujo resultado é desconhecido.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Exigir uma permissão própria para gestão de pendências | Exigir essa permissão, em conjunto com a autorização para desativar contas, para suspender operações durante uma desativação. Exigir a mesma permissão de pendências para autorizar a retomada ou cancelar uma intenção suspensa. | Permite que um grupo revise pendências sem poder desativar contas. Quem pode desativar, mas não possui a permissão de pendências, precisa de apoio autorizado para suspender operações naquele fluxo. |
+| B — Incluir na permissão de gestão de contas existentes | A permissão para redefinir senhas, desativar e reativar contas também autoriza suspender operações no fluxo de desativação, autorizar sua retomada e cancelar intenções suspensas. | Simplifica a concessão quando as mesmas pessoas cuidam de contas e pendências. Quem recebe a permissão para redefinir senhas também ganha acesso às decisões sobre essas operações de materiais. |
+
+O autor escolheu a opção A. Suspender operações durante uma desativação por suspeita de uso indevido exige as permissões de gestão de contas existentes e de gestão de pendências. Após a suspensão, autorizar a retomada ou cancelar a intenção exige a permissão de gestão de pendências. A permissão de estoque e reservas continua cobrindo as ações diretas de materiais e a confirmação de consumo no fechamento.
+
+### Gestão de pendências de materiais — critérios de aceite aprovados
+
+1. Uma conta com as duas permissões pode selecionar quais operações pendentes suspender durante a desativação por suspeita de uso indevido. A suspensão afeta somente as operações selecionadas e elegíveis.
+2. Se faltar a permissão de gestão de pendências, o servidor recusa a suspensão solicitada, mesmo que a conta possa desativar usuários. Se faltar a permissão de gestão de contas, a concessão de gestão de pendências é insuficiente para desativar usuários.
+3. Após a suspensão, uma conta com permissão de gestão de pendências pode autorizar a retomada ou cancelar a intenção, conforme o estado da operação. A permissão de estoque e reservas, sozinha, é insuficiente para tomar essas decisões.
+4. Suspender ou cancelar uma intenção preserva a autoria e o histórico. O sistema mantém os efeitos já realizados pelo SupriTI e continua indicando um resultado desconhecido até que seja apurado.
+
+O autor aprovou os critérios de gestão de pendências de materiais.
+
+### Configuração e publicação de formulários — permissão conjunta
+
+Editar um formulário prepara uma versão. Publicar torna a versão disponível para novas aberturas, conforme o público do formulário. Uma configuração incorreta pode afetar a classificação inicial de chamados ou impedir que o público pretendido use o formulário. Em ambas as opções, Atendimento valida as regras de publicação no servidor e preserva a versão usada nos chamados anteriores.
+
+| Opção | Funcionamento | Compromisso e limite |
+| --- | --- | --- |
+| A — Conceder edição e publicação separadamente | Uma permissão permite criar e editar versões. Outra permite publicar versões válidas de formulários internos e externos. | Permite que um grupo prepare uma versão e outro a publique. A publicação depende de alguém com a concessão correspondente. |
+| B — Conceder edição e publicação juntas | Uma única permissão permite criar, editar e publicar versões válidas de formulários internos e externos. | Simplifica a configuração. Toda pessoa autorizada a editar pode também tornar a versão disponível para novas aberturas. |
+
+O autor escolheu a opção B. A mesma permissão autoriza criar formulários, editar versões em preparação e publicar versões válidas para o público interno ou externo. Atendimento verifica a permissão no servidor em cada ação. A abertura com um formulário interno continua sujeita à associação aos grupos autorizados a usá-lo.
+
+### Configuração e publicação de formulários — critérios de aceite aprovados
+
+1. Uma conta com a permissão pode criar formulários, editar versões em preparação e publicar versões válidas de formulários internos e externos. O servidor recusa essas ações quando a conta não tem a concessão, inclusive por acesso direto à API.
+2. Se um caminho de conclusão estiver sem categoria sugerida, recusar a publicação. A versão em preparação permanece disponível para correção. Preservar a versão publicada, se houver.
+3. Ao publicar uma nova versão válida, usá-la nas novas aberturas. Os chamados anteriores continuam consultáveis com a versão usada na abertura e com as permissões vigentes.
+4. Para abrir um chamado usando um formulário interno, verificar a associação da conta aos grupos autorizados para aquele formulário. Administrar o formulário e usá-lo para abrir chamados são acessos avaliados separadamente.
+
+O autor aprovou os critérios de configuração e publicação de formulários.
 
 ## Referências
 
